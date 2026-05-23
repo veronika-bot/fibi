@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фиби — Дашборд</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{yale:'#0D3B66','yale-d':'#0a2f50',lemon:'#FAF0CA'}}}}</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif}
+.sidebar{width:240px;flex-shrink:0;background:#0D3B66;min-height:100vh;transition:all .3s}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;cursor:pointer;transition:all .2s;color:rgba(255,255,255,.65);font-size:14px;font-weight:500;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.1);color:white}
+.nav-item.active{background:rgba(255,255,255,.18);color:white;font-weight:600}
+.card{background:white;border-radius:18px;box-shadow:0 2px 16px rgba(13,59,102,.07);border:1px solid rgba(13,59,102,.06);transition:transform .25s,box-shadow .25s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(13,59,102,.12)}
+.btn-p{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:#0D3B66;color:white;border-radius:12px;padding:10px 20px;font-weight:600;font-size:14px;transition:all .2s;box-shadow:0 4px 12px rgba(13,59,102,.25);border:none;cursor:pointer;text-decoration:none}
+.btn-p:hover{background:#0a2f50;transform:translateY(-1px)}
+.btn-o{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:#0D3B66;border:2px solid #0D3B66;border-radius:12px;padding:8px 18px;font-weight:600;font-size:14px;transition:all .2s;cursor:pointer;text-decoration:none}
+.btn-o:hover{background:#FAF0CA}
+.screen{display:none}
+.screen.active{display:flex}
+.progress-bar{height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.topic-card{background:white;border-radius:14px;border:1.5px solid #e5e7eb;padding:14px 16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:12px}
+.topic-card:hover{border-color:#0D3B66;background:#f0f4ff;transform:translateX(4px)}
+.topic-card.done{border-color:#10b981;background:#f0fdf4}
+.topic-card.locked{opacity:.55;cursor:not-allowed}
+.chat-msg-left{background:#f1f5f9;border-radius:18px 18px 18px 4px;padding:10px 14px;font-size:14px;color:#374151;max-width:72%;line-height:1.5}
+.chat-msg-right{background:#0D3B66;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:14px;color:white;max-width:72%;line-height:1.5;margin-left:auto}
+.stat-ring{transform:rotate(-90deg);transform-origin:50% 50%}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.float{animation:float 5s ease-in-out infinite}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#0D3B66;border-radius:2px}
+/* Mobile sidebar */
+@media(max-width:768px){.sidebar{position:fixed;left:-240px;z-index:50;height:100vh}.sidebar.open{left:0}.mobile-overlay{display:block}.main-content{margin-left:0!important}}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40}
+</style>
+</head>
+<body class="bg-gray-50" style="overflow-x:hidden">
+
+<!-- Mobile overlay -->
+<div id="overlay" class="mobile-overlay" onclick="closeSidebar()"></div>
+
+<!-- APP LAYOUT -->
+<div class="flex" style="min-height:100vh">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar" class="sidebar flex flex-col py-5 px-3 gap-1">
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2.5 px-3 mb-6">
+      <img src="Иконки.png" alt="Фиби" class="w-9 h-9 flex-shrink-0" style="border-radius:30px">
+      <span class="text-white font-bold text-lg">Фиби</span>
+    </a>
+
+    <!-- Nav -->
+    <a onclick="showScreen('dashboard')" class="nav-item active" id="n-dashboard">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Дашборд
+    </a>
+    <a onclick="showScreen('tasks')" class="nav-item" id="n-tasks">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Задания
+    </a>
+    <a onclick="showScreen('tutors')" class="nav-item" id="n-tutors">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Репетиторы
+    </a>
+    <a onclick="showScreen('chat')" class="nav-item" id="n-chat">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      Чаты
+      <span class="ml-auto w-5 h-5 rounded-full text-xs flex items-center justify-center font-bold text-white" style="background:#ef4444">3</span>
+    </a>
+    <a onclick="showScreen('progress')" class="nav-item" id="n-progress">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+      Прогресс
+    </a>
+    <a onclick="showScreen('parent')" class="nav-item" id="n-parent" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Мои ученики
+    </a>
+    <!-- Tutor nav items (hidden by default) -->
+    <a onclick="showTutorTab('students')" class="nav-item" id="tn-students" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      Мои ученики
+    </a>
+    <a onclick="showTutorTab('groups')" class="nav-item" id="tn-groups" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Группы
+    </a>
+    <a onclick="showTutorTab('materials')" class="nav-item" id="tn-materials" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+      Материалы
+    </a>
+    <a onclick="showTutorTab('tasks')" class="nav-item" id="tn-tasks" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      Задания
+    </a>
+
+    <div class="border-t mt-2 mb-2" style="border-color:rgba(255,255,255,.12)"></div>
+
+    <a href="index.html" class="nav-item">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+      На главную
+    </a>
+
+    <div class="flex-1"></div>
+
+    <!-- Logout -->
+    <button onclick="logout()" class="nav-item w-full text-left" style="color:rgba(255,100,100,.8)">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+      Выйти
+    </button>
+
+    <!-- User -->
+    <div class="flex items-center gap-3 px-3 py-3 rounded-xl mt-1" style="background:rgba(255,255,255,.1)">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 user-avatar" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">АК</div>
+      <div class="overflow-hidden"><div class="text-white text-sm font-semibold truncate sb-user-name">Алина К.</div><div class="text-xs truncate sb-user-grade" style="color:rgba(255,255,255,.5)">9 класс</div></div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="flex-1 overflow-auto main-content" id="main">
+
+    <!-- TOP BAR -->
+    <div class="sticky top-0 z-30 flex items-center justify-between px-6 py-3 bg-white border-b border-gray-100">
+      <button onclick="openSidebar()" class="md:hidden p-1.5 rounded-lg text-gray-500 mr-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div id="page-title" class="font-bold text-gray-800">Дашборд</div>
+      <div class="flex items-center gap-3">
+        <div id="streak-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold" style="background:#FAF0CA;color:#0D3B66"><svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg> 14</div>
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white user-avatar" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">АК</div>
+      </div>
+    </div>
+
+    <!-- ==================== DASHBOARD SCREEN ==================== -->
+    <div id="s-dashboard" class="screen active flex-col p-5 md:p-6 gap-5">
+
+      <!-- Welcome -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Привет, Алина!</h1>
+          <p class="text-gray-500 text-sm mt-0.5">Сегодня 15 мая 2025 · До ОГЭ <strong class="text-yale" style="color:#0D3B66">21 день</strong></p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="showScreen('tasks')" class="btn-p text-sm">▶ Продолжить учёбу</button>
+        </div>
+      </div>
+
+      <!-- Stat cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="card p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            </div>
+            <div><div class="text-2xl font-bold text-gray-900">247</div><div class="text-xs text-gray-500">задач решено</div></div>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div><div class="text-2xl font-bold text-gray-900">78%</div><div class="text-xs text-gray-500">точность</div></div>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+            </div>
+            <div><div class="text-2xl font-bold text-gray-900">14</div><div class="text-xs text-gray-500">дней серии</div></div>
+          </div>
+        </div>
+        <div class="card p-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+            </div>
+            <div><div class="text-2xl font-bold text-gray-900">12</div><div class="text-xs text-gray-500">тем изучено</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <!-- Recommendations -->
+        <div class="lg:col-span-2 card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-bold text-gray-800">Рекомендации на сегодня</h2>
+            <span class="text-xs text-gray-400">3 задания</span>
+          </div>
+          <div class="space-y-3">
+            <div class="flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50" style="background:#f8fafc" onclick="showScreen('tasks')">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div>
+              <div class="flex-1">
+                <div class="font-semibold text-gray-800 text-sm">Дроби и проценты</div>
+                <div class="text-xs text-gray-500">8 заданий · ~25 мин</div>
+                <div class="progress-bar mt-1.5 w-32"><div class="progress-fill" style="width:65%;background:#f59e0b"></div></div>
+              </div>
+              <div class="btn-p text-xs" style="padding:8px 14px">Решать →</div>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50" style="background:#f8fafc" onclick="showScreen('tasks')">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 20.25L12 3.75l8.25 16.5H3.75z"/></svg></div>
+              <div class="flex-1">
+                <div class="font-semibold text-gray-800 text-sm">Геометрия — углы</div>
+                <div class="text-xs text-gray-500">5 заданий · ~15 мин</div>
+                <div class="progress-bar mt-1.5 w-32"><div class="progress-fill" style="width:28%;background:#ef4444"></div></div>
+              </div>
+              <div class="btn-p text-xs" style="padding:8px 14px">Решать →</div>
+            </div>
+            <div class="flex items-center gap-4 p-3 rounded-xl cursor-pointer transition-all hover:bg-gray-50" style="background:#f8fafc" onclick="showScreen('tasks')">
+              <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></div>
+              <div class="flex-1">
+                <div class="font-semibold text-gray-800 text-sm">Статистика и графики</div>
+                <div class="text-xs text-gray-500">6 заданий · ~20 мин</div>
+                <div class="progress-bar mt-1.5 w-32"><div class="progress-fill" style="width:0%;background:#10b981"></div></div>
+              </div>
+              <div class="btn-p text-xs" style="padding:8px 14px">Начать →</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Overall progress ring -->
+        <div class="card p-5 flex flex-col items-center justify-center text-center">
+          <h2 class="font-bold text-gray-800 mb-4 self-start w-full">Общий прогресс</h2>
+          <div class="relative w-36 h-36 mb-4">
+            <svg class="w-36 h-36" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#e5e7eb" stroke-width="10"/>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#FAF0CA" stroke-width="10" stroke-dasharray="301" stroke-dashoffset="60" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="#0D3B66" stroke-width="10" stroke-dasharray="301" stroke-dashoffset="91" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <div class="text-3xl font-bold" style="color:#0D3B66">80%</div>
+              <div class="text-xs text-gray-500">готовность</div>
+            </div>
+          </div>
+          <div class="w-full space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full inline-block" style="background:#0D3B66"></span>Изучено</span>
+              <span class="font-bold" style="color:#0D3B66">12 тем</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full inline-block" style="background:#FAF0CA;border:1px solid #e5e7eb"></span>В процессе</span>
+              <span class="font-bold text-yellow-500">3 темы</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full inline-block bg-gray-200"></span>Осталось</span>
+              <span class="font-bold text-gray-400">5 тем</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topics progress -->
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-gray-800">Прогресс по разделам</h2>
+          <button onclick="showScreen('progress')" class="text-xs font-semibold" style="color:#0D3B66">Подробнее →</button>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="text-gray-700 font-medium">Числа и дроби</span><span class="font-bold" style="color:#10b981">92%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:92%;background:#10b981"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="text-gray-700 font-medium">Алгебра</span><span class="font-bold" style="color:#0D3B66">74%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:74%;background:#0D3B66"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="text-gray-700 font-medium">Геометрия</span><span class="font-bold" style="color:#ef4444">28%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:28%;background:#ef4444"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="text-gray-700 font-medium">Статистика</span><span class="font-bold" style="color:#f59e0b">15%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:15%;background:#f59e0b"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mascot banner -->
+      <div class="rounded-2xl p-5 flex items-center gap-5" style="background:#0D3B66">
+        <img src="mascot.png" alt="" class="float w-20 flex-shrink-0" style="border-radius:30px">
+        <div class="flex-1">
+          <div class="text-white font-bold text-lg mb-1 mascot-greeting">Ты молодец!</div>
+          <div class="text-sm mb-3" style="color:rgba(255,255,255,.75)">14 дней подряд — это отличный результат! Осталось 21 день до ОГЭ. Верю в тебя!</div>
+          <button onclick="showScreen('tasks')" class="btn-p text-sm" style="background:white;color:#0D3B66;box-shadow:none;padding:9px 18px">Решать задачи →</button>
+        </div>
+      </div>
+
+      <!-- Parent link card (students only) -->
+      <div id="parent-link-card" class="card p-5" style="display:none">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800">Подключить родителя</div>
+            <div class="text-xs text-gray-500">Родитель сможет следить за твоим прогрессом</div>
+          </div>
+        </div>
+        <div id="parent-link-content"></div>
+      </div>
+    </div>
+
+    <!-- ==================== TASKS SCREEN ==================== -->
+    <div id="s-tasks" class="screen flex-col p-5 md:p-6 gap-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Задания</h1>
+          <p id="task-section-label" class="text-gray-500 text-sm">Все темы</p>
+        </div>
+        <div class="flex items-center gap-2 text-sm text-gray-500">
+          <span id="task-counter">1 из 15</span>
+          <div class="w-24 h-2 rounded-full bg-gray-200 overflow-hidden"><div id="task-progress-bar" class="h-full rounded-full" style="width:7%;background:#0D3B66;transition:width .4s"></div></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+        <!-- Task card -->
+        <div class="card p-6">
+          <div class="flex items-center gap-3 mb-5">
+            <span id="task-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold" style="background:#FAF0CA;color:#0D3B66">Задание № –</span>
+            <span id="task-difficulty-label" class="text-xs text-gray-400">–</span>
+          </div>
+
+          <div class="rounded-xl p-4 mb-5" style="background:#f8fafc;border:1px solid #e5e7eb">
+            <p id="task-topic-label" class="text-gray-500 text-xs font-semibold uppercase tracking-wide mb-2"></p>
+            <div id="task-text" class="text-base font-medium text-gray-800 leading-relaxed whitespace-pre-line"></div>
+          </div>
+
+          <div class="mb-4">
+            <label class="text-sm font-semibold text-gray-700 mb-2 block">Твой ответ:</label>
+            <div class="flex gap-3">
+              <input id="answer-input" type="text" placeholder="Введи ответ..." class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yale" style="transition:border-color .2s" onkeydown="if(event.key==='Enter')submitAnswer()">
+              <button onclick="submitAnswer()" class="btn-p">Проверить</button>
+            </div>
+          </div>
+
+          <div id="answer-result" class="hidden rounded-xl p-3 mb-4 text-sm font-medium"></div>
+
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="toggleSolution()" class="btn-o text-sm" style="padding:9px 16px">Решение ИИ</button>
+            <button id="hint-btn" onclick="showHint()" class="btn-o text-sm" style="padding:9px 16px">Подсказка</button>
+            <button class="btn-o text-sm" style="padding:9px 16px" onclick="nextTask()">Следующее →</button>
+          </div>
+          <div id="hint-box" class="hidden mt-3 rounded-xl p-3 text-sm" style="background:#fef3c7;color:#92400e"></div>
+        </div>
+
+        <!-- AI Solution panel -->
+        <div id="solution-panel" class="card p-6" style="background:#0D3B66;display:none">
+          <div class="flex items-center gap-2 mb-5">
+            <h3 class="font-bold text-white">Пошаговое решение</h3>
+            <span class="ml-auto text-xs px-2 py-1 rounded-full font-medium" style="background:rgba(255,255,255,.15);color:white">ИИ-помощник</span>
+          </div>
+          <div id="solution-steps" class="space-y-4"></div>
+          <div class="mt-5 pt-4 border-t" style="border-color:rgba(255,255,255,.15)">
+            <div class="text-sm font-bold text-white mb-2">Ответ: <span id="solution-answer" style="color:#FAF0CA">–</span></div>
+            <button onclick="nextTask()" class="text-sm px-4 py-2 rounded-xl font-semibold transition-all" style="background:rgba(255,255,255,.15);color:white">Следующее задание →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topic nav -->
+      <div class="card p-4">
+        <h3 class="font-bold text-gray-800 mb-3 text-sm">Темы ОГЭ</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2" id="topic-nav-grid"></div>
+        <button onclick="loadTaskScreen(null)" class="mt-3 text-xs font-semibold px-3 py-1.5 rounded-lg transition-all" style="color:#0D3B66;background:#f0f4ff">↺ Все темы (случайно)</button>
+      </div>
+    </div>
+
+    <!-- ==================== TUTORS SCREEN ==================== -->
+    <div id="s-tutors" class="screen flex-col p-5 md:p-6 gap-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Репетиторы</h1>
+        <p class="text-gray-500 text-sm">Найди своего идеального наставника</p>
+      </div>
+
+      <!-- Filters -->
+      <div class="flex flex-wrap gap-2">
+        <button class="px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all" style="background:#0D3B66">Все</button>
+        <button class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-white border border-gray-200 hover:border-yale transition-all">Высокий рейтинг</button>
+        <button class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-white border border-gray-200 hover:border-yale transition-all">Группы</button>
+        <button class="px-4 py-2 rounded-xl text-sm font-semibold text-gray-600 bg-white border border-gray-200 hover:border-yale transition-all">● Онлайн сейчас</button>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+
+        <div class="card p-5">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#1a5294)">МИ</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><h3 class="font-bold text-gray-900">Михаил Иванов</h3><span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#10b981"></span></div>
+              <p class="text-xs text-gray-500 mb-1">Математика, физика · 8 лет</p>
+              <div class="flex items-center gap-1"><span style="color:#f59e0b;font-size:12px">★★★★★</span><span class="text-xs font-bold text-gray-700">4.98</span><span class="text-xs text-gray-400">(142)</span></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Алгебра</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Геометрия</span>
+          </div>
+          <p class="text-xs text-gray-500 mb-4">8 лет опыта, 500+ учеников. Специализация — подготовка к ОГЭ с нуля.</p>
+          <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
+            <div><div class="font-bold text-gray-900">1 200 ₽</div><div class="text-xs text-gray-400">/ час</div></div>
+            <button onclick="showScreen('chat')" class="btn-p text-xs" style="padding:8px 14px">Написать</button>
+          </div>
+        </div>
+
+        <div class="card p-5" style="border:2px solid #0D3B66;position:relative">
+          <div class="absolute -top-3 left-4 px-3 py-0.5 rounded-full text-xs font-bold text-white" style="background:#0D3B66">Топ</div>
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">ЕС</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><h3 class="font-bold text-gray-900">Елена Смирнова</h3><span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#10b981"></span></div>
+              <p class="text-xs text-gray-500 mb-1">Математика · 12 лет · Методист</p>
+              <div class="flex items-center gap-1"><span style="color:#f59e0b;font-size:12px">★★★★★</span><span class="text-xs font-bold text-gray-700">5.0</span><span class="text-xs text-gray-400">(89)</span></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Группы</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Статистика</span>
+          </div>
+          <p class="text-xs text-gray-500 mb-4">Все ученики 2024 года сдали ОГЭ на «4» и «5». Авторская методика.</p>
+          <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
+            <div><div class="font-bold text-gray-900">1 500 ₽</div><div class="text-xs text-gray-400">/ час</div></div>
+            <button onclick="showScreen('chat')" class="btn-p text-xs" style="padding:8px 14px">Написать</button>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">АП</div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2"><h3 class="font-bold text-gray-900">Андрей Петров</h3><span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#d1d5db"></span></div>
+              <p class="text-xs text-gray-500 mb-1">Математика · Аспирант МГУ</p>
+              <div class="flex items-center gap-1"><span style="color:#f59e0b;font-size:12px">★★★★</span><span style="color:#d1d5db;font-size:12px">★</span><span class="text-xs font-bold text-gray-700">4.87</span><span class="text-xs text-gray-400">(63)</span></div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1.5 mb-4">
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Алгебра</span>
+            <span class="px-2 py-0.5 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Часть 2</span>
+          </div>
+          <p class="text-xs text-gray-500 mb-4">Специалист по сложным задачам второй части. Авторские методики решения.</p>
+          <div class="border-t border-gray-100 pt-3 flex items-center justify-between">
+            <div><div class="font-bold text-gray-900">900 ₽</div><div class="text-xs text-gray-400">/ час</div></div>
+            <button onclick="showScreen('chat')" class="btn-p text-xs" style="padding:8px 14px">Написать</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group classes banner -->
+      <div class="card p-5 flex flex-col sm:flex-row items-center gap-5" style="background:#FAF0CA;border:none;box-shadow:none">
+        <div class="text-4xl flex-shrink-0">👥</div>
+        <div class="flex-1 text-center sm:text-left">
+          <h3 class="font-bold text-gray-900 mb-1">Групповые занятия</h3>
+          <p class="text-sm text-gray-600">Занимайся вместе с другими учениками. Дешевле и веселее! Следующая группа стартует 20 мая.</p>
+        </div>
+        <button class="btn-p flex-shrink-0">Записаться в группу</button>
+      </div>
+    </div>
+
+    <!-- ==================== CHAT SCREEN ==================== -->
+    <div id="s-chat" class="screen" style="height:calc(100vh - 57px)">
+      <!-- Chat sidebar -->
+      <div class="flex-shrink-0 w-64 border-r border-gray-100 bg-white flex flex-col" style="min-height:100%">
+        <div class="p-4 border-b border-gray-100">
+          <div class="font-bold text-gray-800 mb-3 text-sm">Сообщения</div>
+          <input type="text" placeholder="Поиск..." class="w-full border border-gray-100 rounded-xl px-3 py-2 text-xs focus:outline-none" style="background:#f8fafc">
+        </div>
+        <div class="overflow-auto flex-1">
+          <div onclick="selectChat('mi')" class="p-3 flex items-center gap-3 cursor-pointer rounded-xl mx-2 my-1 chat-item active-chat" id="ci-mi">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style="background:#0D3B66">МИ</div>
+            <div class="flex-1 min-w-0"><div class="text-sm font-semibold text-gray-800">Михаил Иванов</div><div class="text-xs text-gray-500 truncate">Отличный прогресс! 🎉</div></div>
+            <div class="flex flex-col items-end gap-1"><span class="text-xs text-gray-400">14:30</span></div>
+          </div>
+          <div onclick="selectChat('group')" class="p-3 flex items-center gap-3 cursor-pointer rounded-xl mx-2 my-1" id="ci-group">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base flex-shrink-0" style="background:#ede9fe">👥</div>
+            <div class="flex-1 min-w-0"><div class="text-sm font-semibold text-gray-800">Группа 9Б</div><div class="text-xs text-gray-500 truncate">Аня: кто сделал задание?</div></div>
+            <div class="w-4 h-4 rounded-full text-xs flex items-center justify-center text-white font-bold" style="background:#ef4444;font-size:9px">3</div>
+          </div>
+          <div onclick="selectChat('ai')" class="p-3 flex items-center gap-3 cursor-pointer rounded-xl mx-2 my-1" id="ci-ai">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#dbeafe;color:#1d4ed8">ИИ</div>
+            <div class="flex-1 min-w-0"><div class="text-sm font-semibold text-gray-800">ИИ-помощник</div><div class="text-xs text-gray-500 truncate">Чем могу помочь?</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chat main -->
+      <div class="flex-1 flex flex-col bg-white">
+        <!-- Chat header -->
+        <div class="px-5 py-3 border-b border-gray-100 flex items-center gap-3">
+          <div id="chat-hdr-avatar" class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0" style="background:#0D3B66">МИ</div>
+          <div>
+            <div id="chat-hdr-name" class="font-semibold text-gray-800 text-sm">Михаил Иванов</div>
+            <div id="chat-hdr-status" class="text-xs flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block"></span>онлайн</div>
+          </div>
+          <div class="ml-auto flex gap-2">
+            <button class="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.069A1 1 0 0121 8.82v6.36a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+            </button>
+            <button class="p-2 rounded-xl hover:bg-gray-100 text-gray-500 transition-colors">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages -->
+        <div id="chat-messages" class="flex-1 overflow-auto p-5 space-y-4"></div>
+
+        <!-- Input -->
+        <div class="p-4 border-t border-gray-100">
+          <div class="flex gap-2 items-center">
+            <button class="p-2 rounded-xl text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+            </button>
+            <input id="chat-input" type="text" placeholder="Написать сообщение..." class="flex-1 border border-gray-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none" style="background:#f8fafc" onkeydown="if(event.key==='Enter')sendMsg()">
+            <button onclick="sendMsg()" class="btn-p" style="padding:10px 16px;min-width:44px">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PROGRESS SCREEN ==================== -->
+    <div id="s-progress" class="screen flex-col p-5 md:p-6 gap-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Мой прогресс</h1>
+        <p class="text-gray-500 text-sm">Статистика обучения и достижения</p>
+      </div>
+
+      <!-- Weekly activity -->
+      <div class="card p-5">
+        <h2 class="font-bold text-gray-800 mb-4">Активность за неделю</h2>
+        <div class="grid grid-cols-7 gap-2">
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Пн</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg transition-all" style="height:85%;background:#0D3B66;opacity:.9"></div></div><div class="text-xs font-bold text-gray-700 mt-1">34</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Вт</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg" style="height:60%;background:#0D3B66;opacity:.9"></div></div><div class="text-xs font-bold text-gray-700 mt-1">24</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Ср</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg" style="height:100%;background:#0D3B66"></div></div><div class="text-xs font-bold text-gray-700 mt-1">40</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Чт</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg" style="height:45%;background:#0D3B66;opacity:.9"></div></div><div class="text-xs font-bold text-gray-700 mt-1">18</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Пт</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg" style="height:75%;background:#0D3B66;opacity:.9"></div></div><div class="text-xs font-bold text-gray-700 mt-1">30</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Сб</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg" style="height:55%;background:#0D3B66;opacity:.7"></div></div><div class="text-xs font-bold text-gray-700 mt-1">22</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-2">Вс</div><div class="h-16 flex flex-col justify-end"><div class="w-full rounded-t-lg bg-gray-200" style="height:10%"></div></div><div class="text-xs font-bold text-gray-300 mt-1">–</div></div>
+        </div>
+        <div class="text-xs text-gray-400 mt-2 text-right">Задач решено по дням</div>
+      </div>
+
+      <!-- Achievements -->
+      <div class="card p-5">
+        <h2 class="font-bold text-gray-800 mb-4">Достижения</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="text-center p-4 rounded-2xl" style="background:#FAF0CA">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+            <div class="text-sm font-bold text-gray-800">14 дней</div>
+            <div class="text-xs text-gray-500">Серия занятий</div>
+          </div>
+          <div class="text-center p-4 rounded-2xl" style="background:#dcfce7">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+            <div class="text-sm font-bold text-gray-800">100 задач</div>
+            <div class="text-xs text-gray-500">Решено подряд</div>
+          </div>
+          <div class="text-center p-4 rounded-2xl" style="background:#dbeafe">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.518l2.8-1.3m0 0l-5.402 1.053m5.4-1.052l1.053 5.4"/></svg></div>
+            <div class="text-sm font-bold text-gray-800">Быстрый старт</div>
+            <div class="text-xs text-gray-500">5 тем за неделю</div>
+          </div>
+          <div class="text-center p-4 rounded-2xl opacity-40" style="background:#f1f5f9">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-2" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg></div>
+            <div class="text-sm font-bold text-gray-800">ОГЭ на 5</div>
+            <div class="text-xs text-gray-500">Ещё впереди!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topics breakdown -->
+      <div class="card p-5">
+        <h2 class="font-bold text-gray-800 mb-4">Разделы ОГЭ</h2>
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">1. Числа и дроби</span><span class="font-bold" style="color:#10b981">92%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:92%;background:#10b981"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">2. Алгебра и уравнения</span><span class="font-bold" style="color:#0D3B66">74%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:74%;background:#0D3B66"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">3. Функции и графики</span><span class="font-bold" style="color:#f59e0b">55%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:55%;background:#f59e0b"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">4. Геометрия</span><span class="font-bold" style="color:#ef4444">28%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:28%;background:#ef4444"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-sm mb-1.5"><span class="font-medium text-gray-700">5. Статистика и вероятность</span><span class="font-bold" style="color:#ef4444">15%</span></div>
+            <div class="progress-bar"><div class="progress-fill" style="width:15%;background:#ef4444"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fibonacci Rank -->
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-gray-800">Звание Фибоначчи</h2>
+          <span class="text-xs text-gray-400">247 / 350 XP до Знатока</span>
+        </div>
+        <div class="flex items-center gap-4 mb-5">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)"><svg class="w-7 h-7" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="text-xl font-bold text-gray-900">Практик</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:#FAF0CA;color:#0D3B66">247 XP</span>
+            </div>
+            <div class="text-xs text-gray-500 mb-2">Следующее звание: Знаток — нужно ещё 103 XP</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:71%;background:linear-gradient(90deg,#0D3B66,#3b82f6)"></div></div>
+          </div>
+        </div>
+        <div class="flex gap-2 overflow-x-auto pb-1">
+          <div class="text-center flex-shrink-0 px-3"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path stroke-linecap="round" d="M12 2.25v1.5M12 20.25v1.5M4.22 4.22l1.06 1.06M18.72 18.72l1.06 1.06M2.25 12h1.5M20.25 12h1.5M4.22 19.78l1.06-1.06M18.72 5.28l1.06-1.06"/></svg><div class="text-xs text-gray-400">Семя</div><div class="w-2 h-2 rounded-full mx-auto mt-1" style="background:#10b981"></div></div>
+          <div class="text-center flex-shrink-0 px-3"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.306a11.95 11.95 0 015.814-5.518l2.8-1.3m0 0l-5.402 1.053m5.4-1.052l1.053 5.4"/></svg><div class="text-xs text-gray-400">Росток</div><div class="w-2 h-2 rounded-full mx-auto mt-1" style="background:#10b981"></div></div>
+          <div class="text-center flex-shrink-0 px-3"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg><div class="text-xs font-bold mb-0" style="color:#0D3B66">Практик</div><div class="w-2 h-2 rounded-full mx-auto mt-1" style="background:#0D3B66"></div></div>
+          <div class="text-center flex-shrink-0 px-3 opacity-40"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg><div class="text-xs text-gray-400">Знаток</div><div class="w-2 h-2 rounded-full mx-auto mt-1 bg-gray-300"></div></div>
+          <div class="text-center flex-shrink-0 px-3 opacity-40"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg><div class="text-xs text-gray-400">Мастер</div><div class="w-2 h-2 rounded-full mx-auto mt-1 bg-gray-300"></div></div>
+          <div class="text-center flex-shrink-0 px-3 opacity-40"><svg class="w-5 h-5 mx-auto mb-1" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg><div class="text-xs text-gray-400">Гений</div><div class="w-2 h-2 rounded-full mx-auto mt-1 bg-gray-300"></div></div>
+        </div>
+      </div>
+
+      <!-- Medals -->
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-gray-800">Медали</h2>
+          <span class="text-xs text-gray-400">4 из 12 получено</span>
+        </div>
+        <div class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+          <div class="text-center p-3 rounded-2xl" style="background:#FAF0CA">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+            <div class="text-xs font-bold text-gray-700">Неугасимый</div>
+            <div class="text-xs text-gray-400 mt-0.5">+20 XP</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl" style="background:#FAF0CA">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+            <div class="text-xs font-bold text-gray-700">Снайпер</div>
+            <div class="text-xs text-gray-400 mt-0.5">+15 XP</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl" style="background:#FAF0CA">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg></div>
+            <div class="text-xs font-bold text-gray-700">Тематический</div>
+            <div class="text-xs text-gray-400 mt-0.5">+30 XP</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl" style="background:#FAF0CA">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg></div>
+            <div class="text-xs font-bold text-gray-700">Не один</div>
+            <div class="text-xs text-gray-400 mt-0.5">+10 XP</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl opacity-35" style="background:#f1f5f9">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M12 3L3 7.5v5.25c0 5.25 3.5 9.79 9 11.25C17.5 22.54 21 18 21 12.75V7.5L12 3z"/></svg></div>
+            <div class="text-xs font-bold text-gray-400">Перфекционист</div>
+            <div class="text-xs text-gray-300 mt-0.5">+50 XP</div>
+          </div>
+          <div class="text-center p-3 rounded-2xl opacity-35" style="background:#f1f5f9">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-1" style="background:rgba(13,59,102,0.09)"><svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg></div>
+            <div class="text-xs font-bold text-gray-400">Первый экзамен</div>
+            <div class="text-xs text-gray-300 mt-0.5">+40 XP</div>
+          </div>
+        </div>
+        <div class="mt-4 p-3 rounded-xl text-sm flex items-center gap-3" style="background:rgba(13,59,102,0.06)">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)"><svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg></div>
+          <div><span class="font-semibold text-gray-700">Топ-3 за год</span> <span class="text-gray-500 text-xs">— получают подарок от основателей ФИБИ в июне</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TUTOR SCREEN ==================== -->
+    <div id="s-tutor" class="screen flex-col p-5 md:p-6 gap-5">
+
+      <!-- Inner tab nav -->
+      <div class="flex gap-1 p-1 rounded-xl overflow-x-auto" style="background:#f1f5f9;flex-shrink:0">
+        <button class="tutor-tab-btn active" id="ttb-students" onclick="showTutorTab('students')">Ученики</button>
+        <button class="tutor-tab-btn" id="ttb-groups" onclick="showTutorTab('groups')">Группы</button>
+        <button class="tutor-tab-btn" id="ttb-materials" onclick="showTutorTab('materials')">Материалы</button>
+        <button class="tutor-tab-btn" id="ttb-tasks" onclick="showTutorTab('tasks')">Задания</button>
+      </div>
+
+      <!-- ── TAB: STUDENTS ── -->
+      <div id="tt-students" class="tutor-tc active">
+        <!-- LIST VIEW -->
+        <div id="student-list-view" class="space-y-3">
+          <div class="flex gap-3 mb-1">
+            <input id="student-search" type="text" placeholder="Поиск ученика..." oninput="filterStudents(this.value)"
+              class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-yale transition-colors">
+          </div>
+          <div id="student-list" class="space-y-3"></div>
+        </div>
+        <!-- PROFILE VIEW -->
+        <div id="student-profile-view" style="display:none"></div>
+      </div>
+
+      <!-- ── TAB: GROUPS ── -->
+      <div id="tt-groups" class="tutor-tc space-y-4" style="display:none">
+        <div id="groups-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+
+      <!-- ── TAB: MATERIALS ── -->
+      <div id="tt-materials" class="tutor-tc" style="display:none">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-sm text-gray-500">Презентации, конспекты и дидактические материалы</p>
+          <label class="btn-p text-sm cursor-pointer" style="padding:9px 16px">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            Добавить
+            <input type="file" class="hidden" onchange="addMaterialFile(this)">
+          </label>
+        </div>
+        <div id="materials-list" class="space-y-3"></div>
+      </div>
+
+      <!-- ── TAB: TASKS/ASSIGNMENTS ── -->
+      <div id="tt-tasks" class="tutor-tc space-y-4" style="display:none">
+        <div class="flex items-center justify-between mb-1">
+          <div class="flex gap-2">
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-white" style="background:#0D3B66" onclick="filterAssign('all',this)">Все работы</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 bg-gray-100" onclick="filterAssign('new',this)">Новые</button>
+            <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-gray-600 bg-gray-100" onclick="filterAssign('graded',this)">Проверенные</button>
+          </div>
+          <span id="new-badge" class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:#fef3c7;color:#92400e"></span>
+        </div>
+        <div id="assign-list" class="space-y-4"></div>
+      </div>
+
+
+    </div>
+
+    <!-- ==================== PARENT SCREEN ==================== -->
+    <div id="s-parent" class="screen flex-col p-5 md:p-6 gap-5">
+
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">Мои ученики</h1>
+          <p class="text-gray-500 text-sm mt-0.5">Прогресс ваших детей в Фиби</p>
+        </div>
+        <button onclick="toggleAddChildForm()" class="btn-p text-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          Добавить ученика
+        </button>
+      </div>
+
+      <!-- Add child form -->
+      <div id="add-child-form" class="card p-5" style="display:none">
+        <h3 class="font-bold text-gray-800 mb-1">Привязать ученика по коду</h3>
+        <p class="text-sm text-gray-500 mb-4">Попроси ребёнка открыть дашборд Фиби — там внизу будет 6-значный код. Введи его здесь.</p>
+        <div class="flex gap-3 flex-wrap">
+          <input id="parent-code-input" type="text" maxlength="6" placeholder="ABC123"
+            class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yale font-bold uppercase tracking-widest"
+            style="letter-spacing:.2em;min-width:160px;transition:border-color .2s"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')submitParentCode()">
+          <button onclick="submitParentCode()" class="btn-p">Привязать</button>
+          <button onclick="toggleAddChildForm()" class="btn-o">Отмена</button>
+        </div>
+        <div id="code-error" class="text-xs text-red-500 mt-2" style="display:none"></div>
+      </div>
+
+      <!-- Empty state -->
+      <div id="parent-empty" class="card p-10 text-center" style="display:none">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(13,59,102,0.09)">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <p class="font-semibold text-gray-800 mb-2">Учеников ещё нет</p>
+        <p class="text-sm text-gray-500 max-w-xs mx-auto">Нажмите «Добавить ученика» и введите код — ребёнок найдёт его внизу своего дашборда.</p>
+      </div>
+
+      <!-- Children grid -->
+      <div id="parent-children-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5" style="display:none"></div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.active-chat{background:#FAF0CA!important}
+.tutor-tab-btn{flex:1;padding:8px 14px;font-size:13px;font-weight:600;border:none;background:transparent;cursor:pointer;border-radius:10px;color:#6b7280;transition:all .2s;white-space:nowrap}
+.tutor-tab-btn.active{background:#0D3B66;color:white}
+.tutor-tc{display:none}
+.tutor-tc.active{display:block}
+.material-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:14px;border:1.5px solid #e5e7eb;background:white;transition:all .2s;cursor:default}
+.material-card:hover{border-color:#0D3B66;box-shadow:0 4px 16px rgba(13,59,102,.08)}
+.assign-card{padding:16px;border-radius:14px;border:1.5px solid #e5e7eb;background:white;transition:all .2s}
+.assign-card:hover{border-color:#0D3B66}
+</style>
+
+<script src="tasks.js"></script>
+<script>
+// ─── Screen navigation ─────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('s-' + name).classList.add('active');
+  const ni = document.getElementById('n-' + name);
+  if (ni) ni.classList.add('active');
+  const titles = {dashboard:'Дашборд',tasks:'Задания',tutors:'Репетиторы',chat:'Чаты',progress:'Прогресс',parent:'Мои ученики',tutor:'Кабинет репетитора'};
+  document.getElementById('page-title').textContent = titles[name] || '';
+  if (name === 'tasks' && taskQueue.length === 0) loadTaskScreen(null);
+  if (window.innerWidth < 768) closeSidebar();
+  window.scrollTo(0, 0);
+}
+
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay').style.display = 'block';
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').style.display = 'none';
+}
+
+// ─── Task bank integration ─────────────────────────────────
+let taskQueue = [];
+let taskIndex = 0;
+let currentTask = null;
+
+const DIFF_LABELS = {1:'Базовый уровень', 2:'Средний уровень', 3:'Повышенный уровень'};
+
+function loadTaskScreen(topicId) {
+  taskQueue = getRandomTasks(15, topicId);
+  taskIndex = 0;
+  if (taskQueue.length) renderTask(taskQueue[0]);
+  renderTopicNav();
+  // hide solution panel when loading new set
+  const sp = document.getElementById('solution-panel');
+  if (sp) sp.style.display = 'none';
+}
+
+function renderTask(task) {
+  currentTask = task;
+
+  const badge = document.getElementById('task-badge');
+  if (badge) badge.textContent = 'Задание № ' + task.num;
+
+  const diff = document.getElementById('task-difficulty-label');
+  if (diff) diff.textContent = DIFF_LABELS[task.difficulty] || '';
+
+  const topicLbl = document.getElementById('task-topic-label');
+  if (topicLbl) topicLbl.textContent = task.topic + (task.subtopic ? ' · ' + task.subtopic : '');
+
+  const textEl = document.getElementById('task-text');
+  if (textEl) textEl.textContent = task.text;
+
+  const sectionLbl = document.getElementById('task-section-label');
+  if (sectionLbl) sectionLbl.textContent = task.topic;
+
+  // Reset UI
+  const inp = document.getElementById('answer-input');
+  if (inp) inp.value = '';
+
+  const res = document.getElementById('answer-result');
+  if (res) res.classList.add('hidden');
+
+  const hintBox = document.getElementById('hint-box');
+  if (hintBox) hintBox.classList.add('hidden');
+
+  const sp = document.getElementById('solution-panel');
+  if (sp) sp.style.display = 'none';
+
+  renderSolution(task);
+  updateCounter();
+}
+
+function renderSolution(task) {
+  const steps = document.getElementById('solution-steps');
+  if (steps) {
+    steps.innerHTML = task.solution.map((s, i) => `
+      <div class="flex gap-3">
+        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:rgba(255,255,255,.2);color:white">${i+1}</div>
+        <div>
+          ${s.step ? `<div class="text-sm font-semibold text-white mb-1">${s.step}</div>` : ''}
+          ${s.detail ? `<div class="text-sm" style="color:rgba(255,255,255,.8)">${s.detail}</div>` : ''}
+        </div>
+      </div>`).join('');
+  }
+  const ansEl = document.getElementById('solution-answer');
+  if (ansEl) ansEl.textContent = task.answer;
+}
+
+function updateCounter() {
+  const counter = document.getElementById('task-counter');
+  if (counter) counter.textContent = (taskIndex + 1) + ' из ' + taskQueue.length;
+  const bar = document.getElementById('task-progress-bar');
+  if (bar) bar.style.width = Math.round(((taskIndex + 1) / taskQueue.length) * 100) + '%';
+}
+
+function renderTopicNav() {
+  const grid = document.getElementById('topic-nav-grid');
+  if (!grid || typeof TOPICS === 'undefined') return;
+  grid.innerHTML = TOPICS.map(t => `
+    <div class="topic-card" onclick="filterByTopic('${t.id}')">
+      <span style="color:${t.color};font-size:15px;flex-shrink:0">${t.icon}</span>
+      <span class="text-sm truncate">${t.label}</span>
+      <span class="ml-auto text-xs text-gray-400 flex-shrink-0">${t.tasks.length}</span>
+    </div>`).join('');
+}
+
+function filterByTopic(topicId) {
+  loadTaskScreen(topicId);
+  const topic = TOPICS.find(t => t.id === topicId);
+  if (topic) {
+    const lbl = document.getElementById('task-section-label');
+    if (lbl) lbl.textContent = topic.label;
+  }
+}
+
+function submitAnswer() {
+  const inp = document.getElementById('answer-input');
+  const userAnswer = (inp ? inp.value : '').trim();
+  const res = document.getElementById('answer-result');
+  res.classList.remove('hidden');
+
+  if (!userAnswer) {
+    res.style.background = '#fef3c7'; res.style.color = '#92400e';
+    res.textContent = '⚠ Введи ответ';
+    return;
+  }
+  if (!currentTask) return;
+
+  if (checkAnswer(currentTask, userAnswer)) {
+    res.style.background = '#dcfce7'; res.style.color = '#065f46';
+    res.textContent = '✓ Верно! Отличная работа! Переходим дальше...';
+    setTimeout(nextTask, 1600);
+  } else {
+    res.style.background = '#fee2e2'; res.style.color = '#991b1b';
+    res.textContent = '✗ Не совсем. Правильный ответ: ' + currentTask.answer + '. Посмотри решение ИИ!';
+  }
+}
+
+function nextTask() {
+  if (!taskQueue.length) return;
+  taskIndex = (taskIndex + 1) % taskQueue.length;
+  renderTask(taskQueue[taskIndex]);
+}
+
+function toggleSolution() {
+  const sp = document.getElementById('solution-panel');
+  if (!sp) return;
+  sp.style.display = sp.style.display === 'none' ? '' : 'none';
+}
+
+function showHint() {
+  const hintBox = document.getElementById('hint-box');
+  if (!hintBox || !currentTask) return;
+  hintBox.textContent = currentTask.hint || 'Подсказок нет';
+  hintBox.classList.remove('hidden');
+}
+
+// ─── Chat data ────────────────────────────────────────────
+let currentChatId = 'mi';
+
+const CHATS = {
+  mi: {
+    name: 'Михаил Иванов', initials: 'МИ',
+    avatarBg: '#0D3B66', avatarColor: 'white', avatarRound: '50%',
+    statusHtml: '<span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block mr-1"></span>онлайн',
+    messages: [
+      { t:'time',  text:'Сегодня, 14:00' },
+      { t:'left',  text:'Алина, привет! Как дела с дробями? 😊' },
+      { t:'right', text:'Привет, Михаил Иванович! Стало лучше, но задания 8-10 сложноватые 😅' },
+      { t:'left',  text:'Да, там трюк с НОК. Смотри: когда знаменатели разные, сначала находим наименьшее общее кратное...' },
+      { t:'left',  text:'¾ + ⅚ → НОК(4,6) = 12 → ⁹⁄₁₂ + ¹⁰⁄₁₂ = ¹⁹⁄₁₂ = 1⁷⁄₁₂ 👆' },
+      { t:'right', text:'О, так намного понятнее! Спасибо огромное 🙏' },
+      { t:'left',  text:'Отличный прогресс! 🎉 На следующем уроке разберём задачи на проценты. Отлично справляешься!' },
+      { t:'right', text:'Жду! Когда следующее занятие?' },
+      { t:'left',  text:'Завтра в 17:00. Пришлю ссылку за 15 минут 👍' },
+    ]
+  },
+  group: {
+    name: 'Группа 9Б', initials: '👥',
+    avatarBg: '#ede9fe', avatarColor: '#6d28d9', avatarRound: '10px',
+    statusHtml: '12 участников',
+    messages: [
+      { t:'time',  text:'Сегодня, 13:45' },
+      { t:'named', name:'Аня',           text:'кто сделал домашнее задание по геометрии? 📐' },
+      { t:'named', name:'Коля',          text:'я сделал, но задание 17 непонятно' },
+      { t:'right', text:'Тоже зависла на 17-м 😅' },
+      { t:'named', name:'Михаил Иванов', text:'Ребята, вспомните формулу площади трапеции: S = (a+b)/2 · h' },
+      { t:'named', name:'Аня',           text:'Спасибо, теперь понятно 🙏' },
+      { t:'named', name:'Коля',          text:'У меня получилось 24 см², правильно?' },
+      { t:'named', name:'Михаил Иванов', text:'Верно! Молодцы 🎉 Завтра разберём задания 18–19' },
+    ]
+  },
+  ai: {
+    name: 'ИИ-помощник', initials: 'ИИ',
+    avatarBg: '#dbeafe', avatarColor: '#1d4ed8', avatarRound: '10px',
+    statusHtml: '<span class="w-1.5 h-1.5 rounded-full bg-green-400 inline-block mr-1"></span>всегда онлайн',
+    messages: [
+      { t:'time', text:'Сегодня, 15:00' },
+      { t:'left', text:'Привет! Я ИИ-помощник Фиби 🧠 Задавай любые вопросы по математике — объясню пошагово!' },
+      { t:'right',text:'Как решить уравнение 2x + 6 = 14?' },
+      { t:'left', text:'Решаем:\n1️⃣ Переносим 6 вправо: 2x = 14 − 6 = 8\n2️⃣ Делим на 2: x = 4\n✅ Ответ: x = 4' },
+      { t:'right',text:'Понятно, спасибо!' },
+      { t:'left', text:'Пожалуйста! Хочешь порешаем похожие задачи? 😊' },
+    ]
+  }
+};
+
+function mHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+function selectChat(id) {
+  currentChatId = id;
+  document.querySelectorAll('.chat-item').forEach(c => c.classList.remove('active-chat'));
+  const ci = document.getElementById('ci-' + id);
+  if (ci) ci.classList.add('active-chat');
+
+  const chat = CHATS[id];
+  if (!chat) return;
+
+  const av = document.getElementById('chat-hdr-avatar');
+  if (av) {
+    av.textContent = chat.initials;
+    av.style.background = chat.avatarBg;
+    av.style.color = chat.avatarColor;
+    av.style.borderRadius = chat.avatarRound;
+  }
+  const nm = document.getElementById('chat-hdr-name');
+  if (nm) nm.textContent = chat.name;
+  const st = document.getElementById('chat-hdr-status');
+  if (st) st.innerHTML = chat.statusHtml;
+
+  renderMessages(id);
+}
+
+function renderMessages(id) {
+  const box = document.getElementById('chat-messages');
+  if (!box) return;
+  const chat = CHATS[id];
+  if (!chat) return;
+  box.innerHTML = chat.messages.map(m => {
+    if (m.t === 'time')  return `<div class="text-center"><span class="text-xs text-gray-400 bg-gray-100 px-3 py-1 rounded-full">${m.text}</span></div>`;
+    if (m.t === 'right') return `<div class="flex justify-end"><div class="chat-msg-right">${mHtml(m.text)}</div></div>`;
+    if (m.t === 'named') return `<div><div class="text-xs text-gray-400 mb-1 ml-1 font-medium">${m.name}</div><div class="chat-msg-left">${mHtml(m.text)}</div></div>`;
+    return `<div><div class="chat-msg-left">${mHtml(m.text)}</div></div>`;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+function sendMsg() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const box = document.getElementById('chat-messages');
+  CHATS[currentChatId].messages.push({ t:'right', text });
+  const div = document.createElement('div');
+  div.className = 'flex justify-end';
+  div.innerHTML = `<div class="chat-msg-right">${mHtml(text)}</div>`;
+  box.appendChild(div);
+  input.value = '';
+  box.scrollTop = box.scrollHeight;
+
+  if (currentChatId === 'ai') {
+    setTimeout(() => {
+      const resp = aiReply(text);
+      CHATS.ai.messages.push({ t:'left', text: resp });
+      const r = document.createElement('div');
+      r.innerHTML = `<div class="chat-msg-left">${mHtml(resp)}</div>`;
+      box.appendChild(r); box.scrollTop = box.scrollHeight;
+    }, 900);
+  } else if (currentChatId === 'mi') {
+    const replies = ['Понял, сейчас отвечу! 👍','Хороший вопрос, смотри...','Отлично! 😊'];
+    setTimeout(() => {
+      const resp = replies[Math.floor(Math.random() * replies.length)];
+      CHATS.mi.messages.push({ t:'left', text: resp });
+      const r = document.createElement('div');
+      r.innerHTML = `<div class="chat-msg-left">${resp}</div>`;
+      box.appendChild(r); box.scrollTop = box.scrollHeight;
+    }, 800);
+  } else if (currentChatId === 'group') {
+    const replies = ['Аня: тоже самое думала! 😄','Коля: понял, спасибо 👍','Михаил Иванов: молодцы, продолжайте! 🎉'];
+    setTimeout(() => {
+      const resp = replies[Math.floor(Math.random() * replies.length)];
+      const [who, msg] = resp.split(': ');
+      CHATS.group.messages.push({ t:'named', name: who, text: msg });
+      const r = document.createElement('div');
+      r.innerHTML = `<div class="text-xs text-gray-400 mb-1 ml-1 font-medium">${who}</div><div class="chat-msg-left">${msg}</div>`;
+      box.appendChild(r); box.scrollTop = box.scrollHeight;
+    }, 1000);
+  }
+}
+
+function aiReply(text) {
+  const t = text.toLowerCase();
+  if (t.includes('уравнени')) return 'Для уравнений: переносим числа в одну сторону, x в другую.\nПример: 5x − 3 = 2x + 9 → 3x = 12 → x = 4 ✅';
+  if (t.includes('дроб') || t.includes('процент') || t.includes('%')) return 'С дробями главное — общий знаменатель.\nНайди НОК и приведи каждую дробь: ½ + ⅓ = 3⁄6 + 2⁄6 = ⁵⁄6 ✅';
+  if (t.includes('геометр') || t.includes('треугольн') || t.includes('пифагор')) return 'В геометрии часто нужна теорема Пифагора: c² = a² + b²\nСумма углов треугольника = 180° 📐';
+  if (t.includes('вероятност')) return 'Вероятность = (благоприятные исходы) / (все исходы)\nПример: 4 красных из 10 шаров → P = 4/10 = 0,4 ✅';
+  if (t.includes('спасибо') || t.includes('понятно') || t.includes('окей')) return 'Пожалуйста! 😊 Если будут вопросы — спрашивай, я всегда здесь.';
+  return 'Хороший вопрос! Уточни, что именно вызывает затруднение — разберём пошагово 🧠';
+}
+
+// ─── Tutor interface ──────────────────────────────────────
+
+const TUTOR_DATA = {
+  students: [
+    { id: 101, name: 'Алина', lastName: 'Королёва', grade: 9, lastActive: '2025-05-15', topics: 12, accuracy: 78, streak: 14 },
+    { id: 102, name: 'Максим', lastName: 'Соколов', grade: 9, lastActive: '2025-05-14', topics: 8, accuracy: 65, streak: 3, notes: 'Слабая геометрия' },
+    { id: 103, name: 'Дарья', lastName: 'Иванова', grade: 9, lastActive: '2025-05-15', topics: 15, accuracy: 89, streak: 21 },
+    { id: 104, name: 'Артём', lastName: 'Петров', grade: 9, lastActive: '2025-05-10', topics: 5, accuracy: 55, streak: 0, notes: 'Нужна дополнительная работа' },
+    { id: 105, name: 'Вика', lastName: 'Смирнова', grade: 8, lastActive: '2025-05-15', topics: 10, accuracy: 82, streak: 7 },
+  ],
+  groups: [
+    { id: 1, name: 'Группа 9А', studentIds: [101, 102, 103], schedule: 'Пн, Ср · 18:00', nextLesson: '19 мая · 18:00', topic: 'Дроби и проценты' },
+    { id: 2, name: 'Группа 9Б', studentIds: [104, 105], schedule: 'Вт, Чт · 17:00', nextLesson: '20 мая · 17:00', topic: 'Линейные уравнения' },
+  ],
+  materials: [
+    { id: 1, name: 'Презентация МА У1', type: 'slides', date: '10 мая 2025', file: 'Презентация МА У1.pdf', size: '6.1 МБ', topic: 'Числа и дроби', slides: 75 },
+    { id: 2, name: 'Презентация МА У2', type: 'slides', date: '10 мая 2025', file: 'Презентация МА У2.pdf', size: '6.0 МБ', topic: 'Алгебра и функции', slides: 67 },
+    { id: 3, name: 'Формулы ОГЭ — памятка', type: 'doc', date: '5 мая 2025', topic: 'Шпаргалки' },
+    { id: 4, name: 'Разбор задач второй части', type: 'doc', date: '1 мая 2025', topic: 'Практика' },
+  ],
+  // Assigned tasks (used by journal columns)
+  assignments: [
+    { id: 1, title: 'ДЗ №1 — Дроби', groupId: 1, dueDate: '17 мая', maxScore: 10 },
+    { id: 2, title: 'ДЗ №1 — Уравнения', groupId: 2, dueDate: '18 мая', maxScore: 10 },
+    { id: 3, title: 'Контр. — Числа', groupId: null, dueDate: '20 мая', maxScore: 20 },
+    { id: 4, title: 'ДЗ №2 — Геометрия', groupId: 1, dueDate: '12 мая', maxScore: 15 },
+  ],
+  // Submitted homework inbox
+  submissions: [
+    { id: 1, studentId: 101, title: 'ДЗ №1 — Дроби и проценты (У1)', assignId: 1, submittedAt: '16 мая · 20:14', status: 'new',
+      answers: [
+        { q: 'Задание 1. Найдите 15% от 240', a: '36' },
+        { q: 'Задание 2. Упростите: 3/4 + 5/6', a: '19/12 = 1 7/12' },
+        { q: 'Задание 3. Переведите в десятичную: 7/8', a: '0,875' },
+      ]},
+    { id: 2, studentId: 102, title: 'ДЗ №1 — Дроби и проценты (У1)', assignId: 1, submittedAt: '16 мая · 19:47', status: 'new',
+      answers: [
+        { q: 'Задание 1. Найдите 15% от 240', a: '34' },
+        { q: 'Задание 2. Упростите: 3/4 + 5/6', a: '8/10' },
+        { q: 'Задание 3. Переведите в десятичную: 7/8', a: '0,87' },
+      ]},
+    { id: 3, studentId: 103, title: 'ДЗ №1 — Дроби и проценты (У1)', assignId: 1, submittedAt: '15 мая · 22:30', status: 'graded', grade: 10,
+      answers: [
+        { q: 'Задание 1. Найдите 15% от 240', a: '36' },
+        { q: 'Задание 2. Упростите: 3/4 + 5/6', a: '19/12' },
+        { q: 'Задание 3. Переведите в десятичную: 7/8', a: '0,875' },
+      ]},
+    { id: 4, studentId: 104, title: 'ДЗ №1 — Линейные уравнения (У2)', assignId: 2, submittedAt: '16 мая · 18:02', status: 'new',
+      answers: [
+        { q: 'Задание 1. Решите: 2x + 6 = 14', a: 'x = 4' },
+        { q: 'Задание 2. Решите: 3x − 9 = 0', a: 'x = 3' },
+        { q: 'Задание 3. Решите: 5x = 2x + 12', a: 'x = 4' },
+      ]},
+    { id: 5, studentId: 105, title: 'ДЗ №1 — Линейные уравнения (У2)', assignId: 2, submittedAt: '15 мая · 21:10', status: 'graded', grade: 9,
+      answers: [
+        { q: 'Задание 1. Решите: 2x + 6 = 14', a: 'x = 4' },
+        { q: 'Задание 2. Решите: 3x − 9 = 0', a: 'x = 3' },
+        { q: 'Задание 3. Решите: 5x = 2x + 12', a: 'x = 3 (ошибка)' },
+      ]},
+    { id: 6, studentId: 101, title: 'ДЗ №2 — Геометрия', assignId: 4, submittedAt: '13 мая · 17:55', status: 'graded', grade: 13,
+      answers: [
+        { q: 'Задание 1. Периметр прямоугольника 8×5', a: '26' },
+        { q: 'Задание 2. Площадь треугольника с основ. 10 и выс. 6', a: '30' },
+      ]},
+  ],
+  grades: {
+    101: { 1: 8, 4: 13 },
+    102: { 1: 6, 4: 10 },
+    103: { 1: 10, 4: 14 },
+    104: { 2: 7 },
+    105: { 2: 9 },
+  }
+};
+
+let currentTutorTab = 'students';
+let assignFilter = 'all';
+
+function initTutorUI() {
+  showTutorTab('students');
+}
+
+function showTutorTab(tab) {
+  currentTutorTab = tab;
+  // Ensure tutor screen is active
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const ts = document.getElementById('s-tutor');
+  if (ts) ts.classList.add('active');
+  // Update sidebar
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const ni = document.getElementById('tn-' + tab);
+  if (ni) ni.classList.add('active');
+
+  // Switch inner tab
+  document.querySelectorAll('.tutor-tc').forEach(t => t.style.display = 'none');
+  document.querySelectorAll('.tutor-tab-btn').forEach(b => b.classList.remove('active'));
+  const tc = document.getElementById('tt-' + tab);
+  if (tc) tc.style.display = '';
+  const btn = document.getElementById('ttb-' + tab);
+  if (btn) btn.classList.add('active');
+
+  const titles = { students:'Мои ученики', groups:'Группы', materials:'Материалы', tasks:'Задания' };
+  document.getElementById('page-title').textContent = titles[tab] || '';
+
+  if (tab === 'students') renderStudentList(TUTOR_DATA.students);
+  if (tab === 'groups') renderGroups();
+  if (tab === 'materials') renderMaterials();
+  if (tab === 'tasks') { renderAssignments(); updateNewBadge(); }
+  window.scrollTo(0, 0);
+  if (window.innerWidth < 768) closeSidebar();
+}
+
+// ── Students ──
+function renderStudentList(list) {
+  const el = document.getElementById('student-list');
+  if (!el) return;
+  if (!list.length) { el.innerHTML = '<p class="text-gray-400 text-sm text-center py-8">Ученики не найдены</p>'; return; }
+  el.innerHTML = list.map(s => {
+    const ini = (s.name[0] + (s.lastName ? s.lastName[0] : '')).toUpperCase();
+    const accColor = s.accuracy >= 80 ? '#10b981' : s.accuracy >= 60 ? '#f59e0b' : '#ef4444';
+    const streakColor = s.streak >= 7 ? '#0D3B66' : s.streak > 0 ? '#f59e0b' : '#d1d5db';
+    const note = s.notes ? `<div class="text-xs text-amber-700 mt-1 flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>${s.notes}</div>` : '';
+    return `
+    <div class="card p-4" style="cursor:pointer;transition:box-shadow .15s,border-color .15s" onclick="showStudentProfile(${s.id})"
+      onmouseenter="this.style.boxShadow='0 4px 18px rgba(13,59,102,.10)';this.style.borderColor='#0D3B66'"
+      onmouseleave="this.style.boxShadow='';this.style.borderColor=''">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-sm flex-shrink-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center justify-between gap-2 flex-wrap">
+            <div>
+              <span class="font-bold text-gray-900">${s.name} ${s.lastName}</span>
+              <span class="ml-2 text-xs px-2 py-0.5 rounded-full font-medium" style="background:#f1f5f9;color:#6b7280">${s.grade} класс</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-xs text-gray-400">Был(а): ${s.lastActive}</div>
+              <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+            </div>
+          </div>
+          ${note}
+          <div class="flex flex-wrap gap-4 mt-3">
+            <div class="text-center">
+              <div class="text-lg font-bold" style="color:${accColor}">${s.accuracy}%</div>
+              <div class="text-xs text-gray-500">точность</div>
+            </div>
+            <div class="text-center">
+              <div class="text-lg font-bold text-gray-800">${s.topics}</div>
+              <div class="text-xs text-gray-500">тем пройдено</div>
+            </div>
+            <div class="text-center">
+              <div class="text-lg font-bold" style="color:${streakColor}">${s.streak}</div>
+              <div class="text-xs text-gray-500">серия дней</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterStudents(q) {
+  const filtered = TUTOR_DATA.students.filter(s =>
+    (s.name + ' ' + s.lastName).toLowerCase().includes(q.toLowerCase())
+  );
+  renderStudentList(filtered);
+}
+
+function backToStudentList() {
+  document.getElementById('student-list-view').style.display = '';
+  document.getElementById('student-profile-view').style.display = 'none';
+  document.getElementById('page-title').textContent = 'Мои ученики';
+}
+
+function showStudentProfile(id) {
+  const s = TUTOR_DATA.students.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById('student-list-view').style.display = 'none';
+  const pv = document.getElementById('student-profile-view');
+  pv.style.display = '';
+  document.getElementById('page-title').textContent = s.name + ' ' + s.lastName;
+
+  const ini = (s.name[0] + (s.lastName ? s.lastName[0] : '')).toUpperCase();
+  const accColor = s.accuracy >= 80 ? '#10b981' : s.accuracy >= 60 ? '#f59e0b' : '#ef4444';
+  const streakColor = s.streak >= 7 ? '#0D3B66' : s.streak > 0 ? '#f59e0b' : '#d1d5db';
+
+  const subs = TUTOR_DATA.submissions.filter(x => x.studentId === id);
+  const newSubs = subs.filter(x => x.status === 'new');
+  const gradedSubs = subs.filter(x => x.status === 'graded');
+
+  const subsHtml = subs.length ? subs.map(sub => {
+    const isNew = sub.status === 'new';
+    const badge = isNew
+      ? `<span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:#fef3c7;color:#d97706">Не проверено</span>`
+      : `<span class="text-xs font-bold px-2 py-0.5 rounded-full" style="background:#d1fae5;color:#065f46">Оценено: ${sub.grade ?? '—'}</span>`;
+    const answers = sub.answers.map(a =>
+      `<div class="text-xs py-1.5 border-t border-gray-100"><span class="text-gray-500">${a.q}</span><br><span class="font-medium text-gray-800 mt-0.5 block">→ ${a.a}</span></div>`
+    ).join('');
+    return `<div class="assign-card">
+      <div class="flex items-start justify-between gap-2 flex-wrap mb-2">
+        <div>
+          <div class="font-semibold text-gray-900 text-sm">${sub.title}</div>
+          <div class="text-xs text-gray-400 mt-0.5">${sub.submittedAt}</div>
+        </div>
+        ${badge}
+      </div>
+      ${answers}
+      ${isNew ? `<button onclick="event.stopPropagation();gradeSubmission(${sub.id},10)" class="btn-p text-xs mt-3" style="padding:7px 14px">Выставить оценку</button>` : ''}
+    </div>`;
+  }).join('')
+  : `<p class="text-sm text-gray-400 py-4 text-center">Работ не сдавалось</p>`;
+
+  const noteHtml = s.notes
+    ? `<div class="card p-4 flex items-start gap-3" style="border-color:#fbbf24;background:#fffbeb">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        <div><div class="text-xs font-bold text-amber-700 mb-0.5">Заметка репетитора</div><div class="text-sm text-amber-900">${s.notes}</div></div>
+      </div>`
+    : '';
+
+  pv.innerHTML = `
+    <div class="space-y-4">
+      <!-- Back -->
+      <button onclick="backToStudentList()" class="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-yale transition-colors mb-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5"/></svg>
+        Все ученики
+      </button>
+
+      <!-- Header card -->
+      <div class="card p-5">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-lg flex-shrink-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>
+          <div class="flex-1">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-xl font-bold text-gray-900">${s.name} ${s.lastName}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#f1f5f9;color:#6b7280">${s.grade} класс</span>
+            </div>
+            <div class="text-xs text-gray-400 mt-0.5">Последняя активность: ${s.lastActive}</div>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 mt-5">
+          <div class="rounded-xl p-3 text-center" style="background:rgba(13,59,102,0.06)">
+            <div class="text-xl font-bold" style="color:${accColor}">${s.accuracy}%</div>
+            <div class="text-xs text-gray-500 mt-0.5">точность</div>
+          </div>
+          <div class="rounded-xl p-3 text-center" style="background:rgba(13,59,102,0.06)">
+            <div class="text-xl font-bold text-gray-800">${s.topics}</div>
+            <div class="text-xs text-gray-500 mt-0.5">тем пройдено</div>
+          </div>
+          <div class="rounded-xl p-3 text-center" style="background:rgba(13,59,102,0.06)">
+            <div class="text-xl font-bold" style="color:${streakColor}">${s.streak}</div>
+            <div class="text-xs text-gray-500 mt-0.5">серия дней</div>
+          </div>
+        </div>
+      </div>
+
+      ${noteHtml}
+
+      <!-- Submissions -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-gray-800">Сданные работы</h3>
+          ${newSubs.length ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#fef3c7;color:#d97706">${newSubs.length} ждут проверки</span>` : ''}
+        </div>
+        <div class="space-y-3">${subsHtml}</div>
+      </div>
+    </div>`;
+}
+
+// ── Groups ──
+function renderGroups() {
+  const el = document.getElementById('groups-list');
+  if (!el) return;
+  el.innerHTML = TUTOR_DATA.groups.map(g => {
+    const members = g.studentIds.map(id => TUTOR_DATA.students.find(s => s.id === id)).filter(Boolean);
+    const avatars = members.map(s => {
+      const ini = (s.name[0] + (s.lastName ? s.lastName[0] : '')).toUpperCase();
+      return `<div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white border-2 border-white -ml-2 first:ml-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>`;
+    }).join('');
+    return `
+    <div class="card p-5">
+      <div class="flex items-start justify-between mb-3">
+        <div>
+          <h3 class="font-bold text-gray-900 text-lg">${g.name}</h3>
+          <div class="text-xs text-gray-500 mt-0.5">${g.studentIds.length} учеников · ${g.schedule}</div>
+        </div>
+        <span class="text-xs px-2.5 py-1 rounded-full font-medium" style="background:rgba(13,59,102,0.08);color:#0D3B66">${g.studentIds.length} чел.</span>
+      </div>
+      <div class="flex items-center gap-1 mb-4">${avatars}</div>
+      <div class="flex flex-col gap-2 text-sm mb-4">
+        <div class="flex items-center gap-2 text-gray-700">
+          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Следующий урок: <strong>${g.nextLesson}</strong>
+        </div>
+        <div class="flex items-center gap-2 text-gray-700">
+          <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+          Тема: ${g.topic}
+        </div>
+      </div>
+      <div class="border-t border-gray-100 pt-3 flex gap-2">
+        <button onclick="showTutorTab('tasks')" class="btn-p text-xs flex-1" style="padding:9px 0">Выдать задание</button>
+        <button onclick="showTutorTab('journal')" class="btn-o text-xs flex-1" style="padding:9px 0">Журнал</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Materials ──
+function renderMaterials() {
+  const el = document.getElementById('materials-list');
+  if (!el) return;
+  const typeIcon = (type) => {
+    if (type === 'slides') return `<svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9 3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605"/></svg>`;
+    return `<svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>`;
+  };
+  el.innerHTML = TUTOR_DATA.materials.map(m => {
+    const openBtn = m.file
+      ? `<a href="${m.file}" target="_blank" class="btn-p text-xs" style="padding:7px 14px;text-decoration:none">Открыть</a>`
+      : `<button class="btn-p text-xs" style="padding:7px 14px">Открыть</button>`;
+    const meta = [m.topic, m.slides ? m.slides + ' слайдов' : null, m.size].filter(Boolean).join(' · ');
+    return `
+    <div class="material-card">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">${typeIcon(m.type)}</div>
+      <div class="flex-1 min-w-0">
+        <div class="font-semibold text-gray-900 truncate">${m.name}</div>
+        <div class="text-xs text-gray-500 mt-0.5">${meta}</div>
+        <div class="text-xs text-gray-400 mt-0.5">${m.date}</div>
+      </div>
+      <div class="flex items-center gap-2 flex-shrink-0">
+        ${openBtn}
+        <button onclick="shareMaterial(${m.id})" class="p-2 rounded-lg text-gray-400 hover:text-yale hover:bg-gray-100 transition-all" title="Поделиться с учениками">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"/></svg>
+        </button>
+        <button onclick="deleteMaterial(${m.id})" class="p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-50 transition-all" title="Удалить">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addMaterialFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  TUTOR_DATA.materials.unshift({
+    id: Date.now(), name: file.name.replace(/\.[^.]+$/, ''),
+    type: file.name.match(/\.(ppt|pptx|key)$/i) ? 'slides' : 'doc',
+    date: new Date().toLocaleDateString('ru', {day:'numeric', month:'long', year:'numeric'}),
+    topic: 'Без категории', size: (file.size / 1048576).toFixed(1) + ' МБ',
+  });
+  renderMaterials();
+  input.value = '';
+}
+
+function shareMaterial(id) {
+  alert('Ссылка на материал скопирована для отправки ученикам.');
+}
+function deleteMaterial(id) {
+  if (!confirm('Удалить материал?')) return;
+  TUTOR_DATA.materials = TUTOR_DATA.materials.filter(m => m.id !== id);
+  renderMaterials();
+}
+
+// ── Assignments / Submissions inbox ──
+function renderAssignments() {
+  const el = document.getElementById('assign-list');
+  if (!el) return;
+  const subs = assignFilter === 'all' ? TUTOR_DATA.submissions
+    : assignFilter === 'new' ? TUTOR_DATA.submissions.filter(s => s.status === 'new')
+    : TUTOR_DATA.submissions.filter(s => s.status === 'graded');
+
+  if (!subs.length) { el.innerHTML = '<p class="text-gray-400 text-sm text-center py-8">Работ нет</p>'; return; }
+
+  el.innerHTML = subs.map(sub => {
+    const student = TUTOR_DATA.students.find(s => s.id === sub.studentId);
+    if (!student) return '';
+    const ini = (student.name[0] + (student.lastName ? student.lastName[0] : '')).toUpperCase();
+    const assign = TUTOR_DATA.assignments.find(a => a.id === sub.assignId);
+    const maxScore = assign ? assign.maxScore : 10;
+    const isNew = sub.status === 'new';
+    const statusBadge = isNew
+      ? `<span class="text-xs px-2.5 py-1 rounded-full font-semibold" style="background:#fef3c7;color:#92400e">Новое</span>`
+      : `<span class="text-xs px-2.5 py-1 rounded-full font-semibold" style="background:#dcfce7;color:#065f46">Проверено · ${sub.grade}/${maxScore}</span>`;
+    const answersHtml = sub.answers.map((a, i) => `
+      <div class="py-2.5 ${i > 0 ? 'border-t border-gray-100' : ''}">
+        <div class="text-xs text-gray-500 mb-1">${a.q}</div>
+        <div class="text-sm font-medium text-gray-800">${a.a}</div>
+      </div>`).join('');
+    const gradeBlock = isNew ? `
+      <div class="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100">
+        <span class="text-sm text-gray-600 font-medium">Оценить:</span>
+        <input id="grade-inp-${sub.id}" type="number" min="0" max="${maxScore}" placeholder="0–${maxScore}"
+          class="grade-input" style="width:56px">
+        <span class="text-xs text-gray-400">из ${maxScore}</span>
+        <button onclick="gradeSubmission(${sub.id},${maxScore})" class="btn-p text-xs ml-auto" style="padding:8px 16px">
+          Принять и выставить
+        </button>
+      </div>` : '';
+    return `
+    <div class="assign-card" id="sub-${sub.id}">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-white text-xs flex-shrink-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-start justify-between gap-2 flex-wrap">
+            <div>
+              <div class="font-semibold text-gray-900">${student.name} ${student.lastName}</div>
+              <div class="text-xs text-gray-500">${sub.title}</div>
+            </div>
+            ${statusBadge}
+          </div>
+          <div class="text-xs text-gray-400 mt-0.5">Сдано: ${sub.submittedAt}</div>
+        </div>
+      </div>
+      <div class="rounded-xl px-4 py-1" style="background:#f8fafc;border:1px solid #f1f5f9">
+        ${answersHtml}
+      </div>
+      ${gradeBlock}
+    </div>`;
+  }).join('');
+}
+
+function gradeSubmission(subId, maxScore) {
+  const inp = document.getElementById('grade-inp-' + subId);
+  if (!inp) return;
+  const v = parseInt(inp.value);
+  if (isNaN(v) || v < 0 || v > maxScore) {
+    inp.style.borderColor = '#ef4444';
+    setTimeout(() => { inp.style.borderColor = ''; }, 1500);
+    return;
+  }
+  const sub = TUTOR_DATA.submissions.find(s => s.id === subId);
+  if (!sub) return;
+  sub.status = 'graded';
+  sub.grade = v;
+  // Sync to grades table
+  if (!TUTOR_DATA.grades[sub.studentId]) TUTOR_DATA.grades[sub.studentId] = {};
+  TUTOR_DATA.grades[sub.studentId][sub.assignId] = v;
+  renderAssignments();
+}
+
+function filterAssign(filter, btn) {
+  assignFilter = filter;
+  document.querySelectorAll('#tt-tasks > div:first-child button').forEach(b => {
+    b.style.background = '#f3f4f6'; b.style.color = '#6b7280';
+  });
+  btn.style.background = '#0D3B66'; btn.style.color = 'white';
+  renderAssignments();
+}
+
+function updateNewBadge() {
+  const n = TUTOR_DATA.submissions.filter(s => s.status === 'new').length;
+  const el = document.getElementById('new-badge');
+  if (el) { el.textContent = n ? n + ' новых' : ''; el.style.display = n ? '' : 'none'; }
+}
+
+
+function tutorAction() {}
+
+// ─── Parent / Student linking ─────────────────────────────
+
+function getRankLabel(xp) {
+  if (!xp || xp < 100) return 'Семя';
+  if (xp < 500) return 'Росток';
+  if (xp < 1000) return 'Практик';
+  if (xp < 2500) return 'Знаток';
+  if (xp < 5000) return 'Мастер';
+  return 'Гений';
+}
+
+function getOrCreateLinkCode(userId) {
+  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
+  let code = Object.keys(codes).find(k => codes[k] === userId);
+  if (!code) {
+    code = Math.random().toString(36).slice(2, 8).toUpperCase();
+    codes[code] = userId;
+    localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
+  }
+  return code;
+}
+
+function refreshLinkCode() {
+  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!u) return;
+  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
+  Object.keys(codes).forEach(k => { if (codes[k] === u.id) delete codes[k]; });
+  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
+  renderStudentLinkCard(u);
+}
+
+function copyLinkCode() {
+  const codeEl = document.getElementById('student-link-code');
+  if (!codeEl) return;
+  navigator.clipboard.writeText(codeEl.textContent).catch(() => {});
+  const btn = document.getElementById('copy-code-btn');
+  if (!btn) return;
+  const prev = btn.textContent;
+  btn.textContent = 'Скопировано!';
+  setTimeout(() => { btn.textContent = prev; }, 2000);
+}
+
+function renderStudentLinkCard(u) {
+  const card = document.getElementById('parent-link-card');
+  const content = document.getElementById('parent-link-content');
+  if (!card || !content) return;
+  card.style.display = '';
+
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const linkedParents = (u.parentIds || [])
+    .map(pid => users.find(x => x.id === pid))
+    .filter(Boolean);
+
+  const code = getOrCreateLinkCode(u.id);
+
+  let parentsHtml = '';
+  if (linkedParents.length) {
+    parentsHtml = '<div class="mb-3 space-y-1.5">' +
+      linkedParents.map(p => `
+        <div class="flex items-center gap-2 text-sm">
+          <svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          <span class="text-gray-700 font-medium">${p.name}${p.lastName ? ' ' + p.lastName : ''}</span>
+          <span class="text-gray-400 text-xs">— доступ к прогрессу открыт</span>
+        </div>`).join('') +
+      '</div>';
+  }
+
+  content.innerHTML = parentsHtml + `
+    <p class="text-xs text-gray-500 mb-2">Поделись кодом с родителем — он введёт его в своём аккаунте:</p>
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="px-4 py-2.5 rounded-xl font-bold text-lg" style="background:rgba(13,59,102,0.07);color:#0D3B66;letter-spacing:.2em">
+        <span id="student-link-code">${code}</span>
+      </div>
+      <button id="copy-code-btn" onclick="copyLinkCode()" class="btn-o text-sm" style="padding:9px 16px">Копировать</button>
+      <button onclick="refreshLinkCode()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Обновить код">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+      </button>
+    </div>`;
+}
+
+function toggleAddChildForm() {
+  const form = document.getElementById('add-child-form');
+  const errEl = document.getElementById('code-error');
+  if (errEl) errEl.style.display = 'none';
+  const isHidden = form.style.display === 'none';
+  form.style.display = isHidden ? '' : 'none';
+  if (isHidden) {
+    const inp = document.getElementById('parent-code-input');
+    if (inp) { inp.value = ''; inp.focus(); }
+  }
+}
+
+function submitParentCode() {
+  const inp = document.getElementById('parent-code-input');
+  const errEl = document.getElementById('code-error');
+  if (!inp || !errEl) return;
+
+  const code = inp.value.trim().toUpperCase();
+  errEl.style.display = 'none';
+
+  if (code.length < 4) {
+    errEl.textContent = 'Введи код из 6 символов';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
+  const studentId = codes[code];
+  if (!studentId) {
+    errEl.textContent = 'Код не найден или уже использован';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!parent) return;
+
+  const studentIdx = users.findIndex(u => u.id === studentId);
+  if (studentIdx < 0) {
+    errEl.textContent = 'Ученик не найден';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if ((parent.childrenIds || []).includes(studentId)) {
+    errEl.textContent = 'Этот ученик уже привязан';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if (!parent.childrenIds) parent.childrenIds = [];
+  parent.childrenIds.push(studentId);
+
+  const student = users[studentIdx];
+  if (!student.parentIds) student.parentIds = [];
+  if (!student.parentIds.includes(parent.id)) student.parentIds.push(parent.id);
+  users[studentIdx] = student;
+
+  const parentIdx = users.findIndex(u => u.id === parent.id);
+  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
+
+  delete codes[code];
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
+  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
+
+  inp.value = '';
+  document.getElementById('add-child-form').style.display = 'none';
+  loadParentScreen();
+}
+
+function removeChild(childId) {
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!parent) return;
+
+  parent.childrenIds = (parent.childrenIds || []).filter(id => id !== childId);
+
+  const childIdx = users.findIndex(u => u.id === childId);
+  if (childIdx >= 0) {
+    users[childIdx].parentIds = (users[childIdx].parentIds || []).filter(id => id !== parent.id);
+  }
+
+  const parentIdx = users.findIndex(u => u.id === parent.id);
+  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
+
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
+  loadParentScreen();
+}
+
+function loadParentScreen() {
+  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!parent) return;
+
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const children = (parent.childrenIds || [])
+    .map(id => users.find(u => u.id === id))
+    .filter(Boolean);
+
+  const grid = document.getElementById('parent-children-grid');
+  const empty = document.getElementById('parent-empty');
+  if (!grid || !empty) return;
+
+  if (!children.length) {
+    grid.style.display = 'none';
+    empty.style.display = '';
+  } else {
+    empty.style.display = 'none';
+    grid.style.display = 'grid';
+    grid.innerHTML = children.map(child => {
+      const ini = ((child.name[0] || '') + (child.lastName ? child.lastName[0] : '')).toUpperCase() || child.name.slice(0, 2).toUpperCase();
+      const grade = child.grade ? child.grade + ' класс' : '';
+      const streak = child.streak || 0;
+      const solved = child.solved || 0;
+      const acc = child.accuracy || 0;
+      const rank = getRankLabel(child.xp || 0);
+      const fullName = child.name + (child.lastName ? ' ' + child.lastName : '');
+      const regDate = child.registeredAt
+        ? new Date(child.registeredAt).toLocaleDateString('ru', { day: 'numeric', month: 'long' })
+        : '—';
+      return `
+        <div class="card p-5">
+          <div class="flex items-start justify-between mb-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-sm flex-shrink-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>
+              <div>
+                <div class="font-bold text-gray-900">${fullName}</div>
+                <div class="text-xs text-gray-500">${grade}</div>
+                <div class="text-xs font-semibold mt-0.5" style="color:#0D3B66">Звание: ${rank}</div>
+              </div>
+            </div>
+            <button onclick="removeChild(${child.id})" class="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all" title="Отвязать">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-3 gap-2 mb-4">
+            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
+              <div class="text-xl font-bold" style="color:#0D3B66">${streak}</div>
+              <div class="text-xs text-gray-500 mt-0.5">серия</div>
+            </div>
+            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
+              <div class="text-xl font-bold" style="color:#0D3B66">${solved}</div>
+              <div class="text-xs text-gray-500 mt-0.5">задач</div>
+            </div>
+            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
+              <div class="text-xl font-bold" style="color:#0D3B66">${acc}%</div>
+              <div class="text-xs text-gray-500 mt-0.5">точность</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5 text-xs text-gray-400">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Зарегистрирован: ${regDate}
+          </div>
+        </div>`;
+    }).join('');
+  }
+}
+
+// ─── Load user from localStorage ──────────────────────────
+function loadUser() {
+  const raw = localStorage.getItem('fibi_current_user');
+  if (!raw) return;
+  const u = JSON.parse(raw);
+  const short = u.name;
+  const ini = ((u.name[0] || '') + (u.lastName ? u.lastName[0] : '')).toUpperCase() || u.name.slice(0,2).toUpperCase();
+  const roleLabel = u.role === 'tutor' ? 'Репетитор' : u.role === 'parent' ? 'Родитель' : '';
+  const grade = u.grade ? u.grade + ' класс' : roleLabel;
+
+  const greetEl = document.querySelector('#s-dashboard h1');
+  if (greetEl) greetEl.textContent = 'Привет, ' + short + '!';
+  document.querySelectorAll('.user-avatar').forEach(el => { el.textContent = ini; });
+  const sbName = document.querySelector('.sb-user-name');
+  if (sbName) sbName.textContent = short;
+  const sbGrade = document.querySelector('.sb-user-grade');
+  if (sbGrade) sbGrade.textContent = grade;
+  document.title = 'Фиби — ' + short;
+  const bannerEl = document.querySelector('.mascot-greeting');
+  if (bannerEl) bannerEl.textContent = short + ', ты молодец!';
+
+  if (u.role === 'tutor') {
+    // Hide student/parent nav items, show tutor nav
+    ['n-dashboard', 'n-tasks', 'n-tutors', 'n-chat', 'n-progress', 'n-parent'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    ['tn-students', 'tn-groups', 'tn-materials', 'tn-tasks'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
+    const sb = document.getElementById('streak-badge');
+    if (sb) sb.style.display = 'none';
+    showTutorTab('students');
+  } else if (u.role === 'parent') {
+    ['n-tasks', 'n-tutors', 'n-chat', 'n-progress'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    const pn = document.getElementById('n-parent');
+    if (pn) pn.style.display = 'flex';
+    const sb2 = document.getElementById('streak-badge');
+    if (sb2) sb2.style.display = 'none';
+    showScreen('parent');
+    loadParentScreen();
+  } else {
+    // Student: show parent link card
+    renderStudentLinkCard(u);
+  }
+}
+
+// ─── Logout ───────────────────────────────────────────────
+function logout() {
+  localStorage.removeItem('fibi_current_user');
+  window.location.href = 'register.html';
+}
+
+window.addEventListener('load', function() {
+  loadUser();
+  loadTaskScreen(null);
+  selectChat('mi');
+});
+</script>
+</body>
+</html>

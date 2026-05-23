@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//opt/homebrew/**)",
+      "Read(//Users/veronika/.nvm/versions/**)",
+      "Read(//usr/local/lib/**)",
+      "Read(//usr/**)",
+      "Read(//opt/**)"
+    ]
+  }
+}

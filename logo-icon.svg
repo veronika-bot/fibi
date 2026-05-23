@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- BG rounded square -->
+  <rect width="48" height="48" rx="11" fill="#0D3B66"/>
+  <!-- Circle -->
+  <circle cx="24" cy="25" r="17" fill="#F0E5B2"/>
+  <!-- Ф -->
+  <text x="24" y="32"
+    text-anchor="middle"
+    font-family="Georgia,'Times New Roman',serif"
+    font-size="22"
+    font-weight="700"
+    fill="#0D3B66">Ф</text>
+  <!-- Cap board -->
+  <polygon points="24,11 35,15 24,19 13,15" fill="#D4A520"/>
+  <!-- Cap rim -->
+  <rect x="17.5" y="17" width="13" height="4" rx="1.5" fill="#C4951A"/>
+  <!-- Sparkle star -->
+  <path d="M40,6 L41.2,9.8 L45,11 L41.2,12.2 L40,16 L38.8,12.2 L35,11 L38.8,9.8 Z" fill="#D4A520"/>
+</svg>

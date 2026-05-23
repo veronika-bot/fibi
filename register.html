@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фиби — Регистрация</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{yale:'#0D3B66','yale-d':'#0a2f50',lemon:'#FAF0CA'}}}}</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.mascot{animation:float 5s ease-in-out infinite}
+.fade-in{animation:fadeIn .5s ease forwards}
+.scale-in{animation:scaleIn .4s ease forwards}
+
+/* Form fields */
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:#374151}
+.field input,.field select{
+  border:1.5px solid #e5e7eb;border-radius:12px;padding:11px 14px;font-size:14px;
+  color:#111827;background:white;transition:all .2s;outline:none;width:100%;
+  font-family:'Plus Jakarta Sans',sans-serif
+}
+.field input:focus,.field select:focus{border-color:#0D3B66;box-shadow:0 0 0 3px rgba(13,59,102,.08)}
+.field input.error,.field select.error{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.08)}
+.field .hint{font-size:11px;color:#9ca3af;margin-top:2px}
+.field .err-msg{font-size:11px;color:#ef4444;margin-top:2px;display:none}
+.field input.error + .err-msg, .field select.error + .err-msg{display:block}
+
+/* Buttons */
+.btn-p{display:flex;align-items:center;justify-content:center;gap:8px;background:#0D3B66;color:white;border-radius:14px;padding:14px 24px;font-weight:700;font-size:15px;transition:all .25s;box-shadow:0 4px 16px rgba(13,59,102,.28);border:none;cursor:pointer;width:100%}
+.btn-p:hover:not(:disabled){background:#0a2f50;transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,59,102,.38)}
+.btn-p:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+/* Role/Grade pills */
+.pill-group{display:flex;gap:8px;flex-wrap:wrap}
+.pill{border:1.5px solid #e5e7eb;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .2s;background:white;user-select:none}
+.pill:hover{border-color:#0D3B66;color:#0D3B66}
+.pill.selected{border-color:#0D3B66;background:#0D3B66;color:white}
+
+/* Password strength bar */
+.strength-bar{height:3px;background:#e5e7eb;border-radius:2px;overflow:hidden;margin-top:6px}
+.strength-fill{height:100%;border-radius:2px;transition:all .4s ease;width:0}
+
+/* Checkbox */
+.checkbox-wrap{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.checkbox-wrap input[type=checkbox]{width:18px;height:18px;border:1.5px solid #d1d5db;border-radius:5px;cursor:pointer;accent-color:#0D3B66;flex-shrink:0;margin-top:2px}
+
+/* Tab switcher */
+.tab-btn{flex:1;padding:10px;font-size:14px;font-weight:600;border:none;background:transparent;cursor:pointer;border-radius:10px;transition:all .2s;color:#6b7280}
+.tab-btn.active{background:#0D3B66;color:white}
+
+/* Success state */
+#success-screen{display:none}
+.check-circle{width:72px;height:72px;border-radius:50%;background:#dcfce7;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+
+/* Spinner */
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
+
+/* Eye icon button */
+.eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#9ca3af;padding:4px;transition:color .2s}
+.eye-btn:hover{color:#0D3B66}
+
+/* Left panel benefit items */
+.benefit{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;background:rgba(255,255,255,.1)}
+</style>
+</head>
+<body style="background:#f8fafc;min-height:100vh">
+
+<div class="min-h-screen flex">
+
+  <!-- LEFT PANEL — брендинг -->
+  <div class="hidden lg:flex flex-col justify-between p-10 xl:p-14" style="width:460px;flex-shrink:0;background:#0D3B66">
+    <!-- Logo -->
+    <a href="index.html" class="flex items-center gap-2.5">
+      <img src="Иконки.png" alt="Фиби" class="w-10 h-10 flex-shrink-0" style="border-radius:30px">
+      <span class="text-white font-bold text-xl">Фиби</span>
+    </a>
+
+    <!-- Logo + tagline -->
+    <div class="text-center">
+      <img src="Иконки.png" alt="Фиби" class="mascot w-44 mx-auto mb-4 drop-shadow-2xl" style="border-radius:30px">
+      <div class="text-xs font-bold uppercase tracking-widest mb-2" style="color:rgba(255,255,255,.4)">1, 1, 2, 3, 5, 8, 13...</div>
+      <p style="color:rgba(255,255,255,.6)" class="text-sm leading-relaxed">Каждый шаг опирается на предыдущий.<br>Так же работает подготовка в ФИБИ.</p>
+    </div>
+
+    <!-- Benefits -->
+    <div class="space-y-3">
+      <div class="benefit">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <span class="text-sm font-medium text-white">ОГЭ и ЕГЭ по математике — всё в одном</span>
+      </div>
+      <div class="benefit">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <span class="text-sm font-medium text-white">Система наград Фибоначчи — расти в звании</span>
+      </div>
+      <div class="benefit">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <span class="text-sm font-medium text-white">92% учеников сдают на «4» и «5»</span>
+      </div>
+      <div class="benefit">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <span class="text-sm font-medium text-white">Репетиторы, чат и домашние задания</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL — форма -->
+  <div class="flex-1 flex items-center justify-center p-4 sm:p-8 overflow-auto">
+    <div class="w-full max-w-md">
+
+      <!-- Mobile logo -->
+      <div class="lg:hidden flex justify-center mb-8">
+        <a href="index.html" class="flex items-center gap-2.5">
+          <img src="Иконки.png" alt="Фиби" class="w-9 h-9 flex-shrink-0" style="border-radius:30px">
+          <span class="font-bold text-xl" style="color:#0D3B66">Фиби</span>
+        </a>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl p-6 sm:p-8 shadow-xl" style="border:1px solid rgba(13,59,102,.07)">
+
+        <!-- Tab switcher: Регистрация / Войти -->
+        <div class="flex p-1 rounded-xl mb-6" style="background:#f1f5f9">
+          <button id="tab-reg" class="tab-btn active" onclick="switchTab('reg')">Регистрация</button>
+          <button id="tab-login" class="tab-btn" onclick="switchTab('login')">Войти</button>
+        </div>
+
+        <!-- ===== REGISTRATION FORM ===== -->
+        <div id="form-reg" class="fade-in">
+          <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Создать аккаунт</h1>
+          <p class="text-sm text-gray-500 mb-6">Присоединяйся к 10 000+ ученикам</p>
+
+          <form id="reg-form" novalidate class="space-y-4">
+
+            <!-- Name row -->
+            <div class="grid grid-cols-2 gap-3">
+              <div class="field">
+                <label for="r-name">Имя <span class="text-red-400">*</span></label>
+                <input id="r-name" type="text" placeholder="Алина" autocomplete="given-name">
+                <div class="err-msg">Введи имя</div>
+              </div>
+              <div class="field">
+                <label for="r-last">Фамилия</label>
+                <input id="r-last" type="text" placeholder="Королёва" autocomplete="family-name">
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="field">
+              <label for="r-email">Email <span class="text-red-400">*</span></label>
+              <input id="r-email" type="email" placeholder="you@example.com" autocomplete="email">
+              <div class="err-msg">Введи корректный email</div>
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <label for="r-pass">Пароль <span class="text-red-400">*</span></label>
+              <div style="position:relative">
+                <input id="r-pass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password" oninput="checkStrength(this.value)">
+                <button type="button" class="eye-btn" onclick="togglePass('r-pass',this)" tabindex="-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div class="strength-bar"><div id="strength-fill" class="strength-fill"></div></div>
+              <div id="strength-label" class="hint"></div>
+              <div class="err-msg">Пароль минимум 6 символов</div>
+            </div>
+
+            <!-- Confirm password -->
+            <div class="field">
+              <label for="r-pass2">Повтори пароль <span class="text-red-400">*</span></label>
+              <div style="position:relative">
+                <input id="r-pass2" type="password" placeholder="Повтори пароль" autocomplete="new-password">
+                <button type="button" class="eye-btn" onclick="togglePass('r-pass2',this)" tabindex="-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div id="pass-match-err" class="err-msg" style="display:none">Пароли не совпадают</div>
+            </div>
+
+            <!-- Role -->
+            <div class="field">
+              <label>Я <span class="text-red-400">*</span></label>
+              <div class="pill-group" id="role-group">
+                <div class="pill selected" data-role="student" onclick="selectRole(this)">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+                    Ученик
+                  </span>
+                </div>
+                <div class="pill" data-role="tutor" onclick="selectRole(this)">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+                    Репетитор
+                  </span>
+                </div>
+                <div class="pill" data-role="parent" onclick="selectRole(this)">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                    Родитель
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grade (shown for students) -->
+            <div id="grade-block" class="field">
+              <label>Класс <span class="text-red-400">*</span></label>
+              <div class="pill-group" id="grade-group">
+                <div class="pill" data-grade="8" onclick="selectGrade(this)">8 класс</div>
+                <div class="pill selected" data-grade="9" onclick="selectGrade(this)">9 класс · ОГЭ</div>
+                <div class="pill" data-grade="10" onclick="selectGrade(this)">10 класс · ЕГЭ</div>
+                <div class="pill" data-grade="11" onclick="selectGrade(this)">11 класс · ЕГЭ</div>
+              </div>
+            </div>
+
+            <!-- Terms -->
+            <label class="checkbox-wrap">
+              <input type="checkbox" id="r-terms">
+              <span class="text-sm text-gray-600">Я соглашаюсь с <a href="#" class="font-semibold underline" style="color:#0D3B66">условиями использования</a> и <a href="#" class="font-semibold underline" style="color:#0D3B66">политикой конфиденциальности</a></span>
+            </label>
+            <div id="terms-err" class="text-xs text-red-500" style="display:none">Необходимо согласие</div>
+
+            <!-- Submit -->
+            <button type="submit" id="reg-btn" class="btn-p mt-2">
+              <span id="reg-btn-text">Создать аккаунт</span>
+              <div id="reg-spinner" class="spinner" style="display:none"></div>
+            </button>
+
+            <!-- Global error -->
+            <div id="reg-global-err" class="text-sm text-red-600 text-center font-medium" style="display:none"></div>
+
+          </form>
+        </div>
+
+        <!-- ===== LOGIN FORM ===== -->
+        <div id="form-login" style="display:none">
+          <h1 class="text-2xl font-extrabold text-gray-900 mb-1">С возвращением!</h1>
+          <p class="text-sm text-gray-500 mb-6">Войди в свой аккаунт Фиби</p>
+
+          <form id="login-form" novalidate class="space-y-4">
+            <div class="field">
+              <label for="l-email">Email <span class="text-red-400">*</span></label>
+              <input id="l-email" type="email" placeholder="you@example.com" autocomplete="email">
+              <div class="err-msg">Введи корректный email</div>
+            </div>
+            <div class="field">
+              <label for="l-pass">Пароль <span class="text-red-400">*</span></label>
+              <div style="position:relative">
+                <input id="l-pass" type="password" placeholder="Твой пароль" autocomplete="current-password">
+                <button type="button" class="eye-btn" onclick="togglePass('l-pass',this)" tabindex="-1">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+              </div>
+              <div class="err-msg">Введи пароль</div>
+            </div>
+            <div class="flex justify-end">
+              <button type="button" class="text-sm font-semibold" style="color:#0D3B66;background:none;border:none;cursor:pointer">Забыл(а) пароль?</button>
+            </div>
+            <button type="submit" id="login-btn" class="btn-p">
+              <span id="login-btn-text">Войти</span>
+              <div id="login-spinner" class="spinner" style="display:none"></div>
+            </button>
+            <div id="login-err" class="text-sm text-red-600 text-center font-medium" style="display:none"></div>
+          </form>
+        </div>
+
+        <!-- ===== SUCCESS SCREEN ===== -->
+        <div id="success-screen" class="text-center py-4">
+          <div class="check-circle scale-in">
+            <svg class="w-10 h-10" style="color:#16a34a" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          </div>
+          <h2 class="text-2xl font-extrabold text-gray-900 mb-2" id="success-name">Добро пожаловать!</h2>
+          <p class="text-gray-500 mb-6 text-sm">Аккаунт создан. Переходим в твой дашборд…</p>
+          <div class="w-full rounded-full overflow-hidden" style="height:4px;background:#e5e7eb">
+            <div id="progress-bar" style="height:100%;background:#0D3B66;border-radius:2px;width:0;transition:width 1.5s ease"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom link -->
+      <p class="text-center text-sm text-gray-400 mt-5">
+        <a href="index.html" class="hover:text-gray-600 transition-colors">← Вернуться на главную</a>
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+let selectedRole = 'student';
+let selectedGrade = '9';
+
+// ─── Tab switch ──────────────────────────────────────────
+function switchTab(tab) {
+  const isReg = tab === 'reg';
+  document.getElementById('tab-reg').classList.toggle('active', isReg);
+  document.getElementById('tab-login').classList.toggle('active', !isReg);
+  document.getElementById('form-reg').style.display = isReg ? '' : 'none';
+  document.getElementById('form-login').style.display = isReg ? 'none' : '';
+  document.getElementById('success-screen').style.display = 'none';
+}
+
+// ─── Role / Grade pills ───────────────────────────────────
+function selectRole(el) {
+  document.querySelectorAll('#role-group .pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedRole = el.dataset.role;
+  document.getElementById('grade-block').style.display = selectedRole === 'student' ? '' : 'none';
+}
+
+function selectGrade(el) {
+  document.querySelectorAll('#grade-group .pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGrade = el.dataset.grade;
+}
+
+// ─── Password visibility ──────────────────────────────────
+function togglePass(id, btn) {
+  const input = document.getElementById(id);
+  const isText = input.type === 'text';
+  input.type = isText ? 'password' : 'text';
+  btn.innerHTML = isText
+    ? `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><circle cx="12" cy="12" r="3"/></svg>`
+    : `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>`;
+}
+
+// ─── Password strength ────────────────────────────────────
+function checkStrength(val) {
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+  if (!val) { fill.style.width = '0'; label.textContent = ''; return; }
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[A-Z]/.test(val)) score++;
+  if (/[0-9]/.test(val)) score++;
+  if (/[^A-Za-z0-9]/.test(val)) score++;
+  const levels = [
+    { w: '20%', color: '#ef4444', text: 'Слабый' },
+    { w: '40%', color: '#f97316', text: 'Слабый' },
+    { w: '60%', color: '#f59e0b', text: 'Средний' },
+    { w: '80%', color: '#84cc16', text: 'Хороший' },
+    { w: '100%', color: '#10b981', text: 'Отличный' },
+  ];
+  const lvl = levels[Math.min(score - 1, 4)] || levels[0];
+  fill.style.width = lvl.w;
+  fill.style.background = lvl.color;
+  label.textContent = lvl.text;
+  label.style.color = lvl.color;
+}
+
+// ─── Validate field ───────────────────────────────────────
+function setError(id, msg) {
+  const el = document.getElementById(id);
+  el.classList.add('error');
+  const errEl = el.nextElementSibling;
+  if (errEl && errEl.classList.contains('err-msg')) {
+    if (msg) errEl.textContent = msg;
+    errEl.style.display = 'block';
+  }
+  return false;
+}
+function clearError(id) {
+  const el = document.getElementById(id);
+  el.classList.remove('error');
+  const errEl = el.nextElementSibling;
+  if (errEl && errEl.classList.contains('err-msg')) errEl.style.display = 'none';
+}
+function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+
+// ─── Get initials ─────────────────────────────────────────
+function initials(name, last) {
+  return ((name[0] || '') + (last[0] || '')).toUpperCase() || name.slice(0,2).toUpperCase();
+}
+
+// ─── REGISTRATION submit ──────────────────────────────────
+document.getElementById('reg-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  let valid = true;
+
+  const name = document.getElementById('r-name').value.trim();
+  const last = document.getElementById('r-last').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pass = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+  const terms = document.getElementById('r-terms').checked;
+
+  // Reset errors
+  ['r-name','r-email','r-pass','r-pass2'].forEach(clearError);
+  document.getElementById('pass-match-err').style.display = 'none';
+  document.getElementById('terms-err').style.display = 'none';
+  document.getElementById('reg-global-err').style.display = 'none';
+
+  if (!name) { setError('r-name', 'Введи имя'); valid = false; }
+  if (!isValidEmail(email)) { setError('r-email', 'Введи корректный email'); valid = false; }
+  if (pass.length < 6) { setError('r-pass', 'Пароль минимум 6 символов'); valid = false; }
+  if (pass !== pass2) {
+    document.getElementById('r-pass2').classList.add('error');
+    document.getElementById('pass-match-err').style.display = 'block';
+    valid = false;
+  }
+  if (!terms) { document.getElementById('terms-err').style.display = 'block'; valid = false; }
+
+  if (!valid) return;
+
+  // Check if email already exists
+  const existing = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  if (existing.find(u => u.email === email)) {
+    const errEl = document.getElementById('reg-global-err');
+    errEl.textContent = 'Пользователь с таким email уже зарегистрирован';
+    errEl.style.display = 'block';
+    setError('r-email', 'Email уже используется');
+    return;
+  }
+
+  // Show loading
+  const btn = document.getElementById('reg-btn');
+  document.getElementById('reg-btn-text').style.display = 'none';
+  document.getElementById('reg-spinner').style.display = 'block';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    // Save user
+    const user = {
+      id: Date.now(),
+      name, lastName: last,
+      email, password: pass,
+      role: selectedRole,
+      grade: selectedRole === 'student' ? selectedGrade : null,
+      registeredAt: new Date().toISOString(),
+      streak: 0, solved: 0, accuracy: 0, xp: 0,
+      childrenIds: [], parentIds: []
+    };
+    existing.push(user);
+    localStorage.setItem('fibi_users', JSON.stringify(existing));
+    localStorage.setItem('fibi_current_user', JSON.stringify(user));
+
+    // Show success
+    document.getElementById('form-reg').style.display = 'none';
+    const ss = document.getElementById('success-screen');
+    ss.style.display = 'block';
+    document.getElementById('success-name').textContent =
+      `Привет, ${name}! 👋`;
+
+    // Animate progress bar
+    setTimeout(() => {
+      document.getElementById('progress-bar').style.width = '100%';
+    }, 50);
+
+    // Redirect
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1700);
+  }, 900);
+});
+
+// ─── LOGIN submit ─────────────────────────────────────────
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const email = document.getElementById('l-email').value.trim();
+  const pass = document.getElementById('l-pass').value;
+  const errEl = document.getElementById('login-err');
+
+  clearError('l-email');
+  clearError('l-pass');
+  errEl.style.display = 'none';
+
+  let valid = true;
+  if (!isValidEmail(email)) { setError('l-email', 'Введи корректный email'); valid = false; }
+  if (!pass) { setError('l-pass', 'Введи пароль'); valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('login-btn');
+  document.getElementById('login-btn-text').style.display = 'none';
+  document.getElementById('login-spinner').style.display = 'block';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+    const user = users.find(u => u.email === email && u.password === pass);
+
+    if (!user) {
+      document.getElementById('login-btn-text').style.display = 'block';
+      document.getElementById('login-spinner').style.display = 'none';
+      btn.disabled = false;
+      errEl.textContent = 'Неверный email или пароль';
+      errEl.style.display = 'block';
+      setError('l-email', ' ');
+      setError('l-pass', ' ');
+      return;
+    }
+
+    localStorage.setItem('fibi_current_user', JSON.stringify(user));
+
+    // Show success
+    document.getElementById('form-login').style.display = 'none';
+    const ss = document.getElementById('success-screen');
+    ss.style.display = 'block';
+    document.getElementById('success-name').textContent = `С возвращением, ${user.name}! 👋`;
+    setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 50);
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1700);
+  }, 800);
+});
+
+// ─── Auto-fill if already logged in ──────────────────────
+window.addEventListener('load', () => {
+  const cur = localStorage.getItem('fibi_current_user');
+  if (cur) {
+    const u = JSON.parse(cur);
+    // Pre-fill login email
+    const le = document.getElementById('l-email');
+    if (le) le.value = u.email;
+  }
+});
+</script>
+</body>
+</html>

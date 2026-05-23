@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 380">
+  <!-- Background -->
+  <rect width="280" height="380" rx="28" fill="#0D3B66"/>
+
+  <!-- Main circle -->
+  <circle cx="140" cy="178" r="118" fill="#F0E5B2"/>
+
+  <!-- Ф letter -->
+  <text x="140" y="222"
+    text-anchor="middle"
+    font-family="Georgia,'Times New Roman',serif"
+    font-size="158"
+    font-weight="700"
+    fill="#0D3B66">Ф</text>
+
+  <!-- Graduation cap board (diamond top) -->
+  <polygon points="140,76 224,107 140,138 56,107" fill="#D4A520"/>
+  <!-- Cap rim -->
+  <ellipse cx="140" cy="138" rx="46" ry="13" fill="#B8901C"/>
+  <rect x="94" y="126" width="92" height="25" rx="5" fill="#D4A520"/>
+  <!-- Tassel cord -->
+  <path d="M224,107 C234,118 236,136 233,154" stroke="#D4A520" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Tassel block -->
+  <rect x="228" y="152" width="11" height="14" rx="2.5" fill="#D4A520"/>
+  <!-- Tassel fringe -->
+  <line x1="229" y1="166" x2="227" y2="177" stroke="#D4A520" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="233" y1="166" x2="233" y2="178" stroke="#D4A520" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="237" y1="166" x2="239" y2="177" stroke="#D4A520" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- 4-pointed sparkle star, top right -->
+  <path d="M252,36 L255.5,47 L266,50 L255.5,53 L252,64 L248.5,53 L238,50 L248.5,47 Z" fill="#D4A520"/>
+
+  <!-- Фиби -->
+  <text x="140" y="322"
+    text-anchor="middle"
+    font-family="Georgia,'Times New Roman',serif"
+    font-size="50"
+    font-weight="700"
+    fill="white"
+    letter-spacing="1">Фиби</text>
+
+  <!-- Tagline -->
+  <text x="140" y="354"
+    text-anchor="middle"
+    font-family="Arial,Helvetica,sans-serif"
+    font-size="15.5"
+    fill="rgba(250,240,202,0.82)"
+    letter-spacing="0.3">твоя подготовка к ОГЭ</text>
+</svg>
