@@ -2422,7 +2422,17 @@ function renderBankPart2() {
   let tasks = OGE_PART2_TASKS;
   if (diffF) tasks = tasks.filter(t => String(t.difficulty) === diffF);
   document.getElementById('bank-count').textContent = tasks.length;
-  el.innerHTML = tasks.map(t => {
+  const banner = `<div style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+    <div>
+      <p class="text-white font-black text-sm mb-0.5">Отдельная страница подготовки</p>
+      <p class="text-blue-200 text-xs">Черновик решений, прогресс и полный разбор — в отдельной странице</p>
+    </div>
+    <a href="oge2.html" target="_blank" style="background:rgba(255,255,255,.18);color:white;border:1.5px solid rgba(255,255,255,.35);border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap;display:flex;align-items:center;gap:6px">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Открыть страницу
+    </a>
+  </div>`;
+  el.innerHTML = banner + tasks.map(t => {
     const dots = [1,2,3].map(i =>
       `<span class="diff-dot ${i <= t.difficulty ? (t.difficulty===1?'bg-green-400':t.difficulty===2?'bg-yellow-400':'bg-red-400') : 'bg-gray-200'}"></span>`
     ).join('');
