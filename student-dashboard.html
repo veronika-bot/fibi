@@ -179,10 +179,10 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
       Банк заданий
     </div>
-    <a href="demo.html" class="nav-item" style="text-decoration:none">
+    <div class="nav-item" onclick="goScreen('s-demo')" id="nav-s-demo">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>
-      Демовариант
-    </a>
+      Демоварианты
+    </div>
     <div class="nav-item" onclick="goScreen('s-homework')" id="nav-s-homework">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
       Домашние задания
@@ -456,6 +456,12 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <span id="bank-count" class="font-bold text-yale text-sm">0</span>
         </div>
       </div>
+    </div>
+
+    <!-- Task number filter -->
+    <div id="bank-tasknum-bar" class="card mb-4" style="display:none">
+      <p class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">Номер задания</p>
+      <div id="bank-tasknum-pills" class="flex flex-wrap gap-1.5"></div>
     </div>
 
     <!-- Anti-cheat warning -->
@@ -764,6 +770,57 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
   </div>
 
+  <!-- ==================== SCREEN: DEMO VARIANTS ==================== -->
+  <div class="screen" id="s-demo">
+
+    <!-- LIST VIEW -->
+    <div id="demo-list-view">
+      <div class="card mb-6" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);color:white">
+        <div class="flex items-center gap-4 flex-wrap">
+          <div>
+            <h2 class="font-black text-2xl mb-1">Демоварианты ОГЭ</h2>
+            <p class="text-blue-200 text-sm">Выбери вариант и пройди полноценный экзамен. Подсказки открываются только после проверки.</p>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-4 flex-wrap">
+          <span class="tag" style="background:rgba(255,255,255,.15);color:white">20 заданий</span>
+          <span class="tag" style="background:rgba(255,255,255,.15);color:white">Часть 1 + Часть 2</span>
+          <span class="tag" style="background:rgba(255,255,255,.15);color:white">Автопроверка ответов</span>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="demo-variant-cards"></div>
+    </div>
+
+    <!-- EXAM VIEW -->
+    <div id="demo-exam-view" style="display:none">
+      <button onclick="backToDemoList()" class="flex items-center gap-2 text-yale font-bold text-sm mb-5 hover:opacity-75 transition-opacity">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        К выбору варианта
+      </button>
+      <div class="card mb-4 py-4" id="demo-exam-header"></div>
+      <div id="demo-exam-tasks" class="space-y-3"></div>
+      <div style="position:sticky;bottom:0;z-index:20;background:linear-gradient(transparent,#f4f6fb 30%);padding:16px 0 8px">
+        <button class="btn-p w-full" style="font-size:16px;padding:14px" onclick="checkDemoAll()">Проверить все ответы →</button>
+      </div>
+    </div>
+
+    <!-- RESULTS VIEW -->
+    <div id="demo-results-view" style="display:none">
+      <button onclick="backToDemoList()" class="flex items-center gap-2 text-yale font-bold text-sm mb-5 hover:opacity-75 transition-opacity">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        К выбору варианта
+      </button>
+      <div class="card mb-6" id="demo-score-card"></div>
+      <h3 class="font-bold text-gray-900 mb-3">Разбор заданий</h3>
+      <div id="demo-results-tasks" class="space-y-3"></div>
+      <div class="flex gap-3 mt-6 flex-wrap">
+        <button class="btn-o flex-1" onclick="retryDemo()">Попробовать ещё раз</button>
+        <button class="btn-p flex-1" onclick="backToDemoList()">Выбрать другой вариант</button>
+      </div>
+    </div>
+
+  </div>
+
   <!-- ==================== SCREEN: HOMEWORK ==================== -->
   <div class="screen" id="s-homework">
     <div id="hw-no-tutor" class="card text-center py-12">
@@ -1064,9 +1121,9 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Экзамен</label>
         <select id="ep-exam" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100 bg-white">
           <option value="">Не выбран</option>
-          <option value="ОГЭ">ОГЭ</option>
-          <option value="ЕГЭ база">ЕГЭ база</option>
-          <option value="ЕГЭ профиль">ЕГЭ профиль</option>
+          <option value="ОГЭ">ОГЭ по математике</option>
+          <option value="ЕГЭ база">ЕГЭ базовый уровень</option>
+          <option value="ЕГЭ профиль">ЕГЭ профильный уровень</option>
         </select>
       </div>
 
@@ -1097,6 +1154,7 @@ let S = {
   currentAttempt: 0,
   taskHistory: [],
   bankFilter: 'all',
+  bankTaskNum: 0,
   chatMessages: [],
   todayXP: 0,
   todayDone: 0,
@@ -1216,14 +1274,15 @@ function goScreen(id) {
     's-home':'Главная','s-tutors':'Репетиторы','s-study':'Самообучение',
     's-bank':'Банк заданий','s-homework':'Домашние задания',
     's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль',
-    's-oge2':'ОГЭ по математике: часть 2','s-oge2-task':'Задание','s-bank-task':'Банк заданий'
+    's-oge2':'ОГЭ по математике: часть 2','s-oge2-task':'Задание','s-bank-task':'Банк заданий','s-demo':'Демоварианты ОГЭ'
   };
   const subs = {
     's-home':'Твои успехи и цели','s-tutors':'Управление репетитором',
     's-study':'Курсы и теория','s-bank':'Практика и задания',
     's-homework':'Задания от репетитора','s-progress':'Статистика и достижения',
     's-chat':'Сообщения','s-profile':'Настройки аккаунта',
-    's-oge2':'Задания 20–25 с подробными решениями','s-oge2-task':'Пошаговое решение и подсказки','s-bank-task':'Практика — Часть 1'
+    's-oge2':'Задания 20–25 с подробными решениями','s-oge2-task':'Пошаговое решение и подсказки','s-bank-task':'Практика — Часть 1',
+    's-demo':'Полный экзамен с автопроверкой'
   };
   document.getElementById('page-title').textContent = titles[id] || '';
   document.getElementById('page-sub').textContent = subs[id] || '';
@@ -1231,6 +1290,7 @@ function goScreen(id) {
   if (id === 's-chat') renderChat();
   if (id === 's-oge2') renderOge2List();
   if (id === 's-bank') renderBank();
+  if (id === 's-demo') renderDemoList();
 }
 
 function openChat() { goScreen('s-chat'); }
@@ -1594,6 +1654,7 @@ let _bankCache = [];   // cached tasks from last fetch
 const STATIC_TASKS = [{"id":"cmpmy7z3v000o6o2mga4nv4tx","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: 2,4 · 5 − 3,8","answer":"8.2","answerAlt":"[\"8,2\"]","hint1":"Сначала умножение, потом вычитание","partialSolution":null,"fullSolution":[{"step":"Умножаем","detail":"2,4 · 5 = 12"},{"step":"Вычитаем","detail":"12 − 3,8 = 8,2"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3x000p6o2mhd0lik57","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: 3,6 : 0,4 + 1,5","answer":"10.5","answerAlt":"[\"10,5\"]","hint1":"Деление выполняется до сложения","partialSolution":null,"fullSolution":[{"step":"Делим","detail":"3,6 : 0,4 = 9"},{"step":"Складываем","detail":"9 + 1,5 = 10,5"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3y000q6o2mjqv6azwa","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: (−3)² − 4 · 2","answer":"1","answerAlt":"[]","hint1":"Порядок: степень → умножение → вычитание","partialSolution":null,"fullSolution":[{"step":"Возводим в степень","detail":"(−3)² = 9"},{"step":"Умножаем","detail":"4 · 2 = 8"},{"step":"Вычитаем","detail":"9 − 8 = 1"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3z000r6o2m2aqqw83r","examType":"OGE","part":1,"taskNumber":2,"description":"Велосипед стоит 12 000 ₽. На него сделали скидку 15%. Сколько стоит велосипед со скидкой?","answer":"10200","answerAlt":"[\"10 200\"]","hint1":"Скидка 15% = умножить на 0,85","partialSolution":null,"fullSolution":[{"step":"Размер скидки","detail":"12 000 · 0,15 = 1 800 ₽"},{"step":"Итого","detail":"12 000 − 1 800 = 10 200 ₽"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z3z000s6o2mjqax4moq","examType":"OGE","part":1,"taskNumber":2,"description":"В классе 30 учеников. 40% из них — отличники. Сколько отличников?","answer":"12","answerAlt":"[]","hint1":"40% = 0,4","partialSolution":null,"fullSolution":[{"step":"Находим 40% от 30","detail":"30 · 0,4 = 12"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z40000t6o2mzwyxbrml","examType":"OGE","part":1,"taskNumber":2,"description":"Цена товара выросла с 800 ₽ до 1 000 ₽. На сколько процентов выросла цена?","answer":"25","answerAlt":"[\"25%\"]","hint1":"Прирост / старая цена × 100%","partialSolution":null,"fullSolution":[{"step":"Прирост","detail":"1 000 − 800 = 200 ₽"},{"step":"Процент","detail":"200 / 800 × 100% = 25%"}],"difficulty":2,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z44000x6o2mpn1p6jzq","examType":"OGE","part":1,"taskNumber":2,"description":"Упростите: 3/4 + 1/6","answer":"0.917","answerAlt":"[\"11/12\"]","hint1":"Найди общий знаменатель (12)","partialSolution":null,"fullSolution":[{"step":"Общий знаменатель 12","detail":"9/12 + 2/12 = 11/12 ≈ 0,917"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z44000y6o2m8rzvqgsu","examType":"OGE","part":1,"taskNumber":2,"description":"Вычислите: 2 2/3 · 1 1/4","answer":"3.333","answerAlt":"[\"3⅓\",\"10/3\"]","hint1":"Переведи смешанные числа в неправильные дроби","partialSolution":null,"fullSolution":[{"step":"Переводим","detail":"8/3 · 5/4 = 40/12 = 10/3 ≈ 3,33"}],"difficulty":2,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z41000u6o2mm3jqrqnt","examType":"OGE","part":1,"taskNumber":3,"description":"Вычислите: √144","answer":"12","answerAlt":"[]","hint1":"Найди число, квадрат которого равен 144","partialSolution":null,"fullSolution":[{"step":"Извлекаем корень","detail":"√144 = 12, так как 12² = 144"}],"difficulty":1,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z42000v6o2mdd73u6gl","examType":"OGE","part":1,"taskNumber":3,"description":"Вычислите: 2³ · 2⁻¹","answer":"4","answerAlt":"[]","hint1":"При умножении степеней с одинаковым основанием показатели складываются","partialSolution":null,"fullSolution":[{"step":"Складываем показатели","detail":"2³ · 2⁻¹ = 2^(3-1) = 2² = 4"}],"difficulty":2,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z43000w6o2mc794r4nl","examType":"OGE","part":1,"taskNumber":3,"description":"Найдите значение: (√5)⁴","answer":"25","answerAlt":"[]","hint1":"(√a)² = a","partialSolution":null,"fullSolution":[{"step":"Упрощаем","detail":"(√5)⁴ = ((√5)²)² = 5² = 25"}],"difficulty":2,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z45000z6o2msubpapki","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: 3x − 7 = 14","answer":"7","answerAlt":"[\"x=7\"]","hint1":"Переноси числа в одну сторону, x — в другую","partialSolution":null,"fullSolution":[{"step":"Переносим","detail":"3x = 14 + 7 = 21"},{"step":"Делим","detail":"x = 21 / 3 = 7"}],"difficulty":1,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4600106o2mi09v5lao","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: 2(x + 3) = 10","answer":"2","answerAlt":"[\"x=2\"]","hint1":"Сначала раскрой скобки","partialSolution":null,"fullSolution":[{"step":"Раскрываем скобки","detail":"2x + 6 = 10"},{"step":"Решаем","detail":"2x = 4; x = 2"}],"difficulty":1,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4700116o2mg3b6nger","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: (x + 2) / 3 = (x − 1) / 2","answer":"8","answerAlt":"[\"x=8\"]","hint1":"Умножь обе части на НОК знаменателей","partialSolution":null,"fullSolution":[{"step":"Умножаем на 6","detail":"2(x+2) = 3(x-1)"},{"step":"Раскрываем","detail":"2x+4 = 3x-3"},{"step":"Решаем","detail":"x = 7... пересчёт: 2x+4=3x−3 → x=7"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4800126o2mfxz1v64f","examType":"OGE","part":1,"taskNumber":5,"description":"Разложите на множители: x² − 9","answer":"(x-3)(x+3)","answerAlt":"[\"(x+3)(x-3)\"]","hint1":"Разность квадратов: a² − b² = (a−b)(a+b)","partialSolution":null,"fullSolution":[{"step":"Применяем формулу","detail":"x² − 9 = x² − 3² = (x−3)(x+3)"}],"difficulty":2,"topics":[{"topic":{"name":"Алгебраические выражения"}}]},{"id":"cmpmy7z4800136o2mbmb0x4py","examType":"OGE","part":1,"taskNumber":5,"description":"Упростите: (a + b)² − 2ab","answer":"a²+b²","answerAlt":"[\"a^2+b^2\"]","hint1":"Раскрой квадрат суммы: (a+b)² = a² + 2ab + b²","partialSolution":null,"fullSolution":[{"step":"Раскрываем","detail":"a² + 2ab + b² − 2ab = a² + b²"}],"difficulty":2,"topics":[{"topic":{"name":"Алгебраические выражения"}}]},{"id":"cmpmy7z4900146o2mfmobhoqt","examType":"OGE","part":1,"taskNumber":6,"description":"При каком значении x функция f(x) = 2x − 4 обращается в ноль?","answer":"2","answerAlt":"[\"x=2\"]","hint1":"Приравняй f(x) к нулю и реши уравнение","partialSolution":null,"fullSolution":[{"step":"Приравниваем","detail":"2x − 4 = 0"},{"step":"Решаем","detail":"x = 2"}],"difficulty":1,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4a00156o2mdscnijuv","examType":"OGE","part":1,"taskNumber":6,"description":"Найдите значение функции f(x) = x² − 3x + 2 при x = 3","answer":"2","answerAlt":"[]","hint1":"Подставь x = 3 в формулу","partialSolution":null,"fullSolution":[{"step":"Подставляем","detail":"9 − 9 + 2 = 2"}],"difficulty":2,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4b00166o2mybf7666s","examType":"OGE","part":1,"taskNumber":6,"description":"Найдите наименьшее значение функции f(x) = x² − 4x + 7","answer":"3","answerAlt":"[]","hint1":"Вершина параболы: x₀ = −b/(2a)","partialSolution":null,"fullSolution":[{"step":"Вершина","detail":"x₀ = 4/2 = 2"},{"step":"Минимум","detail":"f(2) = 4 − 8 + 7 = 3"}],"difficulty":2,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4c00176o2mtu16mogx","examType":"OGE","part":1,"taskNumber":7,"description":"В урне 5 красных и 3 синих шара. Найдите вероятность вытащить красный.","answer":"0.625","answerAlt":"[\"5/8\"]","hint1":"P = благоприятные / все исходы","partialSolution":null,"fullSolution":[{"step":"Всего шаров","detail":"5 + 3 = 8"},{"step":"Вероятность","detail":"P = 5/8 = 0,625"}],"difficulty":1,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4d00186o2mbuaym6wt","examType":"OGE","part":1,"taskNumber":7,"description":"Найдите среднее арифметическое: 4, 7, 3, 8, 3","answer":"5","answerAlt":"[]","hint1":"Сумма делить на количество","partialSolution":null,"fullSolution":[{"step":"Сумма","detail":"4+7+3+8+3 = 25"},{"step":"Среднее","detail":"25 / 5 = 5"}],"difficulty":1,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4d00196o2m2240tqw0","examType":"OGE","part":1,"taskNumber":7,"description":"Монету подбросили 3 раза. Найдите вероятность выпадения хотя бы одного орла.","answer":"0.875","answerAlt":"[\"7/8\"]","hint1":"P(хотя бы один орёл) = 1 − P(ни одного)","partialSolution":null,"fullSolution":[{"step":"P(ни одного орла)","detail":"(1/2)³ = 1/8"},{"step":"Итого","detail":"1 − 1/8 = 7/8 = 0,875"}],"difficulty":2,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4e001a6o2mccojwrjs","examType":"OGE","part":1,"taskNumber":9,"description":"Два велосипедиста выехали навстречу. Скорости 60 и 80 км/ч, расстояние 280 км. Через сколько часов они встретятся?","answer":"2","answerAlt":"[\"2 ч\",\"2 часа\"]","hint1":"При движении навстречу скорости складываются","partialSolution":null,"fullSolution":[{"step":"Скорость сближения","detail":"60 + 80 = 140 км/ч"},{"step":"Время","detail":"280 : 140 = 2 часа"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4f001b6o2mbhwbvzzk","examType":"OGE","part":1,"taskNumber":9,"description":"Один рабочий выполнит заказ за 6 дней, другой — за 12 дней. За сколько дней они справятся вместе?","answer":"4","answerAlt":"[\"4 дня\"]","hint1":"Найди, какую часть заказа каждый выполняет в день","partialSolution":null,"fullSolution":[{"step":"1-й рабочий","detail":"1/6 в день"},{"step":"2-й рабочий","detail":"1/12 в день"},{"step":"Вместе","detail":"1/6 + 1/12 = 3/12 = 1/4; т.е. 4 дня"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4g001c6o2m7pwo676a","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: x² − 5x + 6 = 0","answer":"2; 3","answerAlt":"[\"x1=2, x2=3\",\"2 и 3\",\"x₁=2; x₂=3\"]","hint1":"D = b² − 4ac","partialSolution":null,"fullSolution":[{"step":"Дискриминант","detail":"D = 25 − 24 = 1"},{"step":"Корни","detail":"x₁ = (5+1)/2 = 3; x₂ = (5−1)/2 = 2"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4h001d6o2m0qhwb679","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: 2x² − 7x + 3 = 0","answer":"0.5; 3","answerAlt":"[\"x1=3, x2=0.5\",\"3 и 0,5\",\"3; 0,5\"]","hint1":"a=2, b=−7, c=3","partialSolution":null,"fullSolution":[{"step":"D","detail":"D = 49 − 24 = 25"},{"step":"Корни","detail":"x₁ = (7+5)/4 = 3; x₂ = (7−5)/4 = 0,5"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4h001e6o2m5wx5knby","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: 3x² − 12 = 0","answer":"2; -2","answerAlt":"[\"±2\",\"x=2 и x=-2\"]","hint1":"Когда b=0, уравнение решается без дискриминанта","partialSolution":null,"fullSolution":[{"step":"Делим на 3","detail":"x² − 4 = 0"},{"step":"Решаем","detail":"x = ±2"}],"difficulty":3,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4i001f6o2mx65jwi0d","examType":"OGE","part":2,"taskNumber":13,"description":"Решите систему: { 2x + y = 7; x − y = 2","answer":"x=3; y=1","answerAlt":"[\"(3;1)\",\"x=3, y=1\"]","hint1":"Сложи оба уравнения, чтобы исключить y","partialSolution":null,"fullSolution":[{"step":"Складываем","detail":"3x = 9; x = 3"},{"step":"Подставляем","detail":"6 + y = 7; y = 1"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4j001g6o2mb3cqt76c","examType":"OGE","part":2,"taskNumber":13,"description":"Решите систему: { 3x − 2y = 4; x + y = 3","answer":"x=2; y=1","answerAlt":"[\"(2;1)\",\"x=2, y=1\"]","hint1":"Выразить x из второго уравнения","partialSolution":null,"fullSolution":[{"step":"Из 2-го","detail":"x = 3 − y"},{"step":"Подставляем в 1-е","detail":"3(3−y) − 2y = 4 → y = 1"},{"step":"Итого","detail":"x = 2; y = 1"}],"difficulty":3,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4k001h6o2m2k4owyux","examType":"OGE","part":2,"taskNumber":14,"description":"Решите неравенство: 3x − 4 > 5","answer":"x > 3","answerAlt":"[\"(3;+∞)\"]","hint1":"Перенеси 4 вправо, потом раздели на 3","partialSolution":null,"fullSolution":[{"step":"Переносим","detail":"3x > 9"},{"step":"Делим","detail":"x > 3"}],"difficulty":2,"topics":[{"topic":{"name":"Неравенства"}}]},{"id":"cmpmy7z4k001i6o2mnlrbxoaj","examType":"OGE","part":2,"taskNumber":14,"description":"Решите неравенство: x² − 4x − 5 < 0","answer":"-1 < x < 5","answerAlt":"[\"(-1;5)\"]","hint1":"Найди корни уравнения x²−4x−5=0, затем определи знак","partialSolution":null,"fullSolution":[{"step":"Корни","detail":"x₁=−1, x₂=5"},{"step":"Параболаветвями вверх","detail":"Неравенство < 0 между корнями: −1 < x < 5"}],"difficulty":3,"topics":[{"topic":{"name":"Неравенства"}}]},{"id":"cmpmy7z4l001j6o2m7hfqhiic","examType":"OGE","part":2,"taskNumber":15,"description":"Поезд проехал 360 км за 4 часа. Найдите скорость поезда.","answer":"90","answerAlt":"[\"90 км/ч\"]","hint1":"v = s / t","partialSolution":null,"fullSolution":[{"step":"Применяем формулу","detail":"v = 360 / 4 = 90 км/ч"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4m001k6o2muvvy1emd","examType":"OGE","part":2,"taskNumber":15,"description":"Бассейн наполняется первой трубой за 6 ч, второй — за 4 ч. Третья опустошает за 12 ч. Через сколько часов наполнится?","answer":"4","answerAlt":"[\"4 ч\"]","hint1":"Производительности труб складываются/вычитаются","partialSolution":null,"fullSolution":[{"step":"Производительность","detail":"1/6 + 1/4 − 1/12 = 2/12 + 3/12 − 1/12 = 4/12 = 1/3"},{"step":"Время","detail":"1 : (1/3) = 3 ч"}],"difficulty":3,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4n001l6o2mfleepdgi","examType":"OGE","part":2,"taskNumber":16,"description":"Найдите площадь прямоугольника со сторонами 6 и 9 см.","answer":"54","answerAlt":"[\"54 см²\"]","hint1":"S = a · b","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = 6 · 9 = 54 см²"}],"difficulty":1,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4o001m6o2m87hzsesh","examType":"OGE","part":2,"taskNumber":16,"description":"Найдите периметр квадрата со стороной 7 см.","answer":"28","answerAlt":"[\"28 см\"]","hint1":"P = 4a","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"P = 4 · 7 = 28 см"}],"difficulty":1,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4o001n6o2m4llow2wu","examType":"OGE","part":2,"taskNumber":17,"description":"В прямоугольном треугольнике катеты равны 3 и 4. Найдите гипотенузу.","answer":"5","answerAlt":"[\"5 см\"]","hint1":"Теорема Пифагора: c² = a² + b²","partialSolution":null,"fullSolution":[{"step":"Пифагор","detail":"c² = 9 + 16 = 25; c = 5"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4p001o6o2md6ep4all","examType":"OGE","part":2,"taskNumber":17,"description":"Найдите площадь треугольника с основанием 10 и высотой 6.","answer":"30","answerAlt":"[\"30 см²\"]","hint1":"S = (1/2) · a · h","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = 0,5 · 10 · 6 = 30 см²"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4q001p6o2m69ku0pum","examType":"OGE","part":2,"taskNumber":18,"description":"Найдите длину окружности с радиусом 5 (ответ через π, числом).","answer":"31.4","answerAlt":"[\"10π\",\"≈31,4\"]","hint1":"C = 2πr","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"C = 2π · 5 ≈ 31,4"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4r001q6o2mccg39hhu","examType":"OGE","part":2,"taskNumber":18,"description":"Найдите площадь круга с радиусом 3 (ответ числом, округли до целых).","answer":"28","answerAlt":"[\"9π\",\"≈28\"]","hint1":"S = πr²","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = π · 9 ≈ 28,27 ≈ 28"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4r001r6o2moo1u52z3","examType":"OGE","part":2,"taskNumber":19,"description":"В трапеции основания 8 и 12, высота 5. Найдите площадь.","answer":"50","answerAlt":"[\"50 см²\"]","hint1":"S = (a + b)/2 · h","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = (8 + 12)/2 · 5 = 10 · 5 = 50 см²"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4s001s6o2m5o90d1b4","examType":"OGE","part":2,"taskNumber":19,"description":"Угол при основании равнобедренного треугольника 72°. Найдите угол при вершине.","answer":"36","answerAlt":"[\"36°\"]","hint1":"Сумма углов треугольника = 180°","partialSolution":null,"fullSolution":[{"step":"Два основания","detail":"2 · 72 = 144"},{"step":"Вершина","detail":"180 − 144 = 36°"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4t001t6o2m23tsedcr","examType":"OGE","part":2,"taskNumber":19,"description":"Найдите диагональ прямоугольника со сторонами 5 и 12.","answer":"13","answerAlt":"[\"13 см\"]","hint1":"Диагональ — гипотенуза прямоугольного треугольника","partialSolution":null,"fullSolution":[{"step":"Пифагор","detail":"d² = 25 + 144 = 169; d = 13"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]}];
 
 async function renderBank() {
+  S.bankTaskNum = 0;
   const u = S.user;
   const hasAccess = u.hasBankAccess || u.hasStudyAccess || u.demoMode;
 
@@ -1645,7 +1706,7 @@ function _buildTopicPills(tasks) {
 }
 
 function filterBank(el, topic) {
-  document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('#topic-filters .topic-pill').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   S.bankFilter = topic;
   renderBankTasks();
@@ -1658,6 +1719,8 @@ async function renderBankTasks() {
   const part1Grid  = document.getElementById('bank-part1-grid');
   const part2Grid  = document.getElementById('bank-part2-grid');
   const topicFilters = document.getElementById('topic-filters');
+
+  buildTaskNumPills(partF);
 
   if (partF === '2') {
     normalGrid.style.display = 'none';
@@ -2104,6 +2167,25 @@ function sendChat() {
 }
 
 // ===== PROFILE =====
+const EXAM_DISPLAY_NAMES = {
+  'ОГЭ':              'ОГЭ ПО МАТЕМАТИКЕ',
+  'oge':              'ОГЭ ПО МАТЕМАТИКЕ',
+  'oge-math':         'ОГЭ ПО МАТЕМАТИКЕ',
+  'math_oge':         'ОГЭ ПО МАТЕМАТИКЕ',
+  'ЕГЭ база':         'ЕГЭ БАЗОВЫЙ УРОВЕНЬ',
+  'ege_base':         'ЕГЭ БАЗОВЫЙ УРОВЕНЬ',
+  'ege-base':         'ЕГЭ БАЗОВЫЙ УРОВЕНЬ',
+  'ЕГЭ профиль':      'ЕГЭ ПРОФИЛЬНЫЙ УРОВЕНЬ',
+  'ege_prof':         'ЕГЭ ПРОФИЛЬНЫЙ УРОВЕНЬ',
+  'ege-prof':         'ЕГЭ ПРОФИЛЬНЫЙ УРОВЕНЬ',
+  'ЕГЭ Профиль':      'ЕГЭ ПРОФИЛЬНЫЙ УРОВЕНЬ',
+  'exam':             'ЭКЗАМЕН',
+};
+function examDisplayName(raw) {
+  if (!raw) return '—';
+  return EXAM_DISPLAY_NAMES[raw] || raw.toUpperCase();
+}
+
 function renderProfile() {
   const u = S.user;
   const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
@@ -2114,7 +2196,7 @@ function renderProfile() {
   document.getElementById('prof-level').innerHTML = LEVEL_ICONS[lvl.index] + ' ' + lvl.name;
   document.getElementById('prof-city').textContent = u.city||'—';
   document.getElementById('prof-school').textContent = u.school||'—';
-  document.getElementById('prof-exam').textContent = u.exam||'—';
+  document.getElementById('prof-exam').textContent = examDisplayName(u.exam);
   document.getElementById('prof-goal').textContent = (u.dailyGoal||3) + ' задач';
 
   const studySt = document.getElementById('prof-study-status');
@@ -2511,7 +2593,13 @@ function openOge2Task(num) {
     </div>`
   ).join('');
 
-  // Reset answer
+  // Reset answer check input
+  const oge2CheckInp = document.getElementById('oge2t-answer-input');
+  if (oge2CheckInp) { oge2CheckInp.value = ''; oge2CheckInp.disabled = false; }
+  const oge2CheckFb = document.getElementById('oge2t-answer-feedback');
+  if (oge2CheckFb) oge2CheckFb.innerHTML = '';
+
+  // Reset answer reveal
   document.getElementById('oge2-answer-box').style.display = 'none';
   document.getElementById('oge2-answer-btn').textContent = 'Показать ответ';
   document.getElementById('oge2-answer-text').textContent = task.answer;
@@ -2537,6 +2625,7 @@ function renderBankPart2() {
   const diffF = document.getElementById('bank-diff').value;
   let tasks = OGE_PART2_TASKS;
   if (diffF) tasks = tasks.filter(t => String(t.difficulty) === diffF);
+  if (S.bankTaskNum) tasks = tasks.filter(t => t.num === S.bankTaskNum);
   document.getElementById('bank-count').textContent = tasks.length;
   const banner = `<div style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:4px">
     <div>
@@ -2604,6 +2693,50 @@ function toggleOge2Answer() {
   btn.className = visible ? 'btn-o w-full' : 'btn-p w-full';
 }
 
+// ===== TASK LATEX MAP =====
+const TASK_LATEX_MAP = {
+  'cmpmy7z44000x6o2mpn1p6jzq': { preamble:'Упростите:', latex:'\\dfrac{3}{4} + \\dfrac{1}{6}' },
+  'cmpmy7z44000y6o2m8rzvqgsu': { preamble:'Вычислите:', latex:'2\\dfrac{2}{3} \\cdot 1\\dfrac{1}{4}' },
+  'cmpmy7z4700116o2mg3b6nger': { preamble:'Решите уравнение:', latex:'\\dfrac{x+2}{3} = \\dfrac{x-1}{2}' },
+  'cmpmy7z41000u6o2mm3jqrqnt': { preamble:'Вычислите:', latex:'\\sqrt{144}' },
+  'cmpmy7z42000v6o2mdd73u6gl': { preamble:'Вычислите:', latex:'2^3 \\cdot 2^{-1}' },
+  'cmpmy7z43000w6o2mc794r4nl': { preamble:'Найдите значение:', latex:'(\\sqrt{5})^4' },
+  'cmpmy7z4800126o2mfxz1v64f': { preamble:'Разложите на множители:', latex:'x^2 - 9' },
+  'cmpmy7z4800136o2mbmb0x4py': { preamble:'Упростите:', latex:'(a+b)^2 - 2ab' },
+  'cmpmy7z4900146o2mfmobhoqt': { preamble:'При каком x функция обращается в ноль?', latex:'f(x) = 2x - 4' },
+  'cmpmy7z4a00156o2mdscnijuv': { preamble:'Найдите f(3):', latex:'f(x) = x^2 - 3x + 2' },
+  'cmpmy7z4b00166o2mybf7666s': { preamble:'Найдите наименьшее значение:', latex:'f(x) = x^2 - 4x + 7' },
+  'cmpmy7z4c00176o2mtu16mogx': { preamble:'Найдите вероятность вытащить красный шар:', latex:'P = \\dfrac{\\text{благоприятные}}{\\text{всего}}' },
+  'cmpmy7z4d00196o2m2240tqw0': { preamble:'Монету подбросили 3 раза. P(хотя бы один орёл) = ?', latex:'P = 1 - \\left(\\dfrac{1}{2}\\right)^3' },
+};
+
+// ===== BANK TASK NUMBER FILTER =====
+function buildTaskNumPills(part) {
+  const bar = document.getElementById('bank-tasknum-bar');
+  const pills = document.getElementById('bank-tasknum-pills');
+  if (!bar || !pills) return;
+
+  let numbers;
+  if (part === '1') {
+    numbers = [...new Set(STATIC_TASKS.filter(t => t.part === 1).map(t => t.taskNumber))].sort((a,b)=>a-b);
+  } else if (part === '2') {
+    numbers = [...new Set(OGE_PART2_TASKS.map(t => t.num))].sort((a,b)=>a-b);
+  } else {
+    bar.style.display = 'none'; return;
+  }
+
+  bar.style.display = '';
+  const cur = S.bankTaskNum || 0;
+  pills.innerHTML = `<button class="topic-pill ${cur===0?'active':''}" onclick="filterBankByNum(0)">Все</button>` +
+    numbers.map(n => `<button class="topic-pill ${cur===n?'active':''}" onclick="filterBankByNum(${n})">Задание ${n}</button>`).join('');
+}
+
+function filterBankByNum(num) {
+  S.bankTaskNum = num;
+  buildTaskNumPills(document.getElementById('bank-part').value);
+  renderBankTasks();
+}
+
 // ===== ANSWER NORMALIZATION =====
 function normalize(s) {
   return String(s).trim().toLowerCase().replace(/\s/g,'').replace(/,/g,'.');
@@ -2634,6 +2767,7 @@ function renderBankPart1() {
   const diffF = document.getElementById('bank-diff').value;
   let tasks = STATIC_TASKS.filter(t => t.part === 1);
   if (diffF) tasks = tasks.filter(t => String(t.difficulty) === diffF);
+  if (S.bankTaskNum) tasks = tasks.filter(t => t.taskNumber === S.bankTaskNum);
   document.getElementById('bank-count').textContent = tasks.length;
 
   if (tasks.length === 0) {
@@ -2688,8 +2822,19 @@ function openBankTask(id) {
   const diffEl = document.getElementById('bt-diff');
   diffEl.innerHTML = `<span class="tag ${dBg} ${dTc} text-xs">${dLabel}</span>`;
 
-  document.getElementById('bt-preamble').textContent = t.description;
-  document.getElementById('bt-formula-box').style.display = 'none';
+  const latexData = TASK_LATEX_MAP[t.id];
+  const fbox = document.getElementById('bt-formula-box');
+  if (latexData) {
+    document.getElementById('bt-preamble').textContent = latexData.preamble || '';
+    fbox.style.display = 'block';
+    if (window.katex) {
+      try { katex.render(latexData.latex, fbox, {displayMode:true, throwOnError:false}); }
+      catch(e) { fbox.textContent = latexData.latex; }
+    } else { fbox.textContent = latexData.latex; }
+  } else {
+    document.getElementById('bt-preamble').textContent = t.description;
+    fbox.style.display = 'none';
+  }
   document.getElementById('bt-postamble').textContent = '';
 
   const inp = document.getElementById('bt-answer-input');
@@ -2721,8 +2866,14 @@ function openBankTask(id) {
   const fs = Array.isArray(t.fullSolution) ? t.fullSolution
     : (() => { try { return JSON.parse(t.fullSolution||'[]'); } catch { return []; } })();
   solBox.innerHTML = fs.map(s =>
-    `<div class="solution-box"><p class="font-bold text-green-800 text-sm mb-1">${s.step}</p><p class="text-sm text-gray-700">${s.detail}</p></div>`
+    `<div class="solution-box"><p class="font-bold text-green-800 text-sm mb-1">${s.step}</p><p class="text-sm text-gray-700 whitespace-pre-line">${s.detail}</p></div>`
   ).join('');
+
+  if (window.renderMathInElement) {
+    const KATEX_OPTS = {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}],throwOnError:false};
+    renderMathInElement(hintCont, KATEX_OPTS);
+    renderMathInElement(solBox, KATEX_OPTS);
+  }
 
   goScreen('s-bank-task');
   document.querySelector('.main-content').scrollTop = 0;
@@ -2784,6 +2935,258 @@ function toggleBankSolution() {
   btn.textContent = visible ? 'Показать решение' : 'Скрыть решение';
   btn.className = visible ? 'btn-p w-full' : 'btn-o w-full';
   if (!visible) document.querySelector('.main-content').scrollTop += 80;
+}
+
+// ===== DEMO VARIANTS =====
+// Part 1 task selections for each variant (indices into STATIC_TASKS part:1 subset)
+function buildDemoVariantTasks(p1Indices, p2Nums) {
+  const p1 = STATIC_TASKS.filter(t => t.part === 1);
+  const part1 = p1Indices.map(i => p1[i]).filter(Boolean).map((t, pos) => ({
+    demoNum: pos + 1,
+    demoText: t.description,
+    topicName: t.topics?.[0]?.topic?.name || '',
+    difficulty: t.difficulty,
+    answer: t.answer,
+    answerAlt: (() => { try { return JSON.parse(t.answerAlt||'[]'); } catch { return []; } })(),
+    hints: t.hint1 ? [t.hint1] : [],
+    fullSolution: Array.isArray(t.fullSolution) ? t.fullSolution
+      : (() => { try { return JSON.parse(t.fullSolution||'[]'); } catch { return []; } })(),
+    latex: TASK_LATEX_MAP[t.id]?.latex || null,
+    latexPreamble: TASK_LATEX_MAP[t.id]?.preamble || '',
+    partLabel: 'Часть 1',
+  }));
+  const part2 = (p2Nums || OGE_PART2_TASKS.map(t=>t.num))
+    .map(num => OGE_PART2_TASKS.find(t => t.num === num)).filter(Boolean)
+    .map((t, pos) => ({
+      demoNum: pos + 15,
+      demoText: t.fullText || t.shortText,
+      topicName: t.topic,
+      difficulty: t.difficulty,
+      answer: t.answer,
+      answerAlt: [],
+      hints: t.hints || [],
+      fullSolution: t.solution || [],
+      latex: null,
+      latexPreamble: '',
+      partLabel: 'Часть 2',
+      taskNumLabel: 'Задание ' + t.num,
+    }));
+  return [...part1, ...part2];
+}
+
+// Variant definitions: indices into the Part 1 subset of STATIC_TASKS (0-based)
+// STATIC_TASKS Part 1 order: 0-2 (task1), 3-7 (task2), 8-10 (task3), 11-13 (task4), 14-15 (task5), 16-18 (task6), 19-21 (task7), 22-23 (task9)
+const DEMO_VARIANT_DEFS = [
+  {
+    id: 1, title: 'Демовариант 1',
+    description: 'Арифметика · Дроби · Степени · Уравнения · Функции · Вероятность',
+    p1: [0, 3, 8, 11, 14, 16, 19, 22, 1, 4, 9, 12, 15, 17],
+  },
+  {
+    id: 2, title: 'Демовариант 2',
+    description: 'Вычисления · Проценты · Корни · Алгебра · Графики · Статистика',
+    p1: [1, 5, 9, 12, 15, 17, 20, 23, 2, 6, 10, 13, 15, 18],
+  },
+  {
+    id: 3, title: 'Демовариант 3',
+    description: 'Смешанные числа · Степени · Текстовые задачи · Алгебраические выражения',
+    p1: [2, 7, 10, 13, 14, 18, 21, 23, 0, 5, 8, 11, 16, 20],
+  },
+];
+
+let S_demoVariantId = null;
+let S_demoTasks = [];
+let S_demoAnswers = {};
+
+function renderDemoList() {
+  document.getElementById('demo-list-view').style.display = '';
+  document.getElementById('demo-exam-view').style.display = 'none';
+  document.getElementById('demo-results-view').style.display = 'none';
+
+  const container = document.getElementById('demo-variant-cards');
+  const grades = ['—','2','3','4','5'];
+  container.innerHTML = DEMO_VARIANT_DEFS.map(v => `
+    <div class="card cursor-pointer hover:shadow-lg transition-all" onclick="startDemoVariant(${v.id})" style="border:2px solid transparent;transition:border-color .2s" onmouseover="this.style.borderColor='#0D3B66'" onmouseout="this.style.borderColor='transparent'">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center mb-4" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8)">
+        <span class="font-black text-white text-xl">${v.id}</span>
+      </div>
+      <h3 class="font-black text-gray-900 text-lg mb-2">${v.title}</h3>
+      <p class="text-xs text-gray-500 mb-4 leading-relaxed">${v.description}</p>
+      <div class="flex gap-2 flex-wrap mb-4">
+        <span class="tag bg-blue-50 text-blue-700 text-xs">14 заданий ч.1</span>
+        <span class="tag bg-purple-50 text-purple-700 text-xs">6 заданий ч.2</span>
+      </div>
+      <button class="btn-p w-full text-sm">Начать →</button>
+    </div>
+  `).join('');
+}
+
+function startDemoVariant(varId) {
+  const def = DEMO_VARIANT_DEFS.find(v => v.id === varId);
+  if (!def) return;
+  S_demoVariantId = varId;
+  S_demoAnswers = {};
+
+  const savedKey = 'fibi_demo_v' + varId + '_answers';
+  try { S_demoAnswers = JSON.parse(localStorage.getItem(savedKey)||'{}'); } catch {}
+
+  S_demoTasks = buildDemoVariantTasks(def.p1);
+
+  document.getElementById('demo-list-view').style.display = 'none';
+  document.getElementById('demo-results-view').style.display = 'none';
+  document.getElementById('demo-exam-view').style.display = '';
+
+  document.getElementById('demo-exam-header').innerHTML = `
+    <div class="flex items-center justify-between flex-wrap gap-2">
+      <div>
+        <h2 class="font-black text-gray-900 text-lg">${def.title}</h2>
+        <p class="text-sm text-gray-500 mt-0.5">20 заданий · Без подсказок · Подсказки откроются после проверки</p>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <span class="tag bg-blue-50 text-blue-700">Ч.1: задания 1–14</span>
+        <span class="tag bg-purple-50 text-purple-700">Ч.2: задания 15–20</span>
+      </div>
+    </div>
+  `;
+
+  const container = document.getElementById('demo-exam-tasks');
+  container.innerHTML = S_demoTasks.map((t, i) => {
+    const dBg = t.difficulty===1?'bg-green-100':t.difficulty===2?'bg-yellow-100':'bg-red-100';
+    const dTc = t.difficulty===1?'text-green-700':t.difficulty===2?'text-yellow-700':'text-red-700';
+    const dLbl = t.difficulty===1?'Лёгкий':t.difficulty===2?'Средний':'Сложный';
+    const savedVal = S_demoAnswers[i] || '';
+    return `<div class="card" id="demo-task-card-${i}">
+      <div class="flex items-center gap-2 mb-3 flex-wrap">
+        <div class="w-8 h-8 rounded-lg flex items-center justify-center font-black text-sm text-white flex-shrink-0" style="background:#0D3B66;min-width:32px">${t.demoNum}</div>
+        ${t.taskNumLabel ? `<span class="font-bold text-sm text-gray-700">${t.taskNumLabel}</span>` : `<span class="font-bold text-sm text-gray-700">Задание ${t.demoNum}</span>`}
+        ${t.topicName ? `<span class="tag bg-blue-50 text-blue-700 text-xs">${t.topicName}</span>` : ''}
+        <span class="tag ${dBg} ${dTc} text-xs">${dLbl}</span>
+        <span class="tag bg-gray-100 text-gray-500 text-xs">${t.partLabel}</span>
+      </div>
+      <p class="text-sm text-gray-800 mb-3 leading-relaxed whitespace-pre-line">${t.demoText}</p>
+      ${t.latex ? `<div id="demo-formula-${i}" class="exam-problem-box mb-3"></div>` : ''}
+      <div class="answer-input-wrap">
+        <input type="text" id="demo-ans-${i}" class="answer-field" placeholder="Введи ответ..." value="${savedVal.replace(/"/g,'&quot;')}"
+          oninput="demoSaveAnswer(${i},this.value)"
+          onkeydown="if(event.key==='Enter'){var nx=document.getElementById('demo-ans-${i+1}');if(nx)nx.focus();}">
+        <div id="demo-ans-dot-${i}" class="w-2.5 h-2.5 rounded-full bg-gray-200 flex-shrink-0" title="Не заполнено"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  S_demoTasks.forEach((t, i) => {
+    if (t.latex && window.katex) {
+      const el = document.getElementById('demo-formula-' + i);
+      if (el) try { katex.render(t.latex, el, {displayMode:true, throwOnError:false}); } catch(e){}
+    }
+    if (S_demoAnswers[i]) {
+      const dot = document.getElementById('demo-ans-dot-' + i);
+      if (dot) { dot.className = 'w-2.5 h-2.5 rounded-full bg-green-400 flex-shrink-0'; }
+    }
+  });
+
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function demoSaveAnswer(idx, val) {
+  S_demoAnswers[idx] = val;
+  const dot = document.getElementById('demo-ans-dot-' + idx);
+  if (dot) dot.className = 'w-2.5 h-2.5 rounded-full flex-shrink-0 ' + (val.trim() ? 'bg-green-400' : 'bg-gray-200');
+  try {
+    localStorage.setItem('fibi_demo_v' + S_demoVariantId + '_answers', JSON.stringify(S_demoAnswers));
+  } catch {}
+}
+
+function checkDemoAll() {
+  const unanswered = S_demoTasks.filter((t, i) => !S_demoAnswers[i]?.trim()).map((t, i) => t.demoNum);
+  if (unanswered.length > 0 && !confirm(`Ты не ответил на задания: ${unanswered.join(', ')}.\nВсё равно проверить?`)) return;
+  showDemoResults();
+}
+
+function showDemoResults() {
+  document.getElementById('demo-list-view').style.display = 'none';
+  document.getElementById('demo-exam-view').style.display = 'none';
+  document.getElementById('demo-results-view').style.display = '';
+
+  let correct = 0;
+  const results = S_demoTasks.map((t, i) => {
+    const userAns = normalize(S_demoAnswers[i] || '');
+    const isOk = [t.answer, ...t.answerAlt].some(a => normalize(String(a)) === userAns);
+    if (isOk) correct++;
+    return { t, i, isOk, userAns };
+  });
+
+  const score = correct;
+  const total = S_demoTasks.length;
+  const grade = score >= 18 ? 5 : score >= 14 ? 4 : score >= 8 ? 3 : 2;
+  const gradeColors = {5:'bg-green-100 text-green-700', 4:'bg-blue-100 text-blue-700', 3:'bg-yellow-100 text-yellow-700', 2:'bg-red-100 text-red-700'};
+
+  const def = DEMO_VARIANT_DEFS.find(v => v.id === S_demoVariantId);
+  document.getElementById('demo-score-card').innerHTML = `
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4 ${gradeColors[grade]}" style="font-size:2.5rem;font-weight:900">${grade}</div>
+      <h2 class="font-black text-gray-900 text-2xl mb-1">${score} из ${total}</h2>
+      <p class="text-gray-500 text-sm mb-4">${def?.title || 'Демовариант'}</p>
+      <div class="flex gap-3 justify-center flex-wrap">
+        <span class="tag bg-green-100 text-green-700">${correct} верно</span>
+        <span class="tag bg-red-100 text-red-700">${total - correct} ошибок</span>
+        <span class="tag ${gradeColors[grade]}">Оценка ${grade}</span>
+      </div>
+      <p class="text-xs text-gray-400 mt-3">ОГЭ: ≥8 = «3», ≥14 = «4», ≥18 = «5»</p>
+    </div>
+  `;
+
+  const container = document.getElementById('demo-results-tasks');
+  container.innerHTML = results.map(({t, i, isOk, userAns}) => {
+    const solSteps = t.fullSolution.map(s =>
+      `<div class="solution-box mt-2"><p class="font-bold text-green-800 text-xs mb-0.5">${s.step}</p><p class="text-xs text-gray-700 whitespace-pre-line">${s.detail}</p></div>`
+    ).join('');
+    const hintsHtml = t.hints.map((h, hi) =>
+      `<div class="hint-box mt-2"><p class="font-bold text-amber-700 text-xs mb-0.5">Подсказка ${hi+1}</p><p class="text-xs text-amber-900">${h}</p></div>`
+    ).join('');
+    if (isOk) {
+      return `<div class="card" style="border:1.5px solid #86efac">
+        <div class="flex items-center gap-2">
+          <div class="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><svg width="12" height="12" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <span class="font-bold text-sm text-gray-900">${t.taskNumLabel || 'Задание ' + t.demoNum}</span>
+          <span class="tag bg-green-100 text-green-700 text-xs ml-auto">Верно</span>
+        </div>
+        <p class="text-xs text-gray-500 mt-1.5">${t.demoText.substring(0,80)}${t.demoText.length>80?'…':''}</p>
+      </div>`;
+    } else {
+      return `<div class="card" style="border:1.5px solid #fca5a5">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-6 h-6 rounded-lg bg-red-100 flex items-center justify-center flex-shrink-0"><svg width="12" height="12" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></div>
+          <span class="font-bold text-sm text-gray-900">${t.taskNumLabel || 'Задание ' + t.demoNum}</span>
+          <span class="tag bg-red-100 text-red-700 text-xs ml-auto">Ошибка</span>
+        </div>
+        <p class="text-xs text-gray-600 mb-2 leading-relaxed">${t.demoText.substring(0,120)}${t.demoText.length>120?'…':''}</p>
+        <div class="flex gap-4 text-xs mb-3 flex-wrap">
+          <span><b class="text-red-600">Твой ответ:</b> ${userAns||'—'}</span>
+          <span><b class="text-green-600">Правильно:</b> ${t.answer}</span>
+        </div>
+        <details class="group">
+          <summary class="cursor-pointer text-xs font-bold text-yale hover:opacity-75 list-none flex items-center gap-1">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="group-open:rotate-90 transition-transform"><polyline points="9 18 15 12 9 6"/></svg>
+            Разбор задания
+          </summary>
+          <div class="mt-2">${hintsHtml}${solSteps}</div>
+        </details>
+      </div>`;
+    }
+  }).join('');
+
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function retryDemo() {
+  S_demoAnswers = {};
+  try { localStorage.removeItem('fibi_demo_v' + S_demoVariantId + '_answers'); } catch {}
+  startDemoVariant(S_demoVariantId);
+}
+
+function backToDemoList() {
+  renderDemoList();
 }
 
 </script>
