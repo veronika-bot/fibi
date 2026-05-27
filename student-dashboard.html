@@ -460,12 +460,12 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         <div class="bg-gray-50 rounded-xl p-4 mb-4 text-sm text-gray-800 leading-relaxed" id="tm-text"></div>
 
         <div id="tm-hint-box" class="hint-box" style="display:none">
-          <p class="font-bold text-amber-700 text-sm mb-1">💡 Подсказка</p>
+          <p class="font-bold text-amber-700 text-sm mb-1 flex items-center gap-1"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg> Подсказка</p>
           <p class="text-sm text-amber-800" id="tm-hint"></p>
         </div>
 
         <div id="tm-solution-box" class="solution-box" style="display:none">
-          <p class="font-bold text-green-700 text-sm mb-2">✅ Решение</p>
+          <p class="font-bold text-green-700 text-sm mb-2 flex items-center gap-1"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Решение</p>
           <div id="tm-solution" class="text-sm text-green-800 space-y-1"></div>
         </div>
 
@@ -728,6 +728,70 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
   </div>
 </div>
 
+<!-- ==================== MODAL: EDIT PROFILE ==================== -->
+<div class="modal-overlay" id="edit-profile-modal">
+  <div class="modal" style="max-width:480px;width:100%">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-black text-xl text-gray-900">Редактировать профиль</h3>
+      <button onclick="closeModal('edit-profile-modal')" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+        <svg width="14" height="14" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Имя</label>
+          <input id="ep-name" type="text" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100" />
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Фамилия</label>
+          <input id="ep-lastName" type="text" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Город</label>
+        <div style="position:relative">
+          <input id="ep-city" type="text" autocomplete="off" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100"
+            oninput="epCitySuggest(this.value)" onfocus="epCitySuggest(this.value)"
+            onblur="setTimeout(()=>document.getElementById('ep-city-list').style.display='none',160)" />
+          <div id="ep-city-list" style="display:none;position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid #e5e7eb;border-radius:12px;z-index:200;max-height:180px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,.1)"></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Школа</label>
+        <input id="ep-school" type="text" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100" />
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Экзамен</label>
+        <select id="ep-exam" class="w-full rounded-xl border border-gray-200 px-3 py-2.5 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100 bg-white">
+          <option value="">Не выбран</option>
+          <option value="ОГЭ">ОГЭ</option>
+          <option value="ЕГЭ база">ЕГЭ база</option>
+          <option value="ЕГЭ профиль">ЕГЭ профиль</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Цель в день (заданий)</label>
+        <div class="flex gap-2">
+          <button type="button" onclick="epGoalStep(-1)" class="w-10 h-10 rounded-xl border border-gray-200 font-bold text-lg flex items-center justify-center hover:bg-gray-50 transition-colors">−</button>
+          <input id="ep-goal" type="number" min="1" max="30" class="flex-1 rounded-xl border border-gray-200 px-3 py-2.5 text-sm text-center focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100" />
+          <button type="button" onclick="epGoalStep(1)" class="w-10 h-10 rounded-xl border border-gray-200 font-bold text-lg flex items-center justify-center hover:bg-gray-50 transition-colors">+</button>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-2">
+        <button class="btn-p flex-1" onclick="saveProfile()">Сохранить</button>
+        <button class="btn-o flex-1" onclick="closeModal('edit-profile-modal')">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script src="tasks.js"></script>
 <script>
 // ===== STATE =====
@@ -960,9 +1024,9 @@ function renderHome() {
   document.getElementById('home-goal-done').textContent = done + ' решено';
   document.getElementById('home-goal-target').textContent = 'цель: ' + goal;
 
-  document.getElementById('b2-tag-home').textContent = u.hasStudyAccess ? '✅ Активно' : 'Платно';
+  document.getElementById('b2-tag-home').textContent = u.hasStudyAccess ? 'Активно' : 'Платно';
   document.getElementById('b2-tag-home').className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700');
-  document.getElementById('b3-tag-home').textContent = u.hasBankAccess ? '✅ Активно' : 'Платно';
+  document.getElementById('b3-tag-home').textContent = u.hasBankAccess ? 'Активно' : 'Платно';
   document.getElementById('b3-tag-home').className = 'tag ' + (u.hasBankAccess ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700');
 
   renderQuickTask();
@@ -1012,13 +1076,13 @@ async function checkQT(id) {
     });
     const d = await r.json();
     if (d.isCorrect) {
-      fb.textContent='✅ Верно!'; fb.style.color='#22c55e';
+      fb.innerHTML='<svg style="display:inline;vertical-align:-2px" width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Верно!'; fb.style.color='#22c55e';
       addXP(d.xpEarned||10); S.todayDone++; S.user.solved=(S.user.solved||0)+1; S.user.correct=(S.user.correct||0)+1; saveUser();
     } else {
-      fb.textContent='❌ Неверно, попробуй ещё'; fb.style.color='#ef4444';
+      fb.innerHTML='<svg style="display:inline;vertical-align:-2px" width="14" height="14" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg> Неверно, попробуй ещё'; fb.style.color='#ef4444';
     }
   } catch {
-    fb.textContent='❌ Нет связи с банком'; fb.style.color='#ef4444';
+    fb.innerHTML='<svg style="display:inline;vertical-align:-2px" width="14" height="14" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg> Нет связи с банком'; fb.style.color='#ef4444';
   }
 }
 
@@ -1449,7 +1513,7 @@ async function submitAnswer() {
     markTaskSolved(t.id, true);
 
   } else if (data.attemptNum < 3) {
-    document.getElementById('tm-feedback').textContent = '❌ Неверно. ' + (data.hint ? 'Посмотри подсказку.' : 'Попробуй ещё раз.');
+    document.getElementById('tm-feedback').innerHTML = '<svg style="display:inline;vertical-align:-2px;margin-right:4px" width="14" height="14" fill="none" stroke="#ef4444" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>Неверно. ' + (data.hint ? 'Посмотри подсказку.' : 'Попробуй ещё раз.');
     document.getElementById('tm-feedback').style.color = '#ef4444';
     if (data.hint) {
       document.getElementById('tm-hint').textContent = data.hint;
@@ -1481,11 +1545,11 @@ function showTaskDone(correct, xpGain) {
   const msg = document.getElementById('tm-result-msg');
   if (correct) {
     msg.className = 'rounded-xl p-4 text-center font-bold bg-green-50 text-green-700';
-    msg.innerHTML = `✅ Верно! <span class="font-black">+${xpGain} XP</span>`;
+    msg.innerHTML = `<svg style="display:inline;vertical-align:-3px;margin-right:6px" width="18" height="18" fill="none" stroke="#15803d" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg>Верно! <span class="font-black">+${xpGain} XP</span>`;
     addXP(xpGain);
   } else {
     msg.className = 'rounded-xl p-4 text-center font-bold bg-red-50 text-red-700';
-    msg.innerHTML = '❌ Задание помечено как ошибка. Разбери решение выше.';
+    msg.innerHTML = '<svg style="display:inline;vertical-align:-3px;margin-right:6px" width="18" height="18" fill="none" stroke="#dc2626" stroke-width="2.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>Задание помечено как ошибка. Разбери решение выше.';
   }
 }
 
@@ -1704,10 +1768,12 @@ function renderProfile() {
   document.getElementById('prof-goal').textContent = (u.dailyGoal||3) + ' задач/день';
 
   const studySt = document.getElementById('prof-study-status');
-  studySt.textContent = u.hasStudyAccess ? '✅ Активно' : 'Не активно';
+  studySt.textContent = u.hasStudyAccess ? 'Активно' : 'Не активно';
+  studySt.className = u.hasStudyAccess ? 'tag bg-green-100 text-green-700' : 'tag bg-gray-200 text-gray-600';
   studySt.className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
   const bankSt = document.getElementById('prof-bank-status');
-  bankSt.textContent = (u.hasBankAccess||u.hasStudyAccess) ? '✅ Активно' : 'Не активно';
+  bankSt.textContent = (u.hasBankAccess||u.hasStudyAccess) ? 'Активно' : 'Не активно';
+  bankSt.className = (u.hasBankAccess||u.hasStudyAccess) ? 'tag bg-green-100 text-green-700' : 'tag bg-gray-200 text-gray-600';
   bankSt.className = 'tag ' + ((u.hasBankAccess||u.hasStudyAccess) ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
 
   const hobbies = document.getElementById('prof-hobbies');
@@ -1716,7 +1782,48 @@ function renderProfile() {
 }
 
 function editProfile() {
-  alert('Редактирование профиля будет доступно в следующем обновлении!');
+  const u = S.user;
+  document.getElementById('ep-name').value     = u.name     || '';
+  document.getElementById('ep-lastName').value = u.lastName || '';
+  document.getElementById('ep-city').value     = u.city     || '';
+  document.getElementById('ep-school').value   = u.school   || '';
+  document.getElementById('ep-exam').value     = u.exam     || '';
+  document.getElementById('ep-goal').value     = u.dailyGoal || 3;
+  openModal('edit-profile-modal');
+}
+
+function epGoalStep(d) {
+  const el = document.getElementById('ep-goal');
+  el.value = Math.max(1, Math.min(30, Number(el.value||3) + d));
+}
+
+function epCitySuggest(val) {
+  const list = document.getElementById('ep-city-list');
+  const q = val.trim().toLowerCase();
+  const hits = q ? RUSSIAN_CITIES.filter(c => c.toLowerCase().includes(q)).slice(0,8)
+                 : RUSSIAN_CITIES.slice(0,8);
+  if (!hits.length) { list.style.display='none'; return; }
+  list.style.display = 'block';
+  list.innerHTML = hits.map(c => {
+    const bold = q ? c.replace(new RegExp('('+q+')','gi'),'<b>$1</b>') : c;
+    return `<div style="padding:8px 14px;cursor:pointer;font-size:14px;transition:background .15s"
+      onmousedown="document.getElementById('ep-city').value='${c}';document.getElementById('ep-city-list').style.display='none'"
+      onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background=''">${bold}</div>`;
+  }).join('');
+}
+
+function saveProfile() {
+  const u = S.user;
+  u.name      = document.getElementById('ep-name').value.trim()     || u.name;
+  u.lastName  = document.getElementById('ep-lastName').value.trim() || '';
+  u.city      = document.getElementById('ep-city').value.trim();
+  u.school    = document.getElementById('ep-school').value.trim();
+  u.exam      = document.getElementById('ep-exam').value;
+  u.dailyGoal = Math.max(1, Number(document.getElementById('ep-goal').value)||3);
+  saveUser();
+  closeModal('edit-profile-modal');
+  renderSidebar();
+  renderProfile();
 }
 
 // ===== GAMIFICATION =====
