@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Демовариант ОГЭ · Математика — ФИБИ</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script>
+tailwind.config={theme:{extend:{colors:{yale:'#0D3B66'},fontFamily:{sans:['Plus Jakarta Sans','sans-serif']}}}}
+</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box;margin:0;padding:0}
+body{background:#eef1f7;color:#1e293b}
+
+.view{display:none}
+.view.active{display:block}
+
+/* ═══ CARDS ═══ */
+.exam-card{background:#fff;border-radius:24px;padding:44px 52px;box-shadow:0 4px 32px rgba(0,0,0,.07),0 1px 4px rgba(0,0,0,.04);text-align:center;margin-bottom:16px}
+.task-card{background:white;border:2px solid #e5e7eb;border-radius:20px;padding:24px 28px;transition:border-color .2s}
+.formula-showcase{background:#f7f8ff;border:2px solid #dde3ff;border-radius:18px;padding:24px 20px;margin:16px auto 8px;overflow-x:auto;display:block;width:100%}
+.formula-showcase .katex-display{margin:0!important}
+
+/* ═══ SUPPORT CARDS ═══ */
+.support-card{background:white;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,.05)}
+
+/* ═══ BUTTONS ═══ */
+.btn-p{background:#0D3B66;color:white;border:none;border-radius:12px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn-p:hover:not(:disabled){background:#0a2f52;transform:translateY(-1px)}
+.btn-p:disabled{opacity:.4;cursor:default;transform:none}
+.btn-o{background:transparent;color:#0D3B66;border:2px solid #0D3B66;border-radius:12px;padding:9px 20px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn-o:hover:not(:disabled){background:#0D3B66;color:white}
+.btn-o:disabled{opacity:.4;cursor:default}
+.btn-green{background:#16a34a;color:white;border:none;border-radius:12px;padding:11px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.btn-green:hover{background:#15803d;transform:translateY(-1px)}
+
+.tag{display:inline-block;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+
+/* ═══ INPUT ═══ */
+.answer-input{width:100%;border:2px solid #e2e8f0;border-radius:12px;padding:12px 16px;font-size:15px;font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;background:#fafbfd;margin-top:12px}
+.answer-input:focus{border-color:#0D3B66}
+.answer-input.answered{border-color:#86efac;background:#f0fdf4}
+
+/* ═══ ANSWERED DOT ═══ */
+.answered-dot{width:10px;height:10px;border-radius:50%;background:#22c55e;display:inline-block;flex-shrink:0}
+.unanswered-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;display:inline-block;flex-shrink:0}
+
+/* ═══ PROGRESS ═══ */
+.progress-track{height:7px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#0D3B66,#3b82f6);border-radius:99px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+
+/* ═══ RESULTS ═══ */
+.result-correct{border:2px solid #86efac;background:#f0fdf4;border-radius:16px;padding:16px 20px;margin-bottom:10px}
+.result-wrong{border:2px solid #fca5a5;background:#fff1f2;border-radius:16px;padding:16px 20px;margin-bottom:10px}
+.accordion-body{display:none;margin-top:12px;border-top:1px solid rgba(0,0,0,.07);padding-top:12px}
+.accordion-body.open{display:block}
+.sol-step{border-left:3px solid #22c55e;padding:10px 14px;border-radius:0 10px 10px 0;background:#f0fdf4;margin-bottom:8px;animation:fadeIn .25s ease}
+.sol-label{font-weight:700;color:#15803d;font-size:11px;margin-bottom:4px;text-transform:uppercase;letter-spacing:.7px}
+.sol-body{color:#166534;font-size:14px;line-height:1.8}
+.sol-body .katex{font-size:1em}
+.hint-block{background:#fffbeb;border:1.5px solid #fbbf24;border-radius:12px;padding:14px 18px;margin-bottom:8px}
+.hint-label{font-weight:700;color:#92400e;font-size:12px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.hint-text{color:#78350f;font-size:13px;line-height:1.75}
+
+/* ═══ STICKY SUBMIT ═══ */
+.sticky-footer{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.97);backdrop-filter:blur(10px);border-top:1px solid #e5e7eb;padding:14px 20px;z-index:40;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+
+/* ═══ BADGE ═══ */
+.score-badge{width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.12);margin:0 auto 20px}
+.grade-badge{display:inline-block;padding:6px 22px;border-radius:24px;font-size:24px;font-weight:900;margin-bottom:20px}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:640px){
+  .exam-card{padding:24px 16px}
+  .task-card{padding:18px 16px}
+  .formula-showcase{font-size:1.1rem;padding:16px 10px}
+  .btn-p,.btn-o,.btn-green{padding:10px 14px;font-size:13px}
+}
+</style>
+</head>
+<body>
+
+<!-- STICKY HEADER -->
+<header style="background:#0D3B66;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px rgba(0,0,0,.2)">
+  <div style="max-width:860px;margin:0 auto;padding:0 20px;height:58px;display:flex;align-items:center;justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:12px">
+      <a href="student-dashboard.html" style="display:flex;align-items:center;gap:9px;text-decoration:none">
+        <img src="Иконки.png" alt="ФИБИ" style="width:32px;height:32px;border-radius:8px;object-fit:cover;background:#f4f6fb">
+        <span style="color:white;font-weight:900;font-size:17px">ФИБИ</span>
+      </a>
+      <span style="color:rgba(255,255,255,.3);font-size:16px">·</span>
+      <span style="color:rgba(255,255,255,.85);font-size:14px;font-weight:700">Демовариант ОГЭ</span>
+    </div>
+    <a href="student-dashboard.html" style="color:rgba(255,255,255,.6);font-size:13px;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px" onmouseover="this.style.color='white'" onmouseout="this.style.color='rgba(255,255,255,.6)'">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Кабинет
+    </a>
+  </div>
+</header>
+
+<div style="max-width:860px;margin:0 auto;padding:28px 20px 100px" id="main-container">
+
+<!-- ═══════════════════════════════════════════════
+     ЭКРАН 1: INTRO
+═══════════════════════════════════════════════ -->
+<div class="view active" id="view-intro">
+
+  <!-- Hero -->
+  <div style="background:linear-gradient(135deg,#0D3B66 0%,#1a5fa8 55%,#2563eb 100%);border-radius:24px;padding:36px 40px;margin-bottom:24px;overflow:hidden;position:relative">
+    <div style="position:absolute;right:-30px;top:-50px;width:240px;height:240px;background:rgba(255,255,255,.05);border-radius:50%"></div>
+    <div style="position:absolute;left:-20px;bottom:-60px;width:180px;height:180px;background:rgba(255,255,255,.04);border-radius:50%"></div>
+    <div style="position:relative">
+      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+        <span class="tag" style="background:rgba(255,255,255,.18);color:white;font-size:11px">ФИБИ · Тренажёр</span>
+        <span class="tag" style="background:rgba(255,255,255,.18);color:white;font-size:11px">Формат ОГЭ</span>
+      </div>
+      <h1 style="color:white;font-size:clamp(22px,6vw,36px);font-weight:900;margin-bottom:10px;line-height:1.2">Демовариант ОГЭ<br>по математике</h1>
+      <p style="color:rgba(255,255,255,.8);font-size:15px;line-height:1.7;max-width:500px;margin-bottom:28px">Полный вариант из 20 заданий: арифметика, алгебра, геометрия, вероятность. Без подсказок в процессе — как на настоящем экзамене.</p>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:32px">
+        <div style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:13px;font-weight:600">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ~40–50 минут
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:13px;font-weight:600">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          20 заданий
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.85);font-size:13px;font-weight:600">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21l1.18-6.86L2 9.27l6.91-1.01L12 2z"/></svg>
+          Пошаговые разборы
+        </div>
+      </div>
+      <button onclick="startExam()" class="btn-p" style="font-size:16px;padding:14px 36px;border-radius:14px;background:white;color:#0D3B66;font-weight:900">
+        Начать
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Info cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:24px">
+    <!-- Part 1 -->
+    <div class="support-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:#dbeafe;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#1d4ed8" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#111827">Часть 1</div>
+          <div style="font-size:12px;color:#6b7280">Задания № 1–14</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#374151;line-height:1.65">Краткий ответ — числа, выражения, уравнения. Арифметика, алгебра, геометрия, статистика, вероятность.</p>
+    </div>
+    <!-- Part 2 -->
+    <div class="support-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:#fef3c7;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#111827">Часть 2</div>
+          <div style="font-size:12px;color:#6b7280">Задания № 15–20</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#374151;line-height:1.65">Задания с развёрнутым решением. Уравнения, геометрия, задачи с параметром, проценты.</p>
+    </div>
+    <!-- Rules -->
+    <div class="support-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:40px;height:40px;background:#f0fdf4;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:800;font-size:15px;color:#111827">Правила</div>
+          <div style="font-size:12px;color:#6b7280">Как работает демовариант</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#374151;line-height:1.65">Ответ проверяется после нажатия «Проверить». Подсказки доступны только в разборе. Ответы сохраняются автоматически.</p>
+    </div>
+  </div>
+
+  <!-- Grade scale -->
+  <div class="support-card" style="margin-bottom:24px">
+    <h3 style="font-weight:800;font-size:15px;color:#111827;margin-bottom:14px;display:flex;align-items:center;gap:8px">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21l1.18-6.86L2 9.27l6.91-1.01L12 2z"/></svg>
+      Шкала оценок ОГЭ
+    </h3>
+    <div style="display:flex;flex-wrap:wrap;gap:10px">
+      <div style="flex:1;min-width:100px;background:#dcfce7;border-radius:12px;padding:12px 16px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#15803d">5</div>
+        <div style="font-size:12px;color:#166534;font-weight:600">14–20 баллов</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#dbeafe;border-radius:12px;padding:12px 16px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#1d4ed8">4</div>
+        <div style="font-size:12px;color:#1e40af;font-weight:600">10–13 баллов</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#fef9c3;border-radius:12px;padding:12px 16px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#92400e">3</div>
+        <div style="font-size:12px;color:#78350f;font-weight:600">7–9 баллов</div>
+      </div>
+      <div style="flex:1;min-width:100px;background:#fee2e2;border-radius:12px;padding:12px 16px;text-align:center">
+        <div style="font-size:22px;font-weight:900;color:#b91c1c">2</div>
+        <div style="font-size:12px;color:#991b1b;font-weight:600">0–6 баллов</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center">
+    <a href="student-dashboard.html" style="color:#6b7280;font-size:13px;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px" onmouseover="this.style.color='#0D3B66'" onmouseout="this.style.color='#6b7280'">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Вернуться в кабинет
+    </a>
+  </div>
+
+</div><!-- /view-intro -->
+
+
+<!-- ═══════════════════════════════════════════════
+     ЭКРАН 2: EXAM
+═══════════════════════════════════════════════ -->
+<div class="view" id="view-exam">
+
+  <!-- Progress header -->
+  <div class="support-card" style="margin-bottom:20px;padding:16px 22px;position:sticky;top:66px;z-index:30">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div style="font-weight:800;font-size:15px;color:#111827;display:flex;align-items:center;gap:8px">
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Демовариант ОГЭ · Математика
+      </div>
+      <span id="exam-progress-label" style="font-size:13px;color:#6b7280;font-weight:600;background:#f3f4f6;padding:4px 12px;border-radius:20px">0 из 20 отвечено</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="exam-progress-bar" style="width:0%"></div></div>
+  </div>
+
+  <!-- Part 1 header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:#dbeafe;border-radius:99px"></div>
+    <span style="font-size:12px;font-weight:800;color:#1d4ed8;letter-spacing:1.5px;text-transform:uppercase;background:#dbeafe;padding:5px 14px;border-radius:20px">Часть 1 · Задания 1–14</span>
+    <div style="height:2px;flex:1;background:#dbeafe;border-radius:99px"></div>
+  </div>
+
+  <!-- Task cards will be rendered here by JS -->
+  <div id="task-cards-part1" style="display:flex;flex-direction:column;gap:14px;margin-bottom:28px"></div>
+
+  <!-- Part 2 header -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:#fde68a;border-radius:99px"></div>
+    <span style="font-size:12px;font-weight:800;color:#92400e;letter-spacing:1.5px;text-transform:uppercase;background:#fef3c7;padding:5px 14px;border-radius:20px">Часть 2 · Задания 15–20</span>
+    <div style="height:2px;flex:1;background:#fde68a;border-radius:99px"></div>
+  </div>
+
+  <div id="task-cards-part2" style="display:flex;flex-direction:column;gap:14px;margin-bottom:20px"></div>
+
+  <!-- spacer for sticky footer -->
+  <div style="height:20px"></div>
+
+</div><!-- /view-exam -->
+
+
+<!-- ═══════════════════════════════════════════════
+     ЭКРАН 3: RESULTS
+═══════════════════════════════════════════════ -->
+<div class="view" id="view-results">
+
+  <!-- Score hero -->
+  <div id="results-hero" style="background:linear-gradient(135deg,#0D3B66 0%,#1a5fa8 55%,#2563eb 100%);border-radius:24px;padding:36px 32px;margin-bottom:24px;text-align:center;overflow:hidden;position:relative">
+    <div style="position:absolute;right:-20px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%"></div>
+    <div style="position:relative">
+      <div id="score-badge" class="score-badge"></div>
+      <div id="grade-badge" class="grade-badge"></div>
+      <p id="score-message" style="color:rgba(255,255,255,.85);font-size:14px;max-width:380px;margin:0 auto 24px;line-height:1.6"></p>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+        <button onclick="retryExam()" class="btn-p" style="background:white;color:#0D3B66;font-weight:900">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 101.44-3.15"/></svg>
+          Попробовать снова
+        </button>
+        <a href="student-dashboard.html" class="btn-o" style="background:transparent;color:white;border-color:rgba(255,255,255,.5);text-decoration:none">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          На главную
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grade scale reminder -->
+  <div class="support-card" style="margin-bottom:20px;padding:14px 20px">
+    <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+      <span style="font-size:12px;font-weight:700;color:#6b7280;margin-right:4px">Оценки:</span>
+      <span class="tag" style="background:#dcfce7;color:#15803d">14–20 → «5»</span>
+      <span class="tag" style="background:#dbeafe;color:#1d4ed8">10–13 → «4»</span>
+      <span class="tag" style="background:#fef9c3;color:#92400e">7–9 → «3»</span>
+      <span class="tag" style="background:#fee2e2;color:#b91c1c">0–6 → «2»</span>
+    </div>
+  </div>
+
+  <!-- Results list -->
+  <div id="results-part1-header" style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:#dbeafe;border-radius:99px"></div>
+    <span style="font-size:12px;font-weight:800;color:#1d4ed8;letter-spacing:1.5px;text-transform:uppercase;background:#dbeafe;padding:5px 14px;border-radius:20px">Часть 1 · Задания 1–14</span>
+    <div style="height:2px;flex:1;background:#dbeafe;border-radius:99px"></div>
+  </div>
+  <div id="results-list-part1" style="margin-bottom:28px"></div>
+
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <div style="height:2px;flex:1;background:#fde68a;border-radius:99px"></div>
+    <span style="font-size:12px;font-weight:800;color:#92400e;letter-spacing:1.5px;text-transform:uppercase;background:#fef3c7;padding:5px 14px;border-radius:20px">Часть 2 · Задания 15–20</span>
+    <div style="height:2px;flex:1;background:#fde68a;border-radius:99px"></div>
+  </div>
+  <div id="results-list-part2" style="margin-bottom:24px"></div>
+
+  <!-- Bottom buttons -->
+  <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px">
+    <button onclick="retryExam()" class="btn-p" style="font-size:15px;padding:13px 28px">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 101.44-3.15"/></svg>
+      Попробовать снова
+    </button>
+    <a href="student-dashboard.html" class="btn-o" style="font-size:15px;padding:13px 28px;text-decoration:none">
+      <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      На главную
+    </a>
+  </div>
+
+</div><!-- /view-results -->
+
+</div><!-- /main-container -->
+
+<!-- STICKY FOOTER (exam view only) -->
+<div class="sticky-footer" id="sticky-submit" style="display:none">
+  <div style="max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+    <div style="font-size:13px;color:#6b7280;font-weight:600">
+      Отвечено: <span id="footer-progress" style="color:#0D3B66;font-weight:800">0</span> / 20
+    </div>
+    <button onclick="submitExam()" class="btn-p" style="font-size:15px;padding:13px 32px;border-radius:14px;flex-shrink:0">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M9 11l3 3L22 4"/></svg>
+      Проверить
+    </button>
+  </div>
+</div>
+
+<!-- KaTeX JS (must be before app script) -->
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  KaTeX helpers
+// ═══════════════════════════════════════════════════════════════
+const KATEX_OPTS = {
+  delimiters:[
+    {left:'$$',right:'$$',display:true},
+    {left:'$',right:'$',display:false}
+  ],
+  throwOnError: false
+};
+
+function renderMath(el) {
+  if (window.renderMathInElement) renderMathInElement(el, KATEX_OPTS);
+}
+
+function renderDisplayMath(latex, el) {
+  if (window.katex) {
+    katex.render(latex, el, { displayMode: true, throwOnError: false });
+  } else {
+    el.textContent = latex;
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  TASK DATA
+// ═══════════════════════════════════════════════════════════════
+const DEMO_TASKS = [
+  // ЧАСТЬ 1 (задания 1-14)
+  { num:1,  part:1, topic:'Арифметика',       latex:null, text:'Вычислите: 2,4 · 5 − 3,8', answer:'8.2', answerAlt:['8,2'], hint:'Сначала умножение, потом вычитание.', solution:[{s:'Умножаем',d:'2,4·5=12'},{s:'Вычитаем',d:'12−3,8=8,2'}] },
+  { num:2,  part:1, topic:'Дроби и проценты', latex:null, text:'Велосипед стоит 12 000 ₽. Скидка 15%. Сколько стоит со скидкой?', answer:'10200', answerAlt:['10 200','10200 руб'], hint:'Скидка 15% = умножить на 0,85.', solution:[{s:'Размер скидки',d:'12000·0,15=1800 ₽'},{s:'Итого',d:'12000−1800=10200 ₽'}] },
+  { num:3,  part:1, topic:'Степени и корни',  latex:'\\sqrt{144}', text:'Вычислите:', answer:'12', answerAlt:[], hint:'Найди число, квадрат которого равен 144.', solution:[{s:'Корень',d:'√144=12, так как 12²=144'}] },
+  { num:4,  part:1, topic:'Уравнения',         latex:'3x - 7 = 14', text:'Решите уравнение:', answer:'7', answerAlt:['x=7'], hint:'Перенеси −7 вправо, потом раздели на 3.', solution:[{s:'Переносим',d:'3x=14+7=21'},{s:'Делим',d:'x=21/3=7'}] },
+  { num:5,  part:1, topic:'Алгебра',            latex:'x^2 - 9', text:'Разложите на множители:', answer:'(x-3)(x+3)', answerAlt:['(x+3)(x-3)'], hint:'Разность квадратов: a²−b²=(a−b)(a+b).', solution:[{s:'Формула',d:'x²−9=x²−3²=(x−3)(x+3)'}] },
+  { num:6,  part:1, topic:'Функции',            latex:'f(x)=x^2-4x+7', text:'Найдите наименьшее значение функции:', answer:'3', answerAlt:[], hint:'Вершина параболы: x₀=−b/(2a).', solution:[{s:'Вершина',d:'x₀=4/2=2'},{s:'Минимум',d:'f(2)=4−8+7=3'}] },
+  { num:7,  part:1, topic:'Вероятность',        latex:null, text:'В урне 5 красных и 3 синих шара. Найдите вероятность вытащить красный.', answer:'0.625', answerAlt:['5/8','0,625'], hint:'P = благоприятные / все исходы.', solution:[{s:'Всего',d:'5+3=8'},{s:'P',d:'5/8=0,625'}] },
+  { num:8,  part:1, topic:'Геометрия',          latex:null, text:'Найдите площадь прямоугольника со сторонами 6 и 9 см.', answer:'54', answerAlt:['54 см²','54 кв.см'], hint:'S = a · b.', solution:[{s:'Формула',d:'S=6·9=54 см²'}] },
+  { num:9,  part:1, topic:'Геометрия',          latex:null, text:'В прямоугольном треугольнике катеты 3 и 4. Найдите гипотенузу.', answer:'5', answerAlt:['5 см'], hint:'Теорема Пифагора: c²=a²+b².', solution:[{s:'Пифагор',d:'c²=9+16=25; c=5'}] },
+  { num:10, part:1, topic:'Текстовые задачи',   latex:null, text:'Два велосипедиста выехали навстречу. Скорости 60 и 80 км/ч, расстояние 280 км. Через сколько часов встретятся?', answer:'2', answerAlt:['2 ч','2 часа'], hint:'При движении навстречу скорости складываются.', solution:[{s:'Скорость сближения',d:'60+80=140 км/ч'},{s:'Время',d:'280/140=2 ч'}] },
+  { num:11, part:1, topic:'Статистика',         latex:null, text:'Найдите среднее арифметическое чисел: 4, 7, 3, 8, 3', answer:'5', answerAlt:[], hint:'Сумма ÷ количество.', solution:[{s:'Сумма',d:'4+7+3+8+3=25'},{s:'Среднее',d:'25/5=5'}] },
+  { num:12, part:1, topic:'Неравенства',        latex:'3x - 4 > 5', text:'Решите неравенство:', answer:'x>3', answerAlt:['(3;+∞)','x > 3'], hint:'Перенеси −4 вправо, потом раздели на 3.', solution:[{s:'Переносим',d:'3x>9'},{s:'Делим',d:'x>3'}] },
+  { num:13, part:1, topic:'Уравнения',          latex:'x^2 - 5x + 6 = 0', text:'Решите уравнение:', answer:'2; 3', answerAlt:['x1=2, x2=3','2 и 3','x₁=2; x₂=3'], hint:'D = b²−4ac. Здесь D=25−24=1.', solution:[{s:'D',d:'D=25−24=1'},{s:'Корни',d:'x₁=(5+1)/2=3; x₂=(5−1)/2=2'}] },
+  { num:14, part:1, topic:'Геометрия',          latex:null, text:'В трапеции основания 8 и 12, высота 5. Найдите площадь.', answer:'50', answerAlt:['50 см²'], hint:'S=(a+b)/2·h.', solution:[{s:'Формула',d:'S=(8+12)/2·5=10·5=50 см²'}] },
+  // ЧАСТЬ 2 (задания 15–20)
+  { num:15, part:2, topic:'Дробные уравнения',  latex:'\\dfrac{x}{x-2} - \\dfrac{12}{x^2-4} = 1', text:'Решите уравнение:', answer:'4', answerAlt:['x=4'], hint:'ОДЗ: x≠2, x≠−2. Умножьте на (x−2)(x+2).', solution:[{s:'ОДЗ',d:'x≠2, x≠−2'},{s:'Умножаем на НОЗ',d:'x(x+2)−12=(x−2)(x+2)'},{s:'Упрощаем',d:'2x=8 → x=4'}] },
+  { num:16, part:2, topic:'Биссектриса',        latex:'\\dfrac{AD}{DC}=\\dfrac{AB}{BC}', text:'В треугольнике ABC: AB=6, BC=4, AC=7,5. Биссектриса угла B делит AC в точке D. Найдите AD. (введи число)', answer:'4.5', answerAlt:['4,5','4.5 см'], hint:'Теорема о биссектрисе: AD/DC=AB/BC=6/4.', solution:[{s:'Пропорция',d:'AD/DC=3/2, пусть AD=3k, DC=2k'},{s:'Уравнение',d:'5k=7,5 → k=1,5'},{s:'Ответ',d:'AD=4,5 см'}] },
+  { num:17, part:2, topic:'Параметр',           latex:'ax^2 - 2ax + 3 = 0', text:'При каких значениях a уравнение имеет два различных корня? Введи условие (например: a<0 или a>3)', answer:'a<0 или a>3', answerAlt:['a < 0 или a > 3','a∈(-∞;0)∪(3;+∞)'], hint:'D=4a²−12a>0. Метод интервалов.', solution:[{s:'D>0',d:'4a(a−3)>0'},{s:'Интервалы',d:'a<0 или a>3'}] },
+  { num:18, part:2, topic:'Трапеция',           latex:'S=\\dfrac{AB+CD}{2}\\cdot h', text:'Равнобедренная трапеция: AB=24, CD=10, BC=13. Найдите площадь (введи приближённое значение, округли до целых).', answer:'186', answerAlt:['186 см²','≈186'], hint:'h²=13²−7²=120, h=√120≈10,95.', solution:[{s:'Высота',d:'h=√(169−49)=√120=2√30≈10,95'},{s:'Площадь',d:'S=17·2√30=34√30≈186'}] },
+  { num:19, part:2, topic:'Движение',           latex:null, text:'Два велосипедиста навстречу, 120 км. Первый быстрее на 4 км/ч. Встретились через 3 ч. Скорость второго (км/ч)?', answer:'18', answerAlt:['18 км/ч'], hint:'(2v+4)·3=120 → v=18.', solution:[{s:'Уравнение',d:'(2v+4)·3=120'},{s:'Решение',d:'2v=36, v=18 км/ч'}] },
+  { num:20, part:2, topic:'Сложные проценты',   latex:'50000\\cdot 1{,}1^n > 80500', text:'Вклад 50 000 руб., 10% годовых. Через сколько полных лет сумма превысит 80 500 руб.?', answer:'5', answerAlt:['5 лет'], hint:'Вычислите 1,1^n: при n=5 → 1,61051>1,61.', solution:[{s:'Неравенство',d:'1,1^n>1,61'},{s:'Перебор',d:'n=5: 1,61051>1,61 ✓'}] }
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  NORMALIZE & CHECK
+// ═══════════════════════════════════════════════════════════════
+function normalize(s) {
+  return s.toString().replace(/\s/g,'').replace(/,/g,'.').toLowerCase();
+}
+
+function isCorrect(task, input) {
+  const n = normalize(input);
+  return n === normalize(task.answer) || task.answerAlt.map(normalize).includes(n);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════════════
+const LS_KEY = 'fibi_demo_answers';
+let userAnswers = {};
+
+function loadAnswers() {
+  try { userAnswers = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); }
+  catch(e) { userAnswers = {}; }
+}
+
+function saveAnswers() {
+  localStorage.setItem(LS_KEY, JSON.stringify(userAnswers));
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  VIEW SWITCHER
+// ═══════════════════════════════════════════════════════════════
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const stickyFooter = document.getElementById('sticky-submit');
+  stickyFooter.style.display = (id === 'view-exam') ? 'block' : 'none';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BUILD EXAM CARDS
+// ═══════════════════════════════════════════════════════════════
+function buildExamCards() {
+  const cont1 = document.getElementById('task-cards-part1');
+  const cont2 = document.getElementById('task-cards-part2');
+  cont1.innerHTML = '';
+  cont2.innerHTML = '';
+
+  DEMO_TASKS.forEach(task => {
+    const card = createTaskCard(task);
+    if (task.part === 1) {
+      cont1.appendChild(card);
+    } else {
+      cont2.appendChild(card);
+    }
+  });
+
+  // Render formulas after DOM insertion
+  requestAnimationFrame(() => {
+    DEMO_TASKS.forEach(task => {
+      if (task.latex) {
+        const formulaEl = document.getElementById('formula-' + task.num);
+        if (formulaEl) renderDisplayMath(task.latex, formulaEl);
+      }
+    });
+    // Restore saved answers
+    Object.entries(userAnswers).forEach(([num, val]) => {
+      const inp = document.getElementById('input-' + num);
+      if (inp) {
+        inp.value = val;
+        inp.classList.add('answered');
+        updateDot(num, true);
+      }
+    });
+    updateExamProgress();
+  });
+}
+
+function createTaskCard(task) {
+  const wrap = document.createElement('div');
+  wrap.className = 'task-card';
+  wrap.id = 'card-' + task.num;
+
+  // Header row: number + dot + topic
+  const header = document.createElement('div');
+  header.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap';
+
+  const numBadge = document.createElement('div');
+  numBadge.style.cssText = 'width:40px;height:40px;background:#0D3B66;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:16px;flex-shrink:0';
+  numBadge.textContent = task.num;
+
+  const dotWrap = document.createElement('span');
+  dotWrap.id = 'dot-' + task.num;
+  dotWrap.innerHTML = '<span class="unanswered-dot"></span>';
+
+  const topicTag = document.createElement('span');
+  topicTag.className = 'tag';
+  topicTag.style.cssText = task.part === 1
+    ? 'background:#dbeafe;color:#1d4ed8'
+    : 'background:#fef3c7;color:#92400e';
+  topicTag.textContent = task.topic;
+
+  const partTag = document.createElement('span');
+  partTag.className = 'tag';
+  partTag.style.cssText = 'background:#f3f4f6;color:#6b7280';
+  partTag.textContent = 'Задание ' + task.num;
+
+  header.appendChild(numBadge);
+  header.appendChild(dotWrap);
+  header.appendChild(topicTag);
+  header.appendChild(partTag);
+  wrap.appendChild(header);
+
+  // Text preamble
+  if (task.text) {
+    const textEl = document.createElement('p');
+    textEl.style.cssText = 'font-size:15px;color:#374151;font-weight:500;line-height:1.7;margin-bottom:' + (task.latex ? '4px' : '0');
+    textEl.textContent = task.text;
+    wrap.appendChild(textEl);
+  }
+
+  // Formula block
+  if (task.latex) {
+    const formulaBox = document.createElement('div');
+    formulaBox.className = 'formula-showcase';
+    formulaBox.id = 'formula-' + task.num;
+    formulaBox.innerHTML = '<span style="color:#9ca3af;font-size:12px">загрузка…</span>';
+    wrap.appendChild(formulaBox);
+  }
+
+  // Answer input
+  const inputWrap = document.createElement('div');
+  inputWrap.style.cssText = 'margin-top:14px';
+
+  const inputLabel = document.createElement('label');
+  inputLabel.style.cssText = 'font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px';
+  inputLabel.textContent = 'Ваш ответ';
+  inputWrap.appendChild(inputLabel);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.id = 'input-' + task.num;
+  input.className = 'answer-input';
+  input.placeholder = 'Введите ответ…';
+  input.autocomplete = 'off';
+  input.addEventListener('input', () => {
+    const val = input.value.trim();
+    if (val) {
+      userAnswers[task.num] = val;
+      input.classList.add('answered');
+      updateDot(task.num, true);
+    } else {
+      delete userAnswers[task.num];
+      input.classList.remove('answered');
+      updateDot(task.num, false);
+    }
+    saveAnswers();
+    updateExamProgress();
+  });
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      // Move focus to next input
+      const allInputs = DEMO_TASKS.map(t => document.getElementById('input-' + t.num)).filter(Boolean);
+      const idx = allInputs.indexOf(input);
+      if (idx < allInputs.length - 1) allInputs[idx + 1].focus();
+    }
+  });
+  inputWrap.appendChild(input);
+  wrap.appendChild(inputWrap);
+
+  return wrap;
+}
+
+function updateDot(num, answered) {
+  const dotWrap = document.getElementById('dot-' + num);
+  if (!dotWrap) return;
+  dotWrap.innerHTML = answered
+    ? '<span class="answered-dot" title="Ответ введён"></span>'
+    : '<span class="unanswered-dot"></span>';
+}
+
+function updateExamProgress() {
+  const count = Object.keys(userAnswers).length;
+  const pct = Math.round(count / 20 * 100);
+  const bar = document.getElementById('exam-progress-bar');
+  const label = document.getElementById('exam-progress-label');
+  const footerLabel = document.getElementById('footer-progress');
+  if (bar) bar.style.width = pct + '%';
+  if (label) label.textContent = count + ' из 20 отвечено';
+  if (footerLabel) footerLabel.textContent = count;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  START EXAM
+// ═══════════════════════════════════════════════════════════════
+function startExam() {
+  loadAnswers();
+  buildExamCards();
+  showView('view-exam');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SUBMIT
+// ═══════════════════════════════════════════════════════════════
+function submitExam() {
+  // Count answered
+  const answered = Object.keys(userAnswers).length;
+  if (answered < 20) {
+    const unanswered = DEMO_TASKS.filter(t => !userAnswers[t.num]).map(t => t.num);
+    const confirmMsg = `Вы ответили на ${answered} из 20 заданий.\nПропущены: ${unanswered.join(', ')}.\n\nВсё равно проверить?`;
+    if (!confirm(confirmMsg)) return;
+  }
+  buildResults();
+  showView('view-results');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  BUILD RESULTS
+// ═══════════════════════════════════════════════════════════════
+function buildResults() {
+  let correct = 0;
+  DEMO_TASKS.forEach(task => {
+    const inp = userAnswers[task.num] || '';
+    if (inp && isCorrect(task, inp)) correct++;
+  });
+
+  // Score badge
+  const badge = document.getElementById('score-badge');
+  const gradeColors = correct >= 14
+    ? {bg:'#dcfce7',color:'#15803d',text:'#dcfce7',border:'rgba(255,255,255,.3)'}
+    : correct >= 10
+    ? {bg:'#dbeafe',color:'#1d4ed8',text:'#dbeafe',border:'rgba(255,255,255,.3)'}
+    : correct >= 7
+    ? {bg:'#fef9c3',color:'#92400e',text:'#fef9c3',border:'rgba(255,255,255,.3)'}
+    : {bg:'#fee2e2',color:'#b91c1c',text:'#fee2e2',border:'rgba(255,255,255,.3)'};
+  badge.style.cssText = `width:120px;height:120px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 8px 32px rgba(0,0,0,.2);margin:0 auto 20px;background:${gradeColors.bg};border:4px solid ${gradeColors.border}`;
+  badge.innerHTML = `
+    <span style="font-size:38px;font-weight:900;color:${gradeColors.color};line-height:1">${correct}</span>
+    <span style="font-size:13px;color:${gradeColors.color};font-weight:700">из 20</span>
+  `;
+
+  // Grade
+  const grade = correct >= 14 ? '5' : correct >= 10 ? '4' : correct >= 7 ? '3' : '2';
+  const gradeEl = document.getElementById('grade-badge');
+  const gradeCSSMap = {
+    '5': 'background:#dcfce7;color:#15803d',
+    '4': 'background:#dbeafe;color:#1d4ed8',
+    '3': 'background:#fef9c3;color:#92400e',
+    '2': 'background:#fee2e2;color:#b91c1c'
+  };
+  gradeEl.style.cssText = `display:inline-block;padding:6px 22px;border-radius:24px;font-size:24px;font-weight:900;margin-bottom:20px;${gradeCSSMap[grade]}`;
+  gradeEl.textContent = 'Оценка: «' + grade + '»';
+
+  // Message
+  const msg = document.getElementById('score-message');
+  const messages = {
+    '5': 'Отличный результат! Ты отлично подготовлен к ОГЭ. Так держать!',
+    '4': 'Хороший результат! Совсем немного до пятёрки. Разбери ошибки и повтори.',
+    '3': 'Результат выше порога. Поработай над ошибками — до четвёрки рукой подать!',
+    '2': 'Не сдался! Изучи разборы заданий и попробуй ещё раз. Всё получится!'
+  };
+  msg.textContent = messages[grade];
+
+  // Build result items
+  buildResultList('results-list-part1', DEMO_TASKS.filter(t => t.part === 1));
+  buildResultList('results-list-part2', DEMO_TASKS.filter(t => t.part === 2));
+}
+
+function buildResultList(containerId, tasks) {
+  const cont = document.getElementById(containerId);
+  cont.innerHTML = '';
+
+  tasks.forEach(task => {
+    const inp = userAnswers[task.num] || '';
+    const correct = inp && isCorrect(task, inp);
+    const unanswered = !inp;
+
+    const item = document.createElement('div');
+    item.className = correct ? 'result-correct' : 'result-wrong';
+
+    // Header row
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap';
+
+    // Icon
+    const icon = document.createElement('div');
+    icon.style.cssText = 'flex-shrink:0;width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;margin-top:2px;' +
+      (correct ? 'background:#dcfce7;color:#15803d' : 'background:#fee2e2;color:#b91c1c');
+    icon.textContent = correct ? '✓' : '✗';
+    row.appendChild(icon);
+
+    // Content
+    const content = document.createElement('div');
+    content.style.cssText = 'flex:1;min-width:0';
+
+    const taskTitle = document.createElement('div');
+    taskTitle.style.cssText = 'font-weight:800;font-size:14px;color:#111827;margin-bottom:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+    taskTitle.innerHTML = `<span>Задание ${task.num}</span>
+      <span class="tag" style="${task.part===1?'background:#dbeafe;color:#1d4ed8':'background:#fef3c7;color:#92400e'}">${task.topic}</span>`;
+    content.appendChild(taskTitle);
+
+    const taskText = document.createElement('p');
+    taskText.style.cssText = 'font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:8px';
+    taskText.textContent = task.text;
+    content.appendChild(taskText);
+
+    // Answer summary
+    const ansRow = document.createElement('div');
+    ansRow.style.cssText = 'display:flex;flex-wrap:wrap;gap:8px;align-items:center';
+
+    if (correct) {
+      ansRow.innerHTML = `<span style="font-size:13px;font-weight:700;color:#15803d">Ваш ответ: ${inp}</span>
+        <span class="tag" style="background:#dcfce7;color:#15803d">Верно ✓</span>`;
+    } else if (unanswered) {
+      ansRow.innerHTML = `<span class="tag" style="background:#f3f4f6;color:#6b7280">Не отвечено</span>
+        <span style="font-size:13px;color:#374151">Правильный ответ: <strong>${task.answer}</strong></span>`;
+    } else {
+      ansRow.innerHTML = `<span style="font-size:13px;font-weight:700;color:#b91c1c">Ваш ответ: ${inp}</span>
+        <span class="tag" style="background:#fee2e2;color:#b91c1c">Неверно ✗</span>
+        <span style="font-size:13px;color:#374151">Правильный: <strong>${task.answer}</strong></span>`;
+    }
+    content.appendChild(ansRow);
+
+    row.appendChild(content);
+    item.appendChild(row);
+
+    // Accordion button (for wrong/unanswered)
+    if (!correct) {
+      const accId = 'acc-' + task.num;
+
+      const accBtn = document.createElement('button');
+      accBtn.style.cssText = 'margin-top:12px;width:100%;display:flex;align-items:center;justify-content:space-between;background:#fff;border:2px solid #e5e7eb;border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:700;font-size:13px;color:#0D3B66;transition:background .15s';
+      accBtn.onmouseover = () => accBtn.style.background = '#f7f8ff';
+      accBtn.onmouseout = () => accBtn.style.background = '#fff';
+      accBtn.innerHTML = `<span style="display:flex;align-items:center;gap:6px">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+        Разбор задания
+      </span>
+      <svg id="acc-arrow-${task.num}" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="transition:transform .2s"><polyline points="6 9 12 15 18 9"/></svg>`;
+
+      accBtn.addEventListener('click', () => {
+        const body = document.getElementById(accId);
+        const arrow = document.getElementById('acc-arrow-' + task.num);
+        if (body.classList.contains('open')) {
+          body.classList.remove('open');
+          arrow.style.transform = '';
+        } else {
+          body.classList.add('open');
+          arrow.style.transform = 'rotate(180deg)';
+        }
+      });
+      item.appendChild(accBtn);
+
+      // Accordion body
+      const accBody = document.createElement('div');
+      accBody.className = 'accordion-body';
+      accBody.id = accId;
+
+      // Formula in accordion if exists
+      if (task.latex) {
+        const fBox = document.createElement('div');
+        fBox.className = 'formula-showcase';
+        fBox.style.marginTop = '0';
+        fBox.style.marginBottom = '12px';
+        fBox.id = 'res-formula-' + task.num;
+        accBody.appendChild(fBox);
+      }
+
+      // Hint
+      const hintDiv = document.createElement('div');
+      hintDiv.className = 'hint-block';
+      hintDiv.innerHTML = `<div class="hint-label">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+        Подсказка
+      </div>
+      <div class="hint-text">${task.hint}</div>`;
+      accBody.appendChild(hintDiv);
+
+      // Solution steps
+      const stepsWrap = document.createElement('div');
+      stepsWrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;margin-top:8px';
+      task.solution.forEach(step => {
+        const s = document.createElement('div');
+        s.className = 'sol-step';
+        s.innerHTML = `<div class="sol-label">${step.s}</div><div class="sol-body">${step.d}</div>`;
+        stepsWrap.appendChild(s);
+      });
+      accBody.appendChild(stepsWrap);
+
+      item.appendChild(accBody);
+    }
+
+    cont.appendChild(item);
+  });
+
+  // Render formulas in results
+  requestAnimationFrame(() => {
+    tasks.forEach(task => {
+      if (task.latex && !isCorrect(task, userAnswers[task.num] || '')) {
+        const el = document.getElementById('res-formula-' + task.num);
+        if (el) renderDisplayMath(task.latex, el);
+      }
+    });
+    renderMath(cont);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  RETRY
+// ═══════════════════════════════════════════════════════════════
+function retryExam() {
+  userAnswers = {};
+  saveAnswers();
+  buildExamCards();
+  showView('view-exam');
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════════════
+loadAnswers();
+</script>
+</body>
+</html>
