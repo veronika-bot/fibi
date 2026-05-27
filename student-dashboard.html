@@ -91,6 +91,18 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
   .sidebar-overlay{display:none!important}
   .main-content{margin-left:240px;padding:28px 32px}
 }
+
+/* ── ОГЭ ЧАСТЬ 2 ── */
+.oge2-hint-step{background:#fffbeb;border:1.5px solid #fbbf24;border-radius:12px;padding:14px 16px;animation:oge2-in .3s ease;margin-bottom:10px}
+.oge2-hint-btn{display:inline-flex;align-items:center;gap:8px;background:white;color:#92400e;border:2px solid #fbbf24;border-radius:12px;padding:9px 18px;font-weight:700;font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:8px}
+.oge2-hint-btn:hover{background:#fffbeb}
+.oge2-solution-step{border-left:3px solid #22c55e;padding:10px 14px;border-radius:0 8px 8px 0;background:#f8fffe;margin-bottom:10px}
+.oge2-answer-box{background:linear-gradient(135deg,#eff6ff,#dbeafe);border:2px solid #93c5fd;border-radius:16px;padding:20px;text-align:center;animation:oge2-in .35s ease}
+.oge2-task-text{background:#f4f6fb;border-radius:14px;padding:20px;font-size:15px;line-height:1.75;white-space:pre-line;color:#1e293b;border:1.5px solid #e5e7eb}
+.oge2-card{border:2px solid #e5e7eb;border-radius:20px;padding:20px 24px;background:white;transition:all .25s;cursor:pointer}
+.oge2-card:hover{border-color:#0D3B66;box-shadow:0 4px 24px rgba(13,59,102,.12);transform:translateY(-2px)}
+.oge2-num{width:52px;height:52px;background:#0D3B66;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-weight:900;font-size:20px;flex-shrink:0}
+@keyframes oge2-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -153,6 +165,10 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <div class="nav-item" onclick="goScreen('s-bank')" id="nav-s-bank">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
       Банк заданий
+    </div>
+    <div class="nav-item" onclick="goScreen('s-oge2')" id="nav-s-oge2">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      ОГЭ Часть 2
     </div>
     <div class="nav-item" onclick="goScreen('s-homework')" id="nav-s-homework">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -507,6 +523,140 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         <div id="tm-done-area" style="display:none" class="mt-4">
           <div id="tm-result-msg" class="rounded-xl p-4 text-center font-bold"></div>
           <button class="btn-p w-full mt-3" onclick="nextTask()">Следующее задание →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: ОГЭ ЧАСТЬ 2 — СПИСОК ==================== -->
+  <div class="screen" id="s-oge2">
+    <div class="card mb-6" style="background:linear-gradient(135deg,#0D3B66,#1e6bba);padding:28px 32px">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-2">
+            <span class="tag text-xs font-bold" style="background:rgba(255,255,255,.2);color:white">ФИПИ · Открытый банк</span>
+          </div>
+          <h2 class="text-2xl font-black text-white mb-1">ОГЭ по математике: часть 2</h2>
+          <p class="text-sm text-blue-200">Задания 20–25 с подробными решениями и пошаговыми подсказками</p>
+        </div>
+        <div class="w-14 h-14 rounded-2xl flex-shrink-0 flex items-center justify-center" style="background:rgba(255,255,255,.15)">
+          <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="1.8"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-3 mt-4">
+        <div class="flex items-center gap-2 text-xs text-blue-100">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          Пошаговые решения
+        </div>
+        <div class="flex items-center gap-2 text-xs text-blue-100">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+          3 подсказки к каждому заданию
+        </div>
+        <div class="flex items-center gap-2 text-xs text-blue-100">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Источник: oge.fipi.ru
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-3" id="oge2-task-list">
+      <!-- Populated by renderOge2List() -->
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: ОГЭ ЧАСТЬ 2 — ЗАДАНИЕ ==================== -->
+  <div class="screen" id="s-oge2-task">
+    <div style="max-width:780px;margin:0 auto">
+      <!-- Back button -->
+      <button onclick="goScreen('s-oge2')" class="flex items-center gap-2 text-yale font-bold text-sm mb-5 hover:opacity-75 transition-opacity">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Назад к списку заданий
+      </button>
+
+      <!-- Task header -->
+      <div class="card mb-4">
+        <div class="flex items-start justify-between gap-4 mb-4">
+          <div class="flex items-center gap-3">
+            <div class="oge2-num" id="oge2t-num-badge">20</div>
+            <div>
+              <h2 class="text-xl font-black text-gray-900" id="oge2t-heading">Задание 20</h2>
+              <div class="flex items-center gap-2 mt-1 flex-wrap">
+                <span class="tag bg-blue-100 text-blue-700 text-xs" id="oge2t-topic"></span>
+                <span class="tag bg-gray-100 text-gray-600 text-xs" id="oge2t-subtopic"></span>
+                <div class="flex gap-1 items-center ml-1" id="oge2t-diff-dots"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="oge2-task-text" id="oge2t-text"></div>
+        <div class="flex items-center gap-2 mt-3">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          <p class="text-xs text-gray-400">Источник: <a id="oge2t-source-link" href="https://oge.fipi.ru/bank" target="_blank" class="underline hover:text-yale transition-colors">oge.fipi.ru/bank</a> — <span id="oge2t-source-text"></span></p>
+        </div>
+      </div>
+
+      <!-- Hints -->
+      <div class="card mb-4">
+        <h3 class="font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+          Подсказки
+          <span class="text-xs text-gray-400 font-normal ml-1">— открывай по одной</span>
+        </h3>
+
+        <div id="oge2-hint-1-block" style="display:none" class="oge2-hint-step">
+          <p class="font-bold text-amber-700 text-sm mb-1.5">Подсказка 1</p>
+          <p class="text-sm text-amber-900 leading-relaxed" id="oge2-hint-1-text"></p>
+        </div>
+        <button id="oge2-hint-1-btn" class="oge2-hint-btn" onclick="showOge2Hint(1)">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+          Подсказка 1
+        </button>
+
+        <div id="oge2-hint-2-block" style="display:none" class="oge2-hint-step">
+          <p class="font-bold text-amber-700 text-sm mb-1.5">Подсказка 2</p>
+          <p class="text-sm text-amber-900 leading-relaxed" id="oge2-hint-2-text"></p>
+        </div>
+        <button id="oge2-hint-2-btn" class="oge2-hint-btn" style="display:none" onclick="showOge2Hint(2)">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+          Подсказка 2
+        </button>
+
+        <div id="oge2-hint-3-block" style="display:none" class="oge2-hint-step">
+          <p class="font-bold text-amber-700 text-sm mb-1.5">Подсказка 3</p>
+          <p class="text-sm text-amber-900 leading-relaxed" id="oge2-hint-3-text"></p>
+        </div>
+        <button id="oge2-hint-3-btn" class="oge2-hint-btn" style="display:none" onclick="showOge2Hint(3)">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 18h6M10 22h4M12 2a7 7 0 017 7c0 2.5-1.3 4.7-3.3 6L15 17H9l-.7-2C6.3 13.7 5 11.5 5 9a7 7 0 017-7z"/></svg>
+          Подсказка 3
+        </button>
+      </div>
+
+      <!-- Solution -->
+      <div class="card mb-4">
+        <div class="flex items-center justify-between mb-1">
+          <h3 class="font-bold text-gray-900 flex items-center gap-2">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#16a34a" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+            Подробное решение
+          </h3>
+          <span class="text-xs text-gray-400">анализ · метод · вычисления · проверка</span>
+        </div>
+        <p class="text-xs text-gray-500 mb-4">Попробуй решить самостоятельно, прежде чем смотреть решение</p>
+        <button id="oge2-solution-btn" class="btn-p w-full" onclick="toggleOge2Solution()">Показать решение</button>
+        <div id="oge2-solution-box" style="display:none" class="mt-4">
+          <div id="oge2-solution-steps" class="space-y-1"></div>
+        </div>
+      </div>
+
+      <!-- Answer -->
+      <div class="card mb-8">
+        <h3 class="font-bold text-gray-900 mb-3 flex items-center gap-2">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+          Итоговый ответ
+        </h3>
+        <button id="oge2-answer-btn" class="btn-o w-full" onclick="toggleOge2Answer()">Показать ответ</button>
+        <div id="oge2-answer-box" style="display:none" class="mt-4 oge2-answer-box">
+          <p class="text-xs text-blue-600 font-bold uppercase tracking-wide mb-2">Ответ</p>
+          <p class="font-black text-yale text-xl" id="oge2-answer-text"></p>
         </div>
       </div>
     </div>
@@ -963,18 +1113,21 @@ function goScreen(id) {
   const titles = {
     's-home':'Главная','s-tutors':'Репетиторы','s-study':'Самообучение',
     's-bank':'Банк заданий','s-homework':'Домашние задания',
-    's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль'
+    's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль',
+    's-oge2':'ОГЭ по математике: часть 2','s-oge2-task':'Задание'
   };
   const subs = {
     's-home':'Твои успехи и цели','s-tutors':'Управление репетитором',
     's-study':'Курсы и теория','s-bank':'Практика и задания',
     's-homework':'Задания от репетитора','s-progress':'Статистика и достижения',
-    's-chat':'Сообщения','s-profile':'Настройки аккаунта'
+    's-chat':'Сообщения','s-profile':'Настройки аккаунта',
+    's-oge2':'Задания 20–25 с подробными решениями','s-oge2-task':'Пошаговое решение и подсказки'
   };
   document.getElementById('page-title').textContent = titles[id] || '';
   document.getElementById('page-sub').textContent = subs[id] || '';
 
   if (id === 's-chat') renderChat();
+  if (id === 's-oge2') renderOge2List();
 }
 
 function openChat() { goScreen('s-chat'); }
@@ -1988,6 +2141,296 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// ===== ОГЭ ЧАСТЬ 2 =====
+
+// Источник: Открытый банк заданий ФИПИ, ОГЭ по математике
+// https://oge.fipi.ru/bank
+const OGE_PART2_TASKS = [
+  {
+    num: 20,
+    topic: 'Уравнения',
+    subtopic: 'Дробно-рациональное уравнение',
+    difficulty: 2,
+    shortText: 'x / (x − 2) − 12 / (x² − 4) = 1',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 20',
+    fullText: `Решите уравнение:
+
+x / (x − 2) − 12 / (x² − 4) = 1`,
+    hints: [
+      'Найдите ОДЗ: определите, при каких значениях x знаменатели обращаются в ноль. Помните, что на ноль делить нельзя. Перечислите запрещённые значения x.',
+      'Разложите знаменатель на множители: x² − 4 = (x − 2)(x + 2). Умножьте обе части уравнения на (x − 2)(x + 2), чтобы избавиться от дробей. Раскройте скобки в обеих частях.',
+      'Приведите подобные члены. У вас получится линейное уравнение. Решите его и проверьте, что найденный корень входит в ОДЗ.'
+    ],
+    solution: [
+      { step: '1. ОДЗ — область допустимых значений', detail: 'Знаменатели не могут быть равны нулю:\n(x − 2) ≠ 0  ⟹  x ≠ 2\n(x² − 4) = (x − 2)(x + 2) ≠ 0  ⟹  x ≠ 2 и x ≠ −2\n\nОДЗ: x ≠ 2 и x ≠ −2' },
+      { step: '2. Разложение знаменателя', detail: 'x² − 4 = (x − 2)(x + 2)\nОбщий знаменатель обеих дробей: (x − 2)(x + 2)' },
+      { step: '3. Умножаем обе части на (x − 2)(x + 2)', detail: 'x · (x + 2) − 12 = 1 · (x − 2)(x + 2)' },
+      { step: '4. Раскрываем скобки', detail: 'Левая часть:   x² + 2x − 12\nПравая часть:  x² − 4' },
+      { step: '5. Решаем уравнение', detail: 'x² + 2x − 12 = x² − 4\n2x − 12 = −4\n2x = 8\nx = 4' },
+      { step: '6. Проверка ОДЗ', detail: 'x = 4: 4 ≠ 2 ✓   и   4 ≠ −2 ✓\nКорень входит в ОДЗ.' },
+      { step: '7. Проверка подстановкой', detail: '4/(4−2) − 12/(16−4) = 4/2 − 12/12 = 2 − 1 = 1 ✓' }
+    ],
+    answer: 'x = 4'
+  },
+  {
+    num: 21,
+    topic: 'Геометрия',
+    subtopic: 'Теорема о биссектрисе треугольника',
+    difficulty: 2,
+    shortText: 'В △ABC биссектриса BD, AB = 6, BC = 4, AC = 7,5. Найдите AD и DC.',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 21',
+    fullText: `В треугольнике ABC проведена биссектриса BD,
+где точка D лежит на стороне AC.
+
+Дано: AB = 6, BC = 4, AC = 7,5.
+
+Найдите длины отрезков AD и DC.`,
+    hints: [
+      'Вспомните теорему о биссектрисе: биссектриса треугольника делит противоположную сторону на отрезки, пропорциональные двум прилежащим сторонам. Запишите пропорцию AD / DC = AB / BC.',
+      'Подставьте данные: AD / DC = 6 / 4 = 3 / 2. Введите переменную k и выразите оба отрезка через k: AD = 3k, DC = 2k.',
+      'Используйте условие AD + DC = AC = 7,5. Составьте уравнение 3k + 2k = 7,5, найдите k, затем вычислите AD и DC. Проверьте ответ.'
+    ],
+    solution: [
+      { step: '1. Теорема о биссектрисе', detail: 'Биссектриса BD делит сторону AC в отношении:\nAD / DC = AB / BC' },
+      { step: '2. Подставляем числа', detail: 'AD / DC = 6 / 4 = 3 / 2' },
+      { step: '3. Вводим переменную', detail: 'Пусть AD = 3k, тогда DC = 2k' },
+      { step: '4. Составляем уравнение', detail: 'AD + DC = AC\n3k + 2k = 7,5\n5k = 7,5\nk = 1,5' },
+      { step: '5. Находим отрезки', detail: 'AD = 3 · 1,5 = 4,5\nDC = 2 · 1,5 = 3' },
+      { step: '6. Проверка', detail: 'AD + DC = 4,5 + 3 = 7,5 = AC ✓\nAD / DC = 4,5 / 3 = 1,5 = 6 / 4 = AB / BC ✓' }
+    ],
+    answer: 'AD = 4,5;  DC = 3'
+  },
+  {
+    num: 22,
+    topic: 'Функции',
+    subtopic: 'Квадратное уравнение с параметром',
+    difficulty: 3,
+    shortText: 'При каких a уравнение ax² − 2ax + 3 = 0 имеет хотя бы один корень?',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 22',
+    fullText: `При каких значениях параметра a уравнение
+
+      ax² − 2ax + 3 = 0
+
+имеет хотя бы один корень?`,
+    hints: [
+      'Рассмотрите два случая отдельно: (1) a = 0 и (2) a ≠ 0. При a = 0 уравнение упрощается до 3 = 0. Есть ли у этого равенства решения?',
+      'При a ≠ 0 уравнение является квадратным. Квадратное уравнение имеет хотя бы один корень при D ≥ 0. Запишите дискриминант: D = b² − 4ac, где здесь b = −2a, c = 3.',
+      'Решите неравенство 4a² − 12a ≥ 0. Вынесите общий множитель 4a и найдите, при каких a произведение неотрицательно. Объедините с результатом случая a = 0.'
+    ],
+    solution: [
+      { step: '1. Случай a = 0', detail: 'Уравнение принимает вид: 3 = 0\nЭто противоречие — корней нет.' },
+      { step: '2. Случай a ≠ 0 — квадратное уравнение', detail: 'Хотя бы один корень ↔ D ≥ 0\nD = (−2a)² − 4 · a · 3 = 4a² − 12a' },
+      { step: '3. Решаем неравенство D ≥ 0', detail: '4a² − 12a ≥ 0\n4a(a − 3) ≥ 0\na(a − 3) ≥ 0' },
+      { step: '4. Знаки множителей', detail: 'Произведение ≥ 0, когда оба ≥ 0 или оба ≤ 0:\n• a ≤ 0  и  (a − 3) ≤ 0  →  a ≤ 0\n• a ≥ 0  и  (a − 3) ≥ 0  →  a ≥ 3\nИтого: a ≤ 0  или  a ≥ 3' },
+      { step: '5. Исключаем a = 0', detail: 'Значение a = 0 проверено в шаге 1: корней нет.\nОкончательно: a < 0  или  a ≥ 3' }
+    ],
+    answer: 'a ∈ (−∞; 0) ∪ [3; +∞)'
+  },
+  {
+    num: 23,
+    topic: 'Геометрия',
+    subtopic: 'Равнобедренная трапеция',
+    difficulty: 2,
+    shortText: 'Равнобедренная трапеция AB ∥ CD, AB = 24, CD = 10, h = 12. Найдите AD и площадь.',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 23',
+    fullText: `В равнобедренной трапеции ABCD:
+  основания AB ∥ CD,  AB = 24,  CD = 10,
+  боковые стороны AD = BC,
+  высота трапеции h = 12.
+
+а) Найдите длину боковой стороны AD.
+б) Найдите площадь трапеции ABCD.`,
+    hints: [
+      'Проведите из вершин D и C высоты на основание AB — получите точки E и F. Так как трапеция равнобедренная, то AE = BF. Найдите AE по формуле: AE = (AB − CD) / 2.',
+      'Боковая сторона AD — гипотенуза прямоугольного треугольника AED, в котором AE — один катет, DE = h = 12 — другой. Примените теорему Пифагора: AD² = AE² + DE².',
+      'Площадь трапеции: S = (AB + CD) / 2 · h. Подставьте числа: AB = 24, CD = 10, h = 12.'
+    ],
+    solution: [
+      { step: '1. Опускаем высоты', detail: 'Из D и C опускаем перпендикуляры DE и CF на AB.\nТак как трапеция равнобедренная, AE = BF.' },
+      { step: '2. Находим AE', detail: 'AE = (AB − CD) / 2 = (24 − 10) / 2 = 14 / 2 = 7' },
+      { step: '3. Теорема Пифагора для AD', detail: 'В прямоугольном △AED:\nAD² = AE² + DE² = 7² + 12² = 49 + 144 = 193\nAD = √193 ≈ 13,9' },
+      { step: '4. Площадь трапеции', detail: 'S = (AB + CD) / 2 · h\nS = (24 + 10) / 2 · 12 = 17 · 12 = 204' }
+    ],
+    answer: 'а) AD = √193 ≈ 13,9;   б) S = 204'
+  },
+  {
+    num: 24,
+    topic: 'Текстовые задачи',
+    subtopic: 'Задача на движение навстречу',
+    difficulty: 2,
+    shortText: 'Два велосипедиста навстречу: S = 120 км, разность скоростей 4 км/ч, встретились через 3 ч.',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 24',
+    fullText: `Два велосипедиста выехали одновременно навстречу
+друг другу из двух городов.
+
+Расстояние между городами — 120 км.
+Скорость первого велосипедиста на 4 км/ч меньше скорости второго.
+Через 3 часа они встретились.
+
+а) Составьте уравнение и найдите скорость каждого велосипедиста.
+б) Какое расстояние проехал первый велосипедист до встречи?`,
+    hints: [
+      'Обозначьте скорость первого велосипедиста x км/ч. Тогда скорость второго — (x + 4) км/ч. За 3 часа оба вместе покрыли расстояние 120 км. Запишите уравнение.',
+      'Уравнение: 3x + 3(x + 4) = 120. Раскройте скобки: 3x + 3x + 12 = 120. Приведите подобные члены и найдите x.',
+      'После нахождения x вычислите скорость второго. Для пункта б) умножьте скорость первого на время (3 ч). Проверьте: сумма расстояний обоих должна равняться 120 км.'
+    ],
+    solution: [
+      { step: '1. Переменная и уравнение', detail: 'Пусть скорость 1-го = x км/ч,  скорость 2-го = (x + 4) км/ч.\nЗа 3 часа: 3x + 3(x + 4) = 120' },
+      { step: '2. Решаем уравнение', detail: '3x + 3x + 12 = 120\n6x = 108\nx = 18' },
+      { step: '3. Скорости', detail: 'Скорость первого:  18 км/ч\nСкорость второго: 18 + 4 = 22 км/ч' },
+      { step: '4. Расстояние первого до встречи', detail: 'S₁ = 18 · 3 = 54 км' },
+      { step: '5. Проверка', detail: 'S₁ + S₂ = 54 + 22 · 3 = 54 + 66 = 120 км ✓' }
+    ],
+    answer: 'v₁ = 18 км/ч,  v₂ = 22 км/ч;  первый проехал 54 км'
+  },
+  {
+    num: 25,
+    topic: 'Финансовая математика',
+    subtopic: 'Сложные проценты. Банковский вклад.',
+    difficulty: 2,
+    shortText: '50 000 руб. под 10% годовых (сложные %). Через сколько лет сумма превысит 60 000 руб.?',
+    source: 'Открытый банк заданий ФИПИ · ОГЭ Математика, задание 25',
+    fullText: `Вкладчик положил в банк 50 000 рублей под 10% годовых.
+Проценты начисляются ежегодно по правилу сложных процентов
+(каждый год сумма увеличивается в 1,1 раза).
+
+а) Запишите формулу суммы вклада через n полных лет.
+б) Через сколько полных лет сумма вклада впервые превысит 60 000 рублей?
+в) Какова сумма вклада через 3 года?`,
+    hints: [
+      'При сложных процентах каждый год сумма умножается на (1 + r), где r — ставка в долях. Здесь r = 10% = 0,1, коэффициент роста = 1,1. Формула: S(n) = P · (1 + r)ⁿ. Запишите её для наших данных.',
+      'Для пункта б) нужно найти наименьшее n, при котором 50 000 · 1,1ⁿ > 60 000. Упростите: 1,1ⁿ > 1,2. Вычислите 1,1¹, 1,1², 1,1³ последовательно и найдите нужный n.',
+      'Для пункта в) подставьте n = 3: S(3) = 50 000 · 1,1³. Вычислите шаг за шагом: 1,1² = 1,21; 1,1³ = 1,21 · 1,1 = 1,331. Умножьте на 50 000.'
+    ],
+    solution: [
+      { step: 'а) Формула вклада', detail: 'S(n) = P · (1 + r)ⁿ = 50 000 · 1,1ⁿ' },
+      { step: 'б) Находим минимальное n', detail: 'Условие: 50 000 · 1,1ⁿ > 60 000\n1,1ⁿ > 1,2\n\nn = 1:  1,1¹ = 1,1     < 1,2  — нет\nn = 2:  1,1² = 1,21   > 1,2  ✓\n\nПервый раз условие выполняется при n = 2 (через 2 года).' },
+      { step: 'в) Сумма через 3 года', detail: 'S(3) = 50 000 · 1,1³\n1,1³ = 1,1 · 1,21 = 1,331\nS(3) = 50 000 · 1,331 = 66 550 рублей' }
+    ],
+    answer: 'а) S(n) = 50 000·1,1ⁿ;   б) через 2 года;   в) 66 550 рублей'
+  }
+];
+
+const DIFF_LABELS = {1:'Лёгкий',2:'Средний',3:'Сложный'};
+const DIFF_COLORS = {1:'bg-green-100 text-green-700',2:'bg-yellow-100 text-yellow-700',3:'bg-red-100 text-red-700'};
+
+function renderOge2List() {
+  const container = document.getElementById('oge2-task-list');
+  if (!container) return;
+  container.innerHTML = OGE_PART2_TASKS.map(t => {
+    const dots = [1,2,3].map(i =>
+      `<span class="diff-dot ${i <= t.difficulty ? (t.difficulty===1?'bg-green-400':t.difficulty===2?'bg-yellow-400':'bg-red-400') : 'bg-gray-200'}"></span>`
+    ).join('');
+    return `
+      <div class="oge2-card" onclick="openOge2Task(${t.num})">
+        <div class="flex items-start gap-4">
+          <div class="oge2-num">${t.num}</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="tag bg-blue-100 text-blue-700 text-xs">${t.topic}</span>
+              <span class="tag ${DIFF_COLORS[t.difficulty]} text-xs">${DIFF_LABELS[t.difficulty]}</span>
+              <div class="flex gap-1 ml-1">${dots}</div>
+            </div>
+            <p class="font-bold text-gray-900 text-sm mb-1">${t.subtopic}</p>
+            <p class="text-xs text-gray-500 text-clamp">${t.shortText}</p>
+          </div>
+          <button class="btn-p flex-shrink-0 text-sm py-2.5 px-5 hidden sm:block" onclick="event.stopPropagation();openOge2Task(${t.num})">Решение →</button>
+        </div>
+        <button class="btn-o w-full mt-3 text-sm py-2.5 sm:hidden" onclick="openOge2Task(${t.num})">Решение →</button>
+      </div>`;
+  }).join('');
+}
+
+function openOge2Task(num) {
+  const task = OGE_PART2_TASKS.find(t => t.num === num);
+  if (!task) return;
+  S.currentOge2Task = task;
+
+  // Header
+  document.getElementById('oge2t-num-badge').textContent = task.num;
+  document.getElementById('oge2t-heading').textContent = 'Задание ' + task.num;
+  document.getElementById('oge2t-topic').textContent = task.topic;
+  document.getElementById('oge2t-subtopic').textContent = task.subtopic;
+  document.getElementById('oge2t-source-text').textContent = task.source;
+
+  // Difficulty dots
+  const dotsEl = document.getElementById('oge2t-diff-dots');
+  dotsEl.innerHTML = [1,2,3].map(i =>
+    `<span class="diff-dot ${i <= task.difficulty ? (task.difficulty===1?'bg-green-400':task.difficulty===2?'bg-yellow-400':'bg-red-400') : 'bg-gray-200'}"></span>`
+  ).join('');
+
+  // Problem text
+  document.getElementById('oge2t-text').textContent = task.fullText;
+
+  // Reset hints
+  [1,2,3].forEach(n => {
+    document.getElementById('oge2-hint-' + n + '-block').style.display = 'none';
+    document.getElementById('oge2-hint-' + n + '-text').textContent = '';
+    const btn = document.getElementById('oge2-hint-' + n + '-btn');
+    btn.style.display = n === 1 ? 'inline-flex' : 'none';
+    btn.disabled = false;
+  });
+
+  // Reset solution
+  const solBox = document.getElementById('oge2-solution-box');
+  solBox.style.display = 'none';
+  document.getElementById('oge2-solution-btn').textContent = 'Показать решение';
+  document.getElementById('oge2-solution-steps').innerHTML = task.solution.map(s =>
+    `<div class="oge2-solution-step">
+      <p class="font-bold text-green-800 text-sm mb-1">${s.step}</p>
+      <p class="text-sm text-gray-700 whitespace-pre-line leading-relaxed">${s.detail}</p>
+    </div>`
+  ).join('');
+
+  // Reset answer
+  document.getElementById('oge2-answer-box').style.display = 'none';
+  document.getElementById('oge2-answer-btn').textContent = 'Показать ответ';
+  document.getElementById('oge2-answer-text').textContent = task.answer;
+
+  // Navigate
+  goScreen('s-oge2-task');
+  // Keep OGE2 nav highlighted
+  const nav = document.getElementById('nav-s-oge2');
+  if (nav) nav.classList.add('active');
+  // Update topbar subtitle
+  document.getElementById('page-sub').textContent = task.topic + ' · ' + task.subtopic;
+  // Scroll to top
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function showOge2Hint(n) {
+  const task = S.currentOge2Task;
+  if (!task || !task.hints[n-1]) return;
+
+  document.getElementById('oge2-hint-' + n + '-text').textContent = task.hints[n-1];
+  document.getElementById('oge2-hint-' + n + '-block').style.display = 'block';
+  document.getElementById('oge2-hint-' + n + '-btn').style.display = 'none';
+
+  // Show next hint button if it exists
+  if (n < task.hints.length) {
+    document.getElementById('oge2-hint-' + (n+1) + '-btn').style.display = 'inline-flex';
+  }
+}
+
+function toggleOge2Solution() {
+  const box = document.getElementById('oge2-solution-box');
+  const btn = document.getElementById('oge2-solution-btn');
+  const visible = box.style.display !== 'none';
+  box.style.display = visible ? 'none' : 'block';
+  btn.textContent = visible ? 'Показать решение' : 'Скрыть решение';
+  btn.className = visible ? 'btn-p w-full' : 'btn-o w-full';
+  if (!visible) document.querySelector('.main-content').scrollTop += 80;
+}
+
+function toggleOge2Answer() {
+  const box = document.getElementById('oge2-answer-box');
+  const btn = document.getElementById('oge2-answer-btn');
+  const visible = box.style.display !== 'none';
+  box.style.display = visible ? 'none' : 'block';
+  btn.textContent = visible ? 'Показать ответ' : 'Скрыть ответ';
+  btn.className = visible ? 'btn-o w-full' : 'btn-p w-full';
+}
 
 </script>
 </body>
