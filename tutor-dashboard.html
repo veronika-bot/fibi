@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ФИБИ — Кабинет репетитора</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { yale: '#0D3B66', lemon: '#FAF0CA' },
+      fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
+body{background:#f4f6fb;margin:0}
+.sidebar{width:240px;min-height:100vh;background:#0D3B66;position:fixed;left:0;top:0;z-index:40;display:flex;flex-direction:column}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;border-radius:12px;cursor:pointer;color:rgba(255,255,255,0.65);font-weight:600;font-size:14px;margin:2px 8px;transition:all .2s}
+.nav-item:hover{background:rgba(255,255,255,0.1);color:white}
+.nav-item.active{background:rgba(255,255,255,0.18);color:white}
+.screen{display:none}.screen.active{display:block}
+.main-content{margin-left:240px;min-height:100vh;padding:28px 32px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.card{background:white;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.btn-p{background:#0D3B66;color:white;border:none;border-radius:12px;padding:12px 24px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-p:hover{background:#0a2f52;transform:translateY(-1px)}
+.btn-o{background:transparent;color:#0D3B66;border:2px solid #0D3B66;border-radius:12px;padding:10px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-o:hover{background:#0D3B66;color:white}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.stat-chip{background:#f4f6fb;border-radius:12px;padding:14px 18px;text-align:center}
+.founder-badge{background:linear-gradient(135deg,#fef9c3,#fde68a);border:2px solid #fbbf24;color:#92400e;border-radius:20px;padding:4px 10px;font-size:11px;font-weight:700}
+.paywall-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0.95) 40%,white 100%);border-radius:20px;display:flex;align-items:flex-end;justify-content:center;padding:32px;z-index:10}
+.paywall-card{background:white;border-radius:20px;padding:28px;box-shadow:0 8px 40px rgba(0,0,0,0.15);text-align:center;max-width:380px;width:100%}
+.demo-toggle{background:#FAF0CA;border:2px solid #0D3B66;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:#0D3B66;cursor:pointer;transition:all .2s}
+.demo-toggle.on{background:#0D3B66;color:#FAF0CA}
+.task-drag{border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-size:13px;cursor:grab;background:white;transition:all .2s}
+.task-drag:hover{border-color:#0D3B66;background:#f0f6ff}
+.task-drag.selected{border-color:#0D3B66;background:#0D3B66;color:white}
+.hw-slot{border:2px dashed #e5e7eb;border-radius:12px;padding:10px 14px;font-size:13px;min-height:48px}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:24px;padding:32px;max-width:540px;width:90%;max-height:90vh;overflow-y:auto}
+.rank-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;transition:background .15s}
+.rank-row:hover{background:#f9fafb}
+.rank-row.me{background:#eff6ff}
+.check-area{border:2px solid #e5e7eb;border-radius:16px;padding:20px;min-height:200px;position:relative}
+.annotation-dot{width:20px;height:20px;border-radius:50%;background:#ef4444;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.2);position:absolute;cursor:pointer;transform:translate(-50%,-50%)}
+input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:#0D3B66}
+.student-row{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:2px solid #f3f4f6;background:white;transition:all .2s;cursor:pointer}
+.student-row:hover{border-color:#0D3B66;background:#f0f6ff}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="px-5 py-5 flex items-center gap-2.5">
+    <a href="index.html"><img src="Иконки.png" alt="ФИБИ" class="w-9 h-9" style="border-radius:10px;object-fit:cover;background:#f4f6fb"></a>
+    <div>
+      <a href="index.html" class="text-xl font-black text-white tracking-tight">ФИБИ</a>
+      <p class="text-xs text-blue-200 font-medium" style="margin-top:-1px">Кабинет репетитора</p>
+    </div>
+  </div>
+
+  <div class="mx-3 mb-4 bg-white/10 rounded-2xl p-3 flex items-center gap-3">
+    <div id="sb-avatar" class="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center text-yale font-bold text-sm"></div>
+    <div class="flex-1 min-w-0">
+      <p id="sb-name" class="text-white font-bold text-sm truncate"></p>
+      <p class="text-blue-200 text-xs" id="sb-tag">Репетитор</p>
+    </div>
+  </div>
+
+  <nav class="flex-1 px-2">
+    <div class="nav-item active" onclick="goScreen('t-overview')" id="nav-t-overview">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Обзор
+    </div>
+    <div class="nav-item" onclick="goScreen('t-students')" id="nav-t-students">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Ученики
+    </div>
+    <div class="nav-item" onclick="goScreen('t-homework')" id="nav-t-homework">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      ДЗ и проверка
+    </div>
+    <div class="nav-item" onclick="goScreen('t-courses')" id="nav-t-courses">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      Учебные материалы
+    </div>
+    <div class="nav-item" onclick="goScreen('t-chart')" id="nav-t-chart">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Рейтинг
+    </div>
+    <div class="nav-item" onclick="goScreen('t-chat')" id="nav-t-chat">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Чат
+    </div>
+    <div class="nav-item" onclick="goScreen('t-subscription')" id="nav-t-subscription">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Подписка
+    </div>
+    <div class="nav-item" onclick="goScreen('t-profile')" id="nav-t-profile">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Профиль
+    </div>
+  </nav>
+
+  <div class="p-4">
+    <button onclick="logout()" class="w-full text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <div class="topbar">
+    <div>
+      <h1 id="page-title" class="text-2xl font-black text-gray-900">Обзор</h1>
+      <p id="page-sub" class="text-sm text-gray-500 mt-0.5">Привет!</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="demo-toggle" id="demo-btn" onclick="toggleDemo()">✨ Демо</button>
+      <div class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm cursor-pointer" onclick="goScreen('t-profile')">
+        <span id="top-avatar" class="font-bold text-yale text-sm"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== OVERVIEW ==================== -->
+  <div class="screen active" id="t-overview">
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="ov-students">0</p>
+        <p class="text-xs text-gray-500 mt-1">Учеников</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="ov-hw">0</p>
+        <p class="text-xs text-gray-500 mt-1">ДЗ задано</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="ov-checked">0</p>
+        <p class="text-xs text-gray-500 mt-1">Проверено ч.2</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="ov-rank">#—</p>
+        <p class="text-xs text-gray-500 mt-1">Место в рейтинге</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Активные ученики</h3>
+        <div id="ov-students-list" class="space-y-2"></div>
+        <button class="btn-o w-full mt-4 text-sm py-2" onclick="goScreen('t-students')">Все ученики →</button>
+      </div>
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Последние ДЗ</h3>
+        <div id="ov-hw-list" class="space-y-2"></div>
+        <button class="btn-o w-full mt-4 text-sm py-2" onclick="goScreen('t-homework')">Все ДЗ →</button>
+      </div>
+    </div>
+
+    <!-- Profile in tutor chart preview -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-900">Моё место в рейтинге</h3>
+        <a href="tutor-chart.html" target="_blank" class="text-sm text-yale font-bold">Открыть рейтинг →</a>
+      </div>
+      <div id="ov-rank-preview"></div>
+    </div>
+  </div>
+
+  <!-- ==================== STUDENTS ==================== -->
+  <div class="screen" id="t-students">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex gap-3">
+        <input type="text" id="student-search" placeholder="Поиск ученика..." oninput="filterStudents()" style="max-width:220px" />
+      </div>
+      <button class="btn-p text-sm py-2 px-4" onclick="addStudentModal()">+ Добавить ученика</button>
+    </div>
+
+    <div id="students-locked" class="relative">
+      <div class="card mb-3 opacity-40 pointer-events-none">
+        <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-blue-100"></div><div><div class="h-3 w-24 bg-gray-200 rounded mb-1"></div><div class="h-2 w-16 bg-gray-100 rounded"></div></div></div>
+      </div>
+      <div class="paywall-overlay" style="position:relative;inset:auto;background:none;padding:0;margin-top:16px">
+        <div class="paywall-card">
+          <div class="text-4xl mb-3">👥</div>
+          <h3 class="font-black text-xl mb-2">База учеников</h3>
+          <p class="text-sm text-gray-500 mb-4">Добавляй своих учеников, отслеживай прогресс и назначай ДЗ. Требует подписку «Свои ученики».</p>
+          <button class="btn-p w-full" onclick="goScreen('t-subscription')">Выбрать подписку</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="students-unlocked" style="display:none">
+      <div id="students-grid" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ==================== HOMEWORK & CHECKING ==================== -->
+  <div class="screen" id="t-homework">
+    <div class="flex gap-3 mb-6" id="hw-tabs">
+      <button class="btn-p text-sm py-2 px-5" id="tab-create" onclick="hwTab('create')">Создать ДЗ</button>
+      <button class="btn-o text-sm py-2 px-5" id="tab-check" onclick="hwTab('check')">Проверить</button>
+      <button class="btn-o text-sm py-2 px-5" id="tab-history" onclick="hwTab('history')">История</button>
+    </div>
+
+    <!-- Create HW -->
+    <div id="hw-create">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-4">Конструктор ДЗ</h3>
+          <div class="space-y-3 mb-4">
+            <div>
+              <label class="text-xs font-bold text-gray-500 mb-1 block">Ученик</label>
+              <select id="hw-student-select">
+                <option value="">Выбрать ученика...</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-bold text-gray-500 mb-1 block">Название ДЗ</label>
+              <input type="text" id="hw-title" placeholder="Например: Арифметика — домашнее" />
+            </div>
+            <div>
+              <label class="text-xs font-bold text-gray-500 mb-1 block">Дедлайн</label>
+              <input type="date" id="hw-deadline" style="width:100%;border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none" />
+            </div>
+          </div>
+
+          <h4 class="font-bold text-gray-700 text-sm mb-2">Выбранные задания (<span id="selected-count">0</span>)</h4>
+          <div id="hw-selected" class="space-y-2 min-h-16 mb-4">
+            <p class="text-xs text-gray-400 italic" id="hw-empty-msg">Выбери задания из банка →</p>
+          </div>
+          <button class="btn-p w-full" onclick="sendHW()">Отправить ДЗ</button>
+        </div>
+
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Банк заданий</h3>
+          <div class="flex flex-wrap gap-1 mb-3" id="hw-topic-filters">
+            <button class="tag bg-yale text-white cursor-pointer" onclick="hwFilterTopic(this,'all')">Все</button>
+          </div>
+          <div class="flex gap-2 mb-3">
+            <select id="hw-part-f" onchange="renderHWBank()" style="max-width:120px">
+              <option value="">Часть 1+2</option>
+              <option value="1">Часть 1</option>
+              <option value="2">Часть 2</option>
+            </select>
+            <select id="hw-diff-f" onchange="renderHWBank()" style="max-width:140px">
+              <option value="">Все ур.</option>
+              <option value="1">Лёгкий</option>
+              <option value="2">Средний</option>
+              <option value="3">Сложный</option>
+            </select>
+          </div>
+          <div id="hw-bank-list" class="space-y-1.5 overflow-y-auto" style="max-height:400px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check submissions -->
+    <div id="hw-check" style="display:none">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <h3 class="font-bold text-gray-900 mb-3">Ожидают проверки</h3>
+          <div id="pending-checks" class="space-y-2"></div>
+        </div>
+        <div id="check-panel">
+          <div class="card">
+            <div class="text-center py-8 text-gray-400">
+              <div class="text-4xl mb-2">📋</div>
+              <p class="font-medium">Выбери работу для проверки</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="hw-history" style="display:none">
+      <div id="hw-history-list"></div>
+    </div>
+  </div>
+
+  <!-- ==================== COURSES ==================== -->
+  <div class="screen" id="t-courses">
+    <div class="grid grid-cols-3 gap-6">
+      <div class="card relative overflow-hidden" id="course-oge">
+        <div class="absolute top-3 right-3" id="oge-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <h3 class="font-black text-gray-900 text-lg mb-1">ОГЭ Математика</h3>
+        <p class="text-xs text-gray-500 mb-3">Презентации уроков, задания, скрипт проверки ДЗ</p>
+        <div class="space-y-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 10 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 42 задания с разбором</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Скрипт проверки ДЗ</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Конструктор ДЗ</div>
+        </div>
+        <button class="btn-p w-full" id="oge-btn" onclick="buyCourse('oge')">Приобрести</button>
+      </div>
+      <div class="card relative overflow-hidden" id="course-ege-base">
+        <div class="absolute top-3 right-3" id="egeb-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
+        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#059669" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <h3 class="font-black text-gray-900 text-lg mb-1">ЕГЭ База</h3>
+        <p class="text-xs text-gray-500 mb-3">Базовый уровень ЕГЭ по математике</p>
+        <div class="space-y-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 12 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Задания части 1</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Скрипт проверки</div>
+        </div>
+        <button class="btn-p w-full" id="egeb-btn" onclick="buyCourse('ege-base')">Приобрести</button>
+      </div>
+      <div class="card relative overflow-hidden" id="course-ege-prof">
+        <div class="absolute top-3 right-3" id="egep-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
+        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#dc2626" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+        <h3 class="font-black text-gray-900 text-lg mb-1">ЕГЭ Профиль</h3>
+        <p class="text-xs text-gray-500 mb-3">Профильный ЕГЭ, часть 2 включена</p>
+        <div class="space-y-1.5 mb-4">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 15 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Задания ч.1 и ч.2</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Интерфейс проверки ч.2</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Комментарии и аннотации</div>
+        </div>
+        <button class="btn-p w-full" id="egep-btn" onclick="buyCourse('ege-prof')">Приобрести</button>
+      </div>
+    </div>
+
+    <!-- Purchased course view -->
+    <div id="course-content" class="mt-6" style="display:none">
+      <div class="card">
+        <h3 class="font-black text-xl text-gray-900 mb-4" id="course-content-title"></h3>
+        <div id="course-lessons-list" class="grid grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHART ==================== -->
+  <div class="screen" id="t-chart">
+    <div class="card mb-6 bg-gradient-to-r from-yale to-blue-500 text-white">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="text-sm opacity-80 mb-1">Твоё место</p>
+          <p class="text-5xl font-black" id="my-rank-num">#—</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm opacity-80 mb-1">Проверено заданий ч.2</p>
+          <p class="text-4xl font-black" id="my-checked-count">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-900">Рейтинг репетиторов ФИБИ</h3>
+        <a href="tutor-chart.html" target="_blank" class="btn-o text-sm py-2 px-4">Публичная страница</a>
+      </div>
+      <div id="chart-list" class="space-y-1"></div>
+    </div>
+  </div>
+
+  <!-- ==================== CHAT ==================== -->
+  <div class="screen" id="t-chat">
+    <div class="flex gap-4" style="height:calc(100vh - 180px)">
+      <!-- Contact list -->
+      <div class="card w-64 flex-shrink-0">
+        <h3 class="font-bold text-gray-900 mb-3 text-sm">Ученики</h3>
+        <div id="chat-contacts" class="space-y-1"></div>
+      </div>
+      <!-- Chat area -->
+      <div class="card flex-1 flex flex-col">
+        <div id="chat-header-t" class="flex items-center gap-3 pb-4 border-b border-gray-100 mb-4">
+          <p class="font-bold text-gray-900" id="chat-student-name">Выбери ученика</p>
+        </div>
+        <div id="chat-msgs-t" class="flex-1 overflow-y-auto space-y-3 mb-4" style="max-height:400px">
+          <div class="text-center text-xs text-gray-400">Выбери ученика из списка</div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-input-t" placeholder="Сообщение..." onkeydown="if(event.key==='Enter')sendTutorChat()" />
+          <button class="btn-p px-5" onclick="sendTutorChat()">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SUBSCRIPTION ==================== -->
+  <div class="screen" id="t-subscription">
+    <div class="grid grid-cols-2 gap-6 mb-6">
+      <div class="card border-2" id="sub-platform-card" style="border-color:#e5e7eb">
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3 class="font-black text-xl mb-1">Платформа</h3>
+        <p class="text-sm text-gray-500 mb-1">Только ученики ФИБИ</p>
+        <div class="space-y-1.5 my-4">
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> Профиль в базе репетиторов</div>
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> Ученики находят тебя сами</div>
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> ДЗ и чат с учениками ФИБИ</div>
+          <div class="flex items-center gap-2 text-sm text-gray-400"><span>✗</span> Добавление своих учеников</div>
+        </div>
+        <button class="btn-p w-full" id="sub-platform-btn" onclick="subscribePlatform()">Подключить</button>
+        <p class="text-xs text-gray-400 text-center mt-2">Годовая подписка</p>
+      </div>
+      <div class="card border-2" id="sub-own-card" style="border-color:#e5e7eb">
+        <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#4f46e5" stroke-width="1.8"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h3 class="font-black text-xl mb-1">Свои ученики</h3>
+        <p class="text-sm text-gray-500 mb-1">Добавляй своих + ученики ФИБИ</p>
+        <div class="space-y-1.5 my-4">
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> Всё из «Платформа»</div>
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> Добавление своих учеников</div>
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> CRM для своей базы</div>
+          <div class="flex items-center gap-2 text-sm"><span class="text-green-500">✓</span> ДЗ любым ученикам</div>
+        </div>
+        <button class="btn-p w-full" id="sub-own-btn" onclick="subscribeOwn()">Подключить</button>
+        <p class="text-xs text-gray-400 text-center mt-2">Годовая подписка</p>
+      </div>
+    </div>
+    <div class="card" id="sub-status-card">
+      <h3 class="font-bold text-gray-900 mb-3">Текущая подписка</h3>
+      <div id="sub-current" class="text-sm text-gray-500">Нет активной подписки</div>
+    </div>
+  </div>
+
+  <!-- ==================== PROFILE ==================== -->
+  <div class="screen" id="t-profile">
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-1">
+        <div class="card text-center">
+          <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-black text-yale mx-auto mb-3" id="tp-avatar"></div>
+          <h3 class="font-black text-gray-900 text-xl" id="tp-name"></h3>
+          <p class="text-sm text-gray-500 mt-1" id="tp-email"></p>
+          <div id="tp-founder" class="founder-badge inline-block mt-2" style="display:none">👑 Основатель ФИБИ</div>
+          <div class="mt-4 space-y-2 text-left">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Подписка</span>
+              <span class="font-medium" id="tp-sub">Нет</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Учеников</span>
+              <span class="font-medium" id="tp-students-count">0</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Проверено ч.2</span>
+              <span class="font-medium" id="tp-checked">0</span>
+            </div>
+          </div>
+          <button class="btn-o w-full mt-4 text-sm">Редактировать</button>
+        </div>
+      </div>
+      <div class="col-span-2 space-y-4">
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Купленные курсы</h3>
+          <div id="tp-courses" class="space-y-2"></div>
+          <button class="btn-o w-full mt-4 text-sm py-2" onclick="goScreen('t-courses')">В магазин →</button>
+        </div>
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Настройки</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div><p class="font-medium text-sm">Демо-режим</p><p class="text-xs text-gray-500">Показать все функции</p></div>
+              <input type="checkbox" id="demo-check" onchange="toggleDemo()" class="accent-yale w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- Add Student Modal -->
+<div class="modal-overlay" id="add-student-modal">
+  <div class="modal">
+    <h3 class="font-black text-xl mb-4">Добавить ученика</h3>
+    <div class="space-y-3">
+      <div>
+        <label class="text-xs font-bold text-gray-500 mb-1 block">Имя ученика</label>
+        <input type="text" id="ns-name" placeholder="Алиса Петрова" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500 mb-1 block">Email (необязательно)</label>
+        <input type="text" id="ns-email" placeholder="alice@example.com" />
+      </div>
+      <div>
+        <label class="text-xs font-bold text-gray-500 mb-1 block">Экзамен</label>
+        <select id="ns-exam">
+          <option>ОГЭ</option><option>ЕГЭ База</option><option>ЕГЭ Профиль</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex gap-2 mt-4">
+      <button class="btn-p flex-1" onclick="confirmAddStudent()">Добавить</button>
+      <button class="btn-o flex-1" onclick="closeModal('add-student-modal')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script src="tasks.js"></script>
+<script>
+// ===== STATE =====
+let T = {
+  user: null,
+  demoMode: false,
+  students: [],
+  hwSelectedTasks: [],
+  hwTopicFilter: 'all',
+  chatWith: null,
+  chatMessages: {},
+  checkedCount: 0,
+};
+
+const DEMO_STUDENTS = [
+  {id:'s1',name:'Алиса Козлова',initials:'АК',exam:'ОГЭ',xp:320,solved:22,streak:5},
+  {id:'s2',name:'Борис Новиков',initials:'БН',exam:'ЕГЭ Профиль',xp:510,solved:35,streak:8},
+  {id:'s3',name:'Вера Иванова',initials:'ВИ',exam:'ЕГЭ База',xp:190,solved:14,streak:2},
+];
+
+const DEMO_CHART = [
+  {id:'t1',name:'Анна Петрова',initials:'АП',checked:89,students:12},
+  {id:'t2',name:'Михаил Козлов',initials:'МК',checked:76,students:9},
+  {id:'t3',name:'Светлана Иванова',initials:'СИ',checked:54,students:7},
+  {id:'t4',name:'Дмитрий Новиков',initials:'ДН',checked:41,students:5},
+];
+
+// ===== INIT =====
+function init() {
+  const stored = localStorage.getItem('fibi_current_user');
+  if (!stored) { location.href='register.html'; return; }
+  T.user = JSON.parse(stored);
+  if (T.user.role !== 'tutor') { location.href='student-dashboard.html'; return; }
+  if (!T.user.courses) T.user.courses = [];
+  if (!T.user.subscription) T.user.subscription = null;
+  if (!T.user.checkedCount) T.user.checkedCount = 0;
+  T.checkedCount = T.user.checkedCount;
+
+  renderSidebar();
+  renderOverview();
+  renderStudents();
+  renderHWBuilder();
+  renderCourses();
+  renderChart();
+  renderChat();
+  renderSubscription();
+  renderTProfile();
+}
+
+function saveUser() {
+  localStorage.setItem('fibi_current_user', JSON.stringify(T.user));
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const idx = users.findIndex(u => u.id === T.user.id);
+  if (idx !== -1) users[idx] = T.user;
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+}
+
+// ===== NAV =====
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const nav = document.getElementById('nav-' + id);
+  if (nav) nav.classList.add('active');
+  const titles = {
+    't-overview':'Обзор','t-students':'Мои ученики','t-homework':'ДЗ и проверка',
+    't-courses':'Учебные материалы','t-chart':'Рейтинг репетиторов',
+    't-chat':'Чат','t-subscription':'Подписка','t-profile':'Профиль'
+  };
+  document.getElementById('page-title').textContent = titles[id]||'';
+}
+
+// ===== DEMO =====
+function toggleDemo() {
+  T.demoMode = !T.demoMode;
+  const btn = document.getElementById('demo-btn');
+  const chk = document.getElementById('demo-check');
+  btn.classList.toggle('on', T.demoMode);
+  if (chk) chk.checked = T.demoMode;
+  if (T.demoMode) {
+    T.user.courses = ['oge','ege-base','ege-prof'];
+    T.user.subscription = 'own';
+    T.checkedCount = 54;
+    T.students = [...DEMO_STUDENTS];
+    T.chatMessages = {
+      's1':[{from:'student',text:'Здравствуйте! Когда следующее занятие?'},{from:'tutor',text:'Привет! В четверг в 17:00.'}],
+    };
+  } else {
+    T.user.courses = [];
+    T.user.subscription = null;
+    T.checkedCount = 0;
+    T.students = [];
+    T.chatMessages = {};
+  }
+  renderAll();
+}
+
+function renderAll() {
+  renderSidebar();
+  renderOverview();
+  renderStudents();
+  renderCourses();
+  renderChart();
+  renderChat();
+  renderSubscription();
+  renderTProfile();
+}
+
+// ===== SIDEBAR =====
+function renderSidebar() {
+  const u = T.user;
+  const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
+  document.getElementById('sb-avatar').textContent = initials.toUpperCase();
+  document.getElementById('top-avatar').textContent = initials.toUpperCase();
+  document.getElementById('sb-name').textContent = (u.name||'') + (u.lastName?' '+u.lastName:'');
+  const isFounder = u.name==='Дина'||u.name==='Вероника';
+  document.getElementById('sb-tag').textContent = isFounder ? '👑 Основатель' : 'Репетитор';
+}
+
+// ===== OVERVIEW =====
+function renderOverview() {
+  const students = T.demoMode ? DEMO_STUDENTS : T.students;
+  document.getElementById('ov-students').textContent = students.length;
+  document.getElementById('ov-hw').textContent = T.demoMode ? 7 : 0;
+  document.getElementById('ov-checked').textContent = T.checkedCount;
+  const myRank = getMyRank();
+  document.getElementById('ov-rank').textContent = myRank > 0 ? '#' + myRank : '#—';
+
+  const sl = document.getElementById('ov-students-list');
+  sl.innerHTML = students.slice(0,3).map(s => `
+    <div class="flex items-center gap-3 py-1.5">
+      <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-yale">${s.initials}</div>
+      <div class="flex-1">
+        <p class="text-sm font-medium">${s.name}</p>
+        <p class="text-xs text-gray-400">${s.exam} • ${s.solved} реш.</p>
+      </div>
+      <span class="text-xs font-bold text-yale">${s.xp} XP</span>
+    </div>
+  `).join('') || '<p class="text-xs text-gray-400">Нет учеников</p>';
+
+  const hl = document.getElementById('ov-hw-list');
+  hl.innerHTML = T.demoMode ? `
+    <div class="text-sm py-1.5 flex justify-between"><span class="font-medium">Алиса К.</span><span class="tag bg-red-100 text-red-700">Срочно</span></div>
+    <div class="text-sm py-1.5 flex justify-between"><span class="font-medium">Борис Н.</span><span class="tag bg-yellow-100 text-yellow-700">Сдано</span></div>
+    <div class="text-sm py-1.5 flex justify-between"><span class="font-medium">Вера И.</span><span class="tag bg-blue-100 text-blue-700">Новое</span></div>
+  ` : '<p class="text-xs text-gray-400">ДЗ пока не назначены</p>';
+
+  renderRankPreview();
+}
+
+function getMyRank() {
+  if (!T.demoMode) return 0;
+  const sorted = [...DEMO_CHART].sort((a,b)=>b.checked-a.checked);
+  const me = sorted.findIndex(r=>r.id==='t3'); // demo: Светлана ≈ me
+  return me+1;
+}
+
+function renderRankPreview() {
+  const el = document.getElementById('ov-rank-preview');
+  const chart = buildChartData();
+  el.innerHTML = chart.slice(0,4).map((r,i) => `
+    <div class="rank-row ${r.isMe?'me':''}">
+      <span class="text-sm font-black w-8 text-center text-gray-500">${i+1}</span>
+      <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-sm font-bold text-yale">${r.initials}</div>
+      <div class="flex-1">
+        <div class="flex items-center gap-2">
+          <span class="text-sm font-bold text-gray-900">${r.name}</span>
+          ${r.isMe?'<span class="tag bg-blue-100 text-blue-700">Ты</span>':''}
+        </div>
+        <span class="text-xs text-gray-400">${r.students} учеников</span>
+      </div>
+      <span class="text-sm font-black text-yale">${r.checked} ч.2</span>
+    </div>
+  `).join('');
+}
+
+// ===== STUDENTS =====
+function renderStudents() {
+  const hasAccess = T.user.subscription === 'own' || T.user.subscription === 'platform' || T.demoMode;
+  document.getElementById('students-locked').style.display = hasAccess ? 'none' : 'block';
+  document.getElementById('students-unlocked').style.display = hasAccess ? 'block' : 'none';
+  if (!hasAccess) return;
+
+  const all = T.demoMode ? DEMO_STUDENTS : T.students;
+  const grid = document.getElementById('students-grid');
+  if (!all.length) {
+    grid.innerHTML = '<div class="card text-center py-8 text-gray-500">Учеников пока нет. Добавь первого!</div>';
+    return;
+  }
+  grid.innerHTML = all.map(s => `
+    <div class="student-row">
+      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale">${s.initials}</div>
+      <div class="flex-1">
+        <p class="font-bold text-gray-900">${s.name}</p>
+        <p class="text-xs text-gray-500">${s.exam} • Серия: ${s.streak}д • ${s.solved} задач</p>
+      </div>
+      <span class="font-black text-yale">${s.xp} XP</span>
+      <button class="btn-o text-xs py-1.5 px-3" onclick="goScreen('t-homework')">ДЗ</button>
+      <button class="text-gray-400 hover:text-yale px-2" onclick="openChatWith('${s.id}')">💬</button>
+    </div>
+  `).join('');
+}
+
+function filterStudents() {
+  const q = document.getElementById('student-search').value.toLowerCase();
+  const source = T.demoMode ? DEMO_STUDENTS : T.students;
+  const filtered = source.filter(s => s.name.toLowerCase().includes(q));
+  const grid = document.getElementById('students-grid');
+  grid.innerHTML = filtered.map(s => `
+    <div class="student-row">
+      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale">${s.initials}</div>
+      <div class="flex-1"><p class="font-bold text-gray-900">${s.name}</p><p class="text-xs text-gray-500">${s.exam}</p></div>
+      <span class="font-black text-yale">${s.xp} XP</span>
+    </div>
+  `).join('');
+}
+
+function addStudentModal() {
+  const hasAccess = T.user.subscription === 'own' || T.demoMode;
+  if (!hasAccess) { alert('Для добавления своих учеников нужна подписка «Свои ученики».'); goScreen('t-subscription'); return; }
+  openModal('add-student-modal');
+}
+
+function confirmAddStudent() {
+  const name = document.getElementById('ns-name').value.trim();
+  if (!name) return;
+  const initials = name.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2);
+  T.students.push({id:'s'+Date.now(),name,initials,exam:document.getElementById('ns-exam').value,xp:0,solved:0,streak:0});
+  closeModal('add-student-modal');
+  renderStudents();
+}
+
+// ===== HW BUILDER =====
+function renderHWBuilder() {
+  buildHWTopicFilters();
+  renderHWBank();
+  populateStudentSelects();
+}
+
+function buildHWTopicFilters() {
+  const el = document.getElementById('hw-topic-filters');
+  const topics = ['Арифметика','Дроби','Степени','Уравнения','Функции','Статистика','Текстовые задачи','Неравенства','Алгебра','Геометрия'];
+  topics.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'tag bg-gray-100 text-gray-700 cursor-pointer';
+    btn.textContent = t;
+    btn.onclick = () => hwFilterTopic(btn, t);
+    el.appendChild(btn);
+  });
+}
+
+function hwFilterTopic(btn, t) {
+  document.querySelectorAll('#hw-topic-filters .tag').forEach(b => {
+    b.className = 'tag bg-gray-100 text-gray-700 cursor-pointer';
+  });
+  btn.className = 'tag bg-yale text-white cursor-pointer';
+  T.hwTopicFilter = t;
+  renderHWBank();
+}
+
+function renderHWBank() {
+  const el = document.getElementById('hw-bank-list');
+  const partF = document.getElementById('hw-part-f').value;
+  const diffF = document.getElementById('hw-diff-f').value;
+  let tasks = typeof TASK_BANK !== 'undefined' ? [...TASK_BANK] : [];
+  if (T.hwTopicFilter !== 'all') tasks = tasks.filter(t=>t.topic===T.hwTopicFilter);
+  if (partF) tasks = tasks.filter(t=>t.part===parseInt(partF));
+  if (diffF) tasks = tasks.filter(t=>t.difficulty===parseInt(diffF));
+  el.innerHTML = tasks.map(t => {
+    const sel = T.hwSelectedTasks.includes(t.id);
+    return `<div class="task-drag ${sel?'selected':''}" onclick="toggleHWTask(${t.id})">
+      <div class="flex items-center justify-between">
+        <span class="font-medium">Задание ${t.num} — ${t.topic}</span>
+        <div class="flex gap-1">${diffTagSmall(t.difficulty)}<span class="text-xs opacity-70">Ч.${t.part}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHWTask(id) {
+  const idx = T.hwSelectedTasks.indexOf(id);
+  if (idx === -1) T.hwSelectedTasks.push(id);
+  else T.hwSelectedTasks.splice(idx, 1);
+  document.getElementById('selected-count').textContent = T.hwSelectedTasks.length;
+  document.getElementById('hw-empty-msg').style.display = T.hwSelectedTasks.length ? 'none' : 'block';
+
+  const sel = document.getElementById('hw-selected');
+  const tasks = typeof TASK_BANK !== 'undefined' ? TASK_BANK : [];
+  sel.innerHTML = '<p class="text-xs text-gray-400 italic" id="hw-empty-msg" style="display:' + (T.hwSelectedTasks.length?'none':'block') + '">Выбери задания из банка →</p>' +
+    T.hwSelectedTasks.map(tid => {
+      const t = tasks.find(x=>x.id===tid);
+      if (!t) return '';
+      return `<div class="hw-slot text-sm flex items-center justify-between">
+        <span>Задание ${t.num} — ${t.topic}</span>
+        <button onclick="toggleHWTask(${t.id})" class="text-red-400 hover:text-red-600 text-xs font-bold ml-2">✕</button>
+      </div>`;
+    }).join('');
+  renderHWBank();
+}
+
+function populateStudentSelects() {
+  const sel = document.getElementById('hw-student-select');
+  const students = T.demoMode ? DEMO_STUDENTS : T.students;
+  sel.innerHTML = '<option value="">Выбрать ученика...</option>' +
+    students.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+}
+
+function sendHW() {
+  if (!document.getElementById('hw-student-select').value) { alert('Выбери ученика'); return; }
+  if (!T.hwSelectedTasks.length) { alert('Выбери задания'); return; }
+  T.hwSelectedTasks = [];
+  document.getElementById('selected-count').textContent = '0';
+  document.getElementById('hw-student-select').value = '';
+  document.getElementById('hw-title').value = '';
+  renderHWBank();
+  alert('✅ ДЗ отправлено ученику!');
+}
+
+function hwTab(tab) {
+  ['create','check','history'].forEach(t => {
+    document.getElementById('hw-'+t).style.display = t===tab?'block':'none';
+    const btn = document.getElementById('tab-'+t);
+    btn.className = t===tab ? 'btn-p text-sm py-2 px-5' : 'btn-o text-sm py-2 px-5';
+  });
+  if (tab==='check') renderPendingChecks();
+  if (tab==='history') renderHWHistory();
+}
+
+function renderPendingChecks() {
+  const el = document.getElementById('pending-checks');
+  if (T.demoMode) {
+    el.innerHTML = `
+      <div class="card cursor-pointer hover:border-yale border-2 border-transparent" onclick="openCheckPanel()">
+        <p class="font-bold text-sm">Алиса К. — ДЗ №2 (Часть 2)</p>
+        <p class="text-xs text-gray-500 mt-1">3 задания • Сдано вчера</p>
+        <span class="tag bg-red-100 text-red-700 mt-2">Ожидает проверки</span>
+      </div>`;
+  } else {
+    el.innerHTML = '<p class="text-sm text-gray-400">Нет работ для проверки</p>';
+  }
+}
+
+function openCheckPanel() {
+  const panel = document.getElementById('check-panel');
+  panel.innerHTML = `<div class="card">
+    <h3 class="font-bold text-gray-900 mb-3">Алиса К. — Задание 15 (часть 2)</h3>
+    <div class="check-area mb-4" id="annotation-area" onclick="addAnnotation(event)">
+      <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-600 leading-relaxed">
+        <p class="font-bold mb-2">Работа ученика:</p>
+        <p>x² + 5x + 6 = 0</p>
+        <p class="mt-2">(x + 2)(x + 3) = 0</p>
+        <p class="mt-2">x = -2 или x = -3</p>
+        <p class="mt-1 text-red-500">Ответ: x = -2, x = 3 ← ошибка!</p>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Кликни по тексту, чтобы добавить аннотацию</p>
+    </div>
+    <div class="mb-3">
+      <label class="text-xs font-bold text-gray-500 mb-1 block">Комментарий</label>
+      <textarea id="check-comment" placeholder="Напиши комментарий к решению..." style="height:80px"></textarea>
+    </div>
+    <div class="flex gap-2">
+      <select id="check-mark" style="max-width:140px">
+        <option>5/5</option><option>4/5</option><option>3/5</option><option>2/5</option><option>1/5</option><option>0/5</option>
+      </select>
+      <button class="btn-p flex-1" onclick="submitCheck()">✓ Подтвердить проверку</button>
+    </div>
+  </div>`;
+}
+
+function addAnnotation(e) {
+  const area = document.getElementById('annotation-area');
+  if (!area) return;
+  const rect = area.getBoundingClientRect();
+  const dot = document.createElement('div');
+  dot.className = 'annotation-dot';
+  dot.style.left = (e.clientX - rect.left) + 'px';
+  dot.style.top = (e.clientY - rect.top) + 'px';
+  dot.title = 'Аннотация';
+  area.appendChild(dot);
+}
+
+function submitCheck() {
+  T.checkedCount++;
+  T.user.checkedCount = T.checkedCount;
+  saveUser();
+  renderChart();
+  renderOverview();
+  document.getElementById('check-panel').innerHTML = `<div class="card text-center py-8">
+    <div class="text-4xl mb-2">✅</div>
+    <p class="font-black text-gray-900">Проверено!</p>
+    <p class="text-sm text-gray-500 mt-1">+1 к твоему рейтингу</p>
+  </div>`;
+  renderPendingChecks();
+}
+
+function renderHWHistory() {
+  const el = document.getElementById('hw-history-list');
+  el.innerHTML = T.demoMode ? `
+    <div class="card mb-3"><div class="flex justify-between"><span class="font-bold">Алиса К. — ДЗ №1</span><span class="tag bg-green-100 text-green-700">Проверено 4/5</span></div><p class="text-xs text-gray-500 mt-1">Отправлено: 2026-05-20</p></div>
+    <div class="card mb-3"><div class="flex justify-between"><span class="font-bold">Борис Н. — ДЗ №1</span><span class="tag bg-green-100 text-green-700">Проверено 5/5</span></div><p class="text-xs text-gray-500 mt-1">Отправлено: 2026-05-18</p></div>
+  ` : '<div class="card text-center py-8 text-gray-500">История пуста</div>';
+}
+
+// ===== COURSES =====
+function renderCourses() {
+  const courses = T.user.courses || [];
+  ['oge','ege-base','ege-prof'].forEach(id => {
+    const owned = courses.includes(id) || T.demoMode;
+    const lockEl = document.getElementById(id.replace('-','')==='egebase'?'egeb-lock-badge':id==='oge'?'oge-lock-badge':'egep-lock-badge');
+    const btnEl = document.getElementById(id.replace('-','')==='egebase'?'egeb-btn':id==='oge'?'oge-btn':'egep-btn');
+    if (lockEl) lockEl.innerHTML = owned ? '<span class="tag bg-green-100 text-green-700">✅ Куплен</span>' : '<span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span>';
+    if (btnEl) { btnEl.textContent = owned ? 'Открыть материалы' : 'Приобрести'; btnEl.onclick = owned ? ()=>openCourseContent(id) : ()=>buyCourse(id); }
+  });
+}
+
+function buyCourse(id) {
+  if (T.demoMode) {
+    if (!T.user.courses) T.user.courses = [];
+    if (!T.user.courses.includes(id)) T.user.courses.push(id);
+    saveUser();
+    renderCourses();
+    renderTProfile();
+  } else {
+    alert('Для покупки обратитесь к команде ФИБИ.');
+  }
+}
+
+function openCourseContent(id) {
+  const titles = {oge:'ОГЭ Математика','ege-base':'ЕГЭ База','ege-prof':'ЕГЭ Профиль'};
+  document.getElementById('course-content').style.display = 'block';
+  document.getElementById('course-content-title').textContent = 'Материалы: ' + titles[id];
+  const lessons = ['Урок 1: Арифметика','Урок 2: Дроби','Урок 3: Уравнения','Урок 4: Функции'];
+  document.getElementById('course-lessons-list').innerHTML = lessons.map(l=>`
+    <div class="card border border-gray-100 cursor-pointer hover:border-yale">
+      <p class="font-bold text-sm">${l}</p>
+      <p class="text-xs text-gray-500 mt-1">Презентация • Задания • Скрипт ДЗ</p>
+    </div>
+  `).join('');
+}
+
+// ===== CHART =====
+function buildChartData() {
+  const my = {
+    id:'me', name: T.user.name+(T.user.lastName?' '+T.user.lastName:''),
+    initials: (T.user.name[0]||'T') + ((T.user.lastName||'')[0]||''),
+    checked: T.checkedCount,
+    students: T.demoMode ? DEMO_STUDENTS.length : T.students.length,
+    isMe: true,
+  };
+  let all = [...DEMO_CHART, my].sort((a,b)=>b.checked-a.checked);
+  return all;
+}
+
+function renderChart() {
+  const chart = buildChartData();
+  const myRank = chart.findIndex(r=>r.isMe) + 1;
+  document.getElementById('my-rank-num').textContent = '#' + (T.demoMode ? 5 : myRank);
+  document.getElementById('my-checked-count').textContent = T.checkedCount;
+
+  const el = document.getElementById('chart-list');
+  el.innerHTML = chart.map((r, i) => {
+    const rank = i + 1;
+    const starSvg = rank===1?`<svg width="16" height="16" viewBox="0 0 24 24" fill="#0D3B66" stroke="none"><path d="M12 1l2.75 8.46h8.9l-7.2 5.23 2.75 8.46L12 18.92l-7.2 5.23 2.75-8.46L.35 9.46h8.9z"/></svg>`:rank===2?`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`:rank===3?`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`:`<span class="text-xs text-gray-400 font-bold">${rank}</span>`;
+    return `<div class="rank-row ${r.isMe?'me':''}">
+      <div class="w-8 flex justify-center">${starSvg}</div>
+      <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale text-sm">${r.initials}</div>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-bold text-sm text-gray-900">${r.name}</span>
+          ${r.isMe?'<span class="tag bg-blue-100 text-blue-700">Ты</span>':''}
+        </div>
+        <span class="text-xs text-gray-400">${r.students} учеников</span>
+      </div>
+      <span class="font-black text-yale">${r.checked}</span>
+      <span class="text-xs text-gray-400 ml-1">проверено ч.2</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== CHAT =====
+function renderChat() {
+  const students = T.demoMode ? DEMO_STUDENTS : T.students;
+  const el = document.getElementById('chat-contacts');
+  el.innerHTML = students.map(s => `
+    <div class="flex items-center gap-2 p-2 rounded-xl cursor-pointer hover:bg-gray-50 ${T.chatWith===s.id?'bg-blue-50':''}" onclick="openChatWith('${s.id}')">
+      <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-yale">${s.initials}</div>
+      <span class="text-sm font-medium text-gray-800">${s.name}</span>
+    </div>
+  `).join('') || '<p class="text-xs text-gray-400">Нет учеников</p>';
+}
+
+function openChatWith(sid) {
+  goScreen('t-chat');
+  T.chatWith = sid;
+  const students = T.demoMode ? DEMO_STUDENTS : T.students;
+  const s = students.find(x=>x.id===sid);
+  if (!s) return;
+  document.getElementById('chat-student-name').textContent = s.name;
+  renderChat();
+  if (!T.chatMessages[sid]) T.chatMessages[sid] = [];
+  renderTMessages();
+}
+
+function renderTMessages() {
+  const el = document.getElementById('chat-msgs-t');
+  const msgs = T.chatMessages[T.chatWith] || [];
+  el.innerHTML = msgs.length
+    ? msgs.map(m=>`<div class="flex ${m.from==='tutor'?'justify-end':'justify-start'}">
+        <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${m.from==='tutor'?'bg-yale text-white':'bg-gray-100 text-gray-800'}">${m.text}</div>
+      </div>`).join('')
+    : '<div class="text-center text-xs text-gray-400">Начало переписки</div>';
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendTutorChat() {
+  const input = document.getElementById('chat-input-t');
+  const text = input.value.trim();
+  if (!text || !T.chatWith) return;
+  if (!T.chatMessages[T.chatWith]) T.chatMessages[T.chatWith] = [];
+  T.chatMessages[T.chatWith].push({from:'tutor',text});
+  input.value = '';
+  renderTMessages();
+}
+
+// ===== SUBSCRIPTION =====
+function renderSubscription() {
+  const sub = T.user.subscription || (T.demoMode ? 'own' : null);
+  const cur = document.getElementById('sub-current');
+  if (sub === 'platform') {
+    cur.innerHTML = '<span class="tag bg-green-100 text-green-700">✅ Платформа — активна</span>';
+    document.getElementById('sub-platform-card').style.borderColor = '#22c55e';
+  } else if (sub === 'own') {
+    cur.innerHTML = '<span class="tag bg-blue-100 text-blue-700">✅ Свои ученики — активна</span>';
+    document.getElementById('sub-own-card').style.borderColor = '#22c55e';
+  } else {
+    cur.textContent = 'Нет активной подписки';
+  }
+}
+
+function subscribePlatform() {
+  if (T.demoMode) { T.user.subscription = 'platform'; saveUser(); renderSubscription(); renderStudents(); }
+  else alert('Для оформления подписки обратитесь к команде ФИБИ.');
+}
+function subscribeOwn() {
+  if (T.demoMode) { T.user.subscription = 'own'; saveUser(); renderSubscription(); renderStudents(); }
+  else alert('Для оформления подписки обратитесь к команде ФИБИ.');
+}
+
+// ===== T-PROFILE =====
+function renderTProfile() {
+  const u = T.user;
+  const initials = (u.name||'T')[0] + ((u.lastName||'')[0]||'');
+  document.getElementById('tp-avatar').textContent = initials.toUpperCase();
+  document.getElementById('tp-name').textContent = (u.name||'') + (u.lastName?' '+u.lastName:'');
+  document.getElementById('tp-email').textContent = u.email||'';
+  document.getElementById('tp-sub').textContent = u.subscription ? (u.subscription==='own'?'Свои ученики':'Платформа') : 'Нет';
+  document.getElementById('tp-students-count').textContent = T.demoMode ? DEMO_STUDENTS.length : T.students.length;
+  document.getElementById('tp-checked').textContent = T.checkedCount;
+
+  const isFounder = u.name==='Дина' || u.name==='Вероника';
+  document.getElementById('tp-founder').style.display = isFounder ? 'inline-block' : 'none';
+
+  const courses = T.user.courses || [];
+  const courseNames = {oge:'📘 ОГЭ','ege-base':'📗 ЕГЭ База','ege-prof':'📕 ЕГЭ Профиль'};
+  const tc = document.getElementById('tp-courses');
+  if (!courses.length && !T.demoMode) {
+    tc.innerHTML = '<p class="text-sm text-gray-400">Курсы не куплены</p>';
+  } else {
+    const list = T.demoMode ? ['oge','ege-base','ege-prof'] : courses;
+    tc.innerHTML = list.map(c=>`<div class="flex items-center gap-2 py-1.5"><span>${courseNames[c]||c}</span><span class="tag bg-green-100 text-green-700 ml-auto">Куплен</span></div>`).join('');
+  }
+}
+
+// ===== UTILS =====
+function diffTagSmall(d) {
+  const map={1:'bg-green-100 text-green-700',2:'bg-yellow-100 text-yellow-700',3:'bg-red-100 text-red-700'};
+  const labels={1:'Л',2:'С',3:'С+'};
+  return `<span class="tag ${map[d]||map[1]} text-xs mr-1">${labels[d]||'?'}</span>`;
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function logout(){localStorage.removeItem('fibi_current_user');location.href='index.html'}
+
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+  o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
+});
+
+init();
+</script>
+</body>
+</html>

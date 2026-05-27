@@ -77,13 +77,13 @@
   <div class="hidden lg:flex flex-col justify-between p-10 xl:p-14" style="width:460px;flex-shrink:0;background:#0D3B66">
     <!-- Logo -->
     <a href="index.html" class="flex items-center gap-2.5">
-      <img src="Иконки.png" alt="Фиби" class="w-10 h-10 flex-shrink-0" style="border-radius:30px">
+      <img src="Иконки.png" alt="Фиби" class="w-10 h-10 flex-shrink-0" style="border-radius:12px;object-fit:cover;background:#f4f6fb">
       <span class="text-white font-bold text-xl">Фиби</span>
     </a>
 
     <!-- Logo + tagline -->
     <div class="text-center">
-      <img src="Иконки.png" alt="Фиби" class="mascot w-44 mx-auto mb-4 drop-shadow-2xl" style="border-radius:30px">
+      <img src="Осьминог.png" alt="Фиби" class="mascot w-44 mx-auto mb-4 drop-shadow-2xl" style="border-radius:30px">
       <div class="text-xs font-bold uppercase tracking-widest mb-2" style="color:rgba(255,255,255,.4)">1, 1, 2, 3, 5, 8, 13...</div>
       <p style="color:rgba(255,255,255,.6)" class="text-sm leading-relaxed">Каждый шаг опирается на предыдущий.<br>Так же работает подготовка в ФИБИ.</p>
     </div>
@@ -124,7 +124,7 @@
       <!-- Mobile logo -->
       <div class="lg:hidden flex justify-center mb-8">
         <a href="index.html" class="flex items-center gap-2.5">
-          <img src="Иконки.png" alt="Фиби" class="w-9 h-9 flex-shrink-0" style="border-radius:30px">
+          <img src="Иконки.png" alt="Фиби" class="w-9 h-9 flex-shrink-0" style="border-radius:12px;object-fit:cover;background:#f4f6fb">
           <span class="font-bold text-xl" style="color:#0D3B66">Фиби</span>
         </a>
       </div>
@@ -463,8 +463,16 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
       document.getElementById('progress-bar').style.width = '100%';
     }, 50);
 
-    // Redirect
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1700);
+    // Redirect based on role
+    setTimeout(() => {
+      if (user.role === 'tutor') {
+        window.location.href = 'tutor-dashboard.html';
+      } else if (user.role === 'student') {
+        window.location.href = 'student-onboarding.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, 1700);
   }, 900);
 });
 
@@ -513,7 +521,19 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
     ss.style.display = 'block';
     document.getElementById('success-name').textContent = `С возвращением, ${user.name}! 👋`;
     setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 50);
-    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1700);
+    setTimeout(() => {
+      if (user.role === 'tutor') {
+        window.location.href = 'tutor-dashboard.html';
+      } else if (user.role === 'student') {
+        if (!user.onboardingDone) {
+          window.location.href = 'student-onboarding.html';
+        } else {
+          window.location.href = 'student-dashboard.html';
+        }
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, 1700);
   }, 800);
 });
 

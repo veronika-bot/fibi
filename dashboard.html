@@ -1801,8 +1801,14 @@ function loadParentScreen() {
 // ─── Load user from localStorage ──────────────────────────
 function loadUser() {
   const raw = localStorage.getItem('fibi_current_user');
-  if (!raw) return;
+  if (!raw) { window.location.href = 'register.html'; return; }
   const u = JSON.parse(raw);
+  // Route to dedicated dashboards
+  if (u.role === 'tutor') { window.location.href = 'tutor-dashboard.html'; return; }
+  if (u.role === 'student') {
+    if (!u.onboardingDone) { window.location.href = 'student-onboarding.html'; return; }
+    window.location.href = 'student-dashboard.html'; return;
+  }
   const short = u.name;
   const ini = ((u.name[0] || '') + (u.lastName ? u.lastName[0] : '')).toUpperCase() || u.name.slice(0,2).toUpperCase();
   const roleLabel = u.role === 'tutor' ? 'Репетитор' : u.role === 'parent' ? 'Родитель' : '';

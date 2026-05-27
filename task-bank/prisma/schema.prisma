@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Topic {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  parentId    String?
+  parent      Topic?  @relation("TopicTree", fields: [parentId], references: [id])
+  children    Topic[] @relation("TopicTree")
+  examType    String?
+  description String?
+  order       Int     @default(0)
+  tasks       TaskTopic[]
+  createdAt   DateTime @default(now())
+}
+
+model Task {
+  id                 String  @id @default(cuid())
+  examType           String  // OGE | EGE_BASE | EGE_PROFILE
+  part               Int
+  taskNumber         Int
+  title              String?
+  description        String
+  answer             String?
+  answerAlt          String  @default("[]")   // JSON array
+  hint1              String?
+  hint2              String?
+  partialSolution    String?
+  fullSolution       String  @default("[]")   // JSON array of {step,detail}
+  explanation        String?
+  difficulty         Int     @default(1)
+  estimatedTimeSec   Int?
+  source             String  @default("PLATFORM")
+  year               Int?
+  tags               String  @default("[]")   // JSON array
+  hasLatex           Boolean @default(false)
+  createdById        String?
+  verificationStatus String  @default("VERIFIED")
+
+  topics        TaskTopic[]
+  attempts      Attempt[]
+  homeworkTasks HomeworkTask[]
+  progress      UserProgress[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([examType, part, taskNumber])
+  @@index([difficulty])
+  @@index([verificationStatus])
+}
+
+model TaskTopic {
+  taskId  String
+  topicId String
+  task    Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  topic   Topic  @relation(fields: [topicId], references: [id])
+  @@id([taskId, topicId])
+}
+
+model Attempt {
+  id         String  @id @default(cuid())
+  userId     String
+  taskId     String
+  task       Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  attemptNum Int
+  answer     String
+  isCorrect  Boolean
+  timeTaken  Int?
+  createdAt  DateTime @default(now())
+  @@index([userId, taskId])
+}
+
+model UserProgress {
+  id            String   @id @default(cuid())
+  userId        String
+  taskId        String
+  task          Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  status        String   @default("UNSOLVED")
+  attempts      Int      @default(0)
+  bestAttempt   Int?
+  solvedAt      DateTime?
+  lastAttemptAt DateTime?
+  xpEarned      Int      @default(0)
+  @@unique([userId, taskId])
+  @@index([userId, status])
+}
+
+model UserStreak {
+  userId       String   @id
+  current      Int      @default(0)
+  best         Int      @default(0)
+  lastActiveAt DateTime @default(now())
+}
+
+model Homework {
+  id          String    @id @default(cuid())
+  tutorId     String
+  studentId   String
+  title       String
+  description String?
+  dueDate     DateTime?
+  status      String    @default("ACTIVE")
+  tasks       HomeworkTask[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  @@index([studentId, status])
+  @@index([tutorId])
+}
+
+model HomeworkTask {
+  id         String   @id @default(cuid())
+  homeworkId String
+  homework   Homework @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  taskId     String
+  task       Task     @relation(fields: [taskId], references: [id])
+  order      Int      @default(0)
+  comment    String?
+}
+
+model Recommendation {
+  id        String   @id @default(cuid())
+  userId    String
+  taskId    String
+  reason    String
+  context   String?
+  priority  Int      @default(0)
+  seen      Boolean  @default(false)
+  dismissed Boolean  @default(false)
+  createdAt DateTime @default(now())
+  @@index([userId, seen])
+}

@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ФИБИ — Кабинет ученика</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { yale: '#0D3B66', lemon: '#FAF0CA' },
+      fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif;box-sizing:border-box}
+body{background:#f4f6fb;margin:0}
+.sidebar{width:240px;min-height:100vh;background:#0D3B66;position:fixed;left:0;top:0;z-index:40;display:flex;flex-direction:column}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;border-radius:12px;cursor:pointer;color:rgba(255,255,255,0.65);font-weight:600;font-size:14px;margin:2px 8px;transition:all .2s}
+.nav-item:hover{background:rgba(255,255,255,0.1);color:white}
+.nav-item.active{background:rgba(255,255,255,0.18);color:white}
+.nav-item .badge{margin-left:auto;background:#FAF0CA;color:#0D3B66;font-size:11px;font-weight:700;border-radius:20px;padding:2px 7px}
+.screen{display:none}
+.screen.active{display:block}
+.main-content{margin-left:240px;min-height:100vh;padding:28px 32px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.card{background:white;border-radius:20px;padding:24px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+.btn-p{background:#0D3B66;color:white;border:none;border-radius:12px;padding:12px 24px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-p:hover{background:#0a2f52;transform:translateY(-1px)}
+.btn-o{background:transparent;color:#0D3B66;border:2px solid #0D3B66;border-radius:12px;padding:10px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.btn-o:hover{background:#0D3B66;color:white}
+.tag{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.xp-bar-outer{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden}
+.xp-bar-inner{height:100%;background:linear-gradient(90deg,#0D3B66,#3B82F6);border-radius:99px;transition:width .6s ease}
+.streak-flame{font-size:24px;animation:flicker 1.5s ease-in-out infinite alternate}
+@keyframes flicker{from{transform:scale(1) rotate(-3deg)}to{transform:scale(1.1) rotate(3deg)}}
+.level-badge{background:linear-gradient(135deg,#0D3B66,#1e6bba);color:white;border-radius:12px;padding:6px 14px;font-size:12px;font-weight:700;display:inline-flex;flex-direction:row;align-items:center;gap:5px;flex-wrap:nowrap;white-space:nowrap;line-height:1}
+.task-card{border:2px solid #e5e7eb;border-radius:16px;padding:20px;cursor:pointer;transition:all .25s;background:white}
+.task-card:hover{border-color:#0D3B66;box-shadow:0 4px 20px rgba(13,59,102,0.12)}
+.task-card.active{border-color:#0D3B66;background:#f0f6ff}
+.attempt-dot{width:10px;height:10px;border-radius:50%;background:#e5e7eb;transition:all .3s}
+.attempt-dot.used{background:#ef4444}
+.attempt-dot.correct{background:#22c55e}
+.hint-box{background:#fffbeb;border:1.5px solid #fbbf24;border-radius:12px;padding:16px;margin-top:12px}
+.solution-box{background:#f0fdf4;border:1.5px solid #22c55e;border-radius:12px;padding:16px;margin-top:12px}
+.paywall-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(255,255,255,0) 0%,rgba(255,255,255,0.98) 55%,white 100%);border-radius:20px;display:flex;align-items:flex-end;justify-content:center;padding:24px 24px 40px;z-index:10}
+.paywall-card{background:white;border-radius:20px;padding:28px;box-shadow:0 8px 40px rgba(0,0,0,0.15);text-align:center;max-width:360px;width:100%}
+.demo-toggle{background:#FAF0CA;border:2px solid #0D3B66;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:#0D3B66;cursor:pointer;transition:all .2s}
+.demo-toggle.on{background:#0D3B66;color:#FAF0CA}
+.stat-chip{background:#f4f6fb;border-radius:12px;padding:12px 16px;text-align:center}
+.topic-pill{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #e5e7eb;background:white;transition:all .2s}
+.topic-pill.active{background:#0D3B66;color:white;border-color:#0D3B66}
+.diff-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:white;border-radius:24px;padding:32px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto}
+.tutor-card{border:2px solid #e5e7eb;border-radius:20px;padding:20px;transition:all .25s;background:white}
+.tutor-card:hover{border-color:#0D3B66;box-shadow:0 4px 20px rgba(13,59,102,0.1)}
+.hw-card{border-left:4px solid #0D3B66;background:white;border-radius:0 16px 16px 0;padding:16px 20px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+.hw-card.urgent{border-left-color:#ef4444}
+.hw-card.done{border-left-color:#22c55e}
+.achievement{text-align:center;padding:16px;border-radius:16px;background:#f9fafb;border:2px solid #e5e7eb}
+.achievement.earned{background:linear-gradient(135deg,#fef9c3,#fde68a);border-color:#fbbf24}
+.progress-ring{transform:rotate(-90deg);transform-origin:50%}
+input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus,select:focus{border-color:#0D3B66}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="px-5 py-5 flex items-center gap-2.5">
+    <a href="index.html"><img src="Иконки.png" alt="ФИБИ" class="w-9 h-9" style="border-radius:10px;object-fit:cover;background:#f4f6fb"></a>
+    <div>
+      <a href="index.html" class="text-xl font-black text-white tracking-tight">ФИБИ</a>
+      <p class="text-xs text-blue-200 font-medium" style="margin-top:-1px">Кабинет ученика</p>
+    </div>
+  </div>
+
+  <!-- User mini-profile -->
+  <div class="mx-3 mb-4 bg-white/10 rounded-2xl p-3 flex items-center gap-3">
+    <div id="sb-avatar" class="w-10 h-10 rounded-full bg-yellow-200 flex items-center justify-center text-yale font-bold text-sm"></div>
+    <div class="flex-1 min-w-0">
+      <p id="sb-name" class="text-white font-bold text-sm truncate"></p>
+      <div class="level-badge inline-flex items-center gap-1 mt-0.5" id="sb-level">Новичок</div>
+    </div>
+  </div>
+
+  <!-- Streak & XP mini -->
+  <div class="mx-3 mb-4 bg-white/10 rounded-2xl p-3 flex items-center justify-between">
+    <div class="flex items-center gap-1.5">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="#f97316" stroke="none"><path d="M12 2C10 5 7 7 7 11a5 5 0 0010 0c0-2-1-4-2-5-1 2-2 3-2 3s-1-4-1-7z"/></svg>
+      <span id="sb-streak" class="text-white font-bold text-sm">0</span>
+      <span class="text-blue-200 text-xs">дней</span>
+    </div>
+    <div class="flex-1 mx-3">
+      <div class="xp-bar-outer">
+        <div id="sb-xp-bar" class="xp-bar-inner" style="width:0%"></div>
+      </div>
+    </div>
+    <div>
+      <span id="sb-xp" class="text-white font-bold text-sm">0</span>
+      <span class="text-blue-200 text-xs"> XP</span>
+    </div>
+  </div>
+
+  <nav class="flex-1 px-2">
+    <div class="nav-item active" onclick="goScreen('s-home')" id="nav-s-home">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Главная
+    </div>
+    <div class="nav-item" onclick="goScreen('s-tutors')" id="nav-s-tutors">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Репетиторы
+      <span class="badge" id="hw-badge" style="display:none">!</span>
+    </div>
+    <div class="nav-item" onclick="goScreen('s-study')" id="nav-s-study">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      Обучение
+    </div>
+    <div class="nav-item" onclick="goScreen('s-bank')" id="nav-s-bank">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+      Банк заданий
+    </div>
+    <div class="nav-item" onclick="goScreen('s-homework')" id="nav-s-homework">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      Домашние задания
+    </div>
+    <div class="nav-item" onclick="goScreen('s-progress')" id="nav-s-progress">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Прогресс
+    </div>
+    <div class="nav-item" onclick="goScreen('s-chat')" id="nav-s-chat">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Чат
+    </div>
+    <div class="nav-item" onclick="goScreen('s-profile')" id="nav-s-profile">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Профиль
+    </div>
+  </nav>
+
+  <div class="p-4">
+    <button onclick="logout()" class="w-full text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти из аккаунта</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main-content">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <h1 id="page-title" class="text-2xl font-black text-gray-900">Главная</h1>
+      <p id="page-sub" class="text-sm text-gray-500 mt-0.5">Добро пожаловать!</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="demo-toggle" id="demo-btn" onclick="toggleDemo()">✨ Демо</button>
+      <div class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm cursor-pointer" onclick="goScreen('s-profile')">
+        <span id="top-avatar" class="font-bold text-yale text-sm"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: HOME ==================== -->
+  <div class="screen active" id="s-home">
+    <!-- Daily goal progress -->
+    <div class="card mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="font-black text-lg text-gray-900">Цель на сегодня</h2>
+          <p class="text-sm text-gray-500" id="home-goal-text">Реши 3 задачи</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="flex justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#f97316" stroke="none" class="streak-flame"><path d="M12 2C10 5 7 7 7 11a5 5 0 0010 0c0-2-1-4-2-5-1 2-2 3-2 3s-1-4-1-7z"/></svg>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Серия</p>
+            <p class="font-black text-gray-900" id="home-streak">0</p>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="#f59e0b" stroke="none"><path d="M13 2L4.5 13.5H11L10 22L20 9.5H13.5L13 2z"/></svg>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">XP сегодня</p>
+            <p class="font-black text-gray-900" id="home-xp-today">0</p>
+          </div>
+        </div>
+      </div>
+      <div class="xp-bar-outer" style="height:12px">
+        <div id="home-goal-bar" class="xp-bar-inner" style="width:0%;height:12px"></div>
+      </div>
+      <div class="flex justify-between mt-2">
+        <span class="text-xs text-gray-500" id="home-goal-done">0 решено</span>
+        <span class="text-xs font-bold text-yale" id="home-goal-target">цель: 3</span>
+      </div>
+    </div>
+
+    <!-- 3 blocks -->
+    <div class="grid grid-cols-3 gap-4 mb-6">
+      <!-- Block 1: Find Tutor -->
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-tutors')">
+        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3 class="font-bold text-gray-900 mb-1">Найти репетитора</h3>
+        <p class="text-xs text-gray-500 mb-3">Подбор репетитора, ДЗ, чат</p>
+        <span class="tag bg-green-100 text-green-700">Бесплатно</span>
+      </div>
+      <!-- Block 2: Self-Study -->
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-study')">
+        <div class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center mb-3">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        </div>
+        <h3 class="font-bold text-gray-900 mb-1">Самообучение</h3>
+        <p class="text-xs text-gray-500 mb-3">Теория, видео, практика</p>
+        <span class="tag bg-yellow-100 text-yellow-700" id="b2-tag-home">Платно</span>
+      </div>
+      <!-- Block 3: Task Bank -->
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-bank')">
+        <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mb-3">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#7c3aed" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+        </div>
+        <h3 class="font-bold text-gray-900 mb-1">Банк заданий</h3>
+        <p class="text-xs text-gray-500 mb-3">42 задания, 10 тем</p>
+        <span class="tag bg-purple-100 text-purple-700" id="b3-tag-home">Платно</span>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="home-solved">0</p>
+        <p class="text-xs text-gray-500 mt-1">Решено задач</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="home-accuracy">—</p>
+        <p class="text-xs text-gray-500 mt-1">Точность</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="home-streak2">0</p>
+        <p class="text-xs text-gray-500 mt-1">Дней подряд</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="home-xp">0</p>
+        <p class="text-xs text-gray-500 mt-1">Всего XP</p>
+      </div>
+    </div>
+
+    <!-- Recent activity + Quick tasks -->
+    <div class="grid grid-cols-2 gap-6">
+      <!-- Quick task -->
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Быстрое задание</h3>
+        <div id="quick-task-area">
+          <p class="text-sm text-gray-500">Загрузка...</p>
+        </div>
+      </div>
+      <!-- Leaderboard mini -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-gray-900">Топ учеников</h3>
+          <a href="#" onclick="goScreen('s-progress');return false" class="text-xs text-yale font-bold">Все →</a>
+        </div>
+        <div id="leaderboard-mini"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: TUTORS ==================== -->
+  <div class="screen" id="s-tutors">
+    <div id="tutors-no-tutor">
+      <div class="card mb-6 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center">
+            <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><circle cx="12" cy="7" r="4"/><path d="M4.5 20c0-3 3.358-5.5 7.5-5.5s7.5 2.5 7.5 5.5"/><path d="M8 5.5l4-2.5 4 2.5"/></svg>
+          </div>
+          <div>
+            <h2 class="font-black text-gray-900 text-lg">Найди своего репетитора</h2>
+            <p class="text-sm text-gray-600 mt-0.5">Бесплатный подбор. Один активный репетитор.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-4 flex gap-3 flex-wrap">
+        <input type="text" placeholder="Поиск по имени..." id="tutor-search" oninput="filterTutors()" style="max-width:240px" />
+        <select id="tutor-exam-filter" onchange="filterTutors()" style="max-width:180px">
+          <option value="">Все экзамены</option>
+          <option>ОГЭ</option>
+          <option>ЕГЭ База</option>
+          <option>ЕГЭ Профиль</option>
+        </select>
+      </div>
+
+      <div id="tutors-list" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- Active tutor view -->
+    <div id="tutors-active" style="display:none">
+      <div class="card mb-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center text-2xl font-bold text-yale" id="at-avatar"></div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h2 class="font-black text-gray-900 text-lg" id="at-name">Имя Репетитора</h2>
+                <span class="tag bg-green-100 text-green-700">Активный</span>
+              </div>
+              <p class="text-sm text-gray-500" id="at-subject"></p>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <button class="btn-o flex items-center gap-1.5" onclick="openChat()"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> Чат</button>
+            <button class="text-xs text-red-500 font-bold px-3 py-2 rounded-lg hover:bg-red-50 transition-colors" onclick="endTutorRelation()">Завершить</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: STUDY ==================== -->
+  <div class="screen" id="s-study">
+    <div id="study-locked" style="position:relative;min-height:440px">
+      <div class="card mb-4" style="opacity:0.4;pointer-events:none">
+        <h2 class="font-black text-gray-900 mb-2">Курс: ОГЭ Математика</h2>
+        <p class="text-sm text-gray-500">10 уроков • 45 заданий • Сертификат</p>
+      </div>
+      <div class="grid grid-cols-3 gap-4" style="opacity:0.4;pointer-events:none">
+        <div class="card"><div class="w-8 h-8 bg-blue-100 rounded-lg mb-2"></div><p class="font-bold text-sm">Урок 1</p><p class="text-xs text-gray-500">Арифметика</p></div>
+        <div class="card"><div class="w-8 h-8 bg-blue-100 rounded-lg mb-2"></div><p class="font-bold text-sm">Урок 2</p><p class="text-xs text-gray-500">Дроби</p></div>
+        <div class="card"><div class="w-8 h-8 bg-blue-100 rounded-lg mb-2"></div><p class="font-bold text-sm">Урок 3</p><p class="text-xs text-gray-500">Уравнения</p></div>
+      </div>
+      <div class="paywall-overlay">
+        <div class="paywall-card">
+          <div class="w-16 h-16 bg-yellow-50 rounded-2xl flex items-center justify-center mx-auto mb-3"><svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="1.6"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+          <h3 class="font-black text-xl text-gray-900 mb-2">Блок «Самообучение»</h3>
+          <p class="text-sm text-gray-500 mb-4">Полные курсы по ОГЭ и ЕГЭ с теорией, практикой и проверкой ДЗ. Автоматически разблокирует Банк заданий.</p>
+          <div class="bg-blue-50 rounded-xl p-3 mb-4">
+            <p class="text-xs text-gray-500 mb-1">Что включено</p>
+            <div class="text-sm text-left space-y-1.5">
+              <p class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12l4 4 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Теория и видеоуроки</p>
+              <p class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12l4 4 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Практические задания</p>
+              <p class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12l4 4 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Скрипты проверки ДЗ</p>
+              <p class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12l4 4 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Полный Банк заданий</p>
+            </div>
+          </div>
+          <button class="btn-p w-full" onclick="buyStudy()">Приобрести доступ</button>
+          <p class="text-xs text-gray-400 mt-2">Разовая покупка • Бессрочный доступ</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="study-unlocked" style="display:none">
+      <div class="card mb-6 bg-gradient-to-r from-yale to-blue-500 text-white">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="font-black text-2xl mb-1" id="study-course-name">Курс: ОГЭ</h2>
+            <p class="text-sm opacity-80" id="study-progress-text">0 из 10 уроков</p>
+          </div>
+          <div class="text-right">
+            <p class="text-4xl font-black" id="study-pct">0%</p>
+            <p class="text-xs opacity-80">пройдено</p>
+          </div>
+        </div>
+        <div class="mt-4 h-2 bg-white/30 rounded-full overflow-hidden">
+          <div id="study-bar" class="h-full bg-white rounded-full transition-all" style="width:0%"></div>
+        </div>
+      </div>
+      <div id="lessons-grid" class="grid grid-cols-2 gap-4"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: BANK ==================== -->
+  <div class="screen" id="s-bank">
+    <!-- Filters -->
+    <div class="card mb-4">
+      <div class="flex flex-wrap gap-2 mb-3" id="topic-filters">
+        <button class="topic-pill active" onclick="filterBank(this,'all')" data-filter="all">Все</button>
+      </div>
+      <div class="flex gap-3 flex-wrap">
+        <select id="bank-part" onchange="renderBank()" style="max-width:140px">
+          <option value="">Часть 1+2</option>
+          <option value="1">Часть 1</option>
+          <option value="2">Часть 2</option>
+        </select>
+        <select id="bank-diff" onchange="renderBank()" style="max-width:160px">
+          <option value="">Все уровни</option>
+          <option value="1">Лёгкий</option>
+          <option value="2">Средний</option>
+          <option value="3">Сложный</option>
+        </select>
+        <div class="flex items-center gap-2 ml-auto">
+          <span class="text-sm text-gray-500">Показано:</span>
+          <span id="bank-count" class="font-bold text-yale text-sm">0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anti-cheat warning -->
+    <div id="anticheat-warn" class="mb-4 bg-amber-50 border border-amber-200 rounded-xl p-4" style="display:none">
+      <div class="flex items-start gap-3">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#92400e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:1px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+        <div>
+          <p class="font-bold text-amber-800 text-sm">Решения скрыты</p>
+          <p class="text-xs text-amber-700 mt-0.5">У тебя есть активное домашнее задание от репетитора. Решения будут доступны после его проверки.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="bank-locked" style="position:relative;min-height:420px">
+      <div id="bank-tasks-preview" class="grid grid-cols-2 gap-3" style="opacity:0.35;pointer-events:none"></div>
+      <div class="paywall-overlay">
+        <div class="paywall-card">
+          <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3"><svg width="34" height="34" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h5"/></svg></div>
+          <h3 class="font-black text-xl text-gray-900 mb-2">Банк заданий</h3>
+          <p class="text-sm text-gray-500 mb-4">42 задания по 10 темам. Разбор решений, подсказки, 3 попытки. Купи Самообучение — и Банк открывается автоматически.</p>
+          <div class="flex gap-2 mb-4">
+            <button class="btn-p flex-1" onclick="buyStudy()" style="white-space:nowrap;font-size:13px;padding:11px 14px">С Самообучением</button>
+            <button class="btn-o flex-1" onclick="buyBankOnly()" style="white-space:nowrap;font-size:13px;padding:9px 14px">Только банк</button>
+          </div>
+          <p class="text-xs text-gray-400">Банк отдельно не включает курсы</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="bank-unlocked" style="display:none">
+      <div id="bank-tasks-grid" class="grid grid-cols-2 gap-3"></div>
+    </div>
+
+    <!-- Task solving modal -->
+    <div class="modal-overlay" id="task-modal">
+      <div class="modal w-full max-w-xl">
+        <div class="flex items-start justify-between mb-4">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="tag bg-blue-100 text-blue-700" id="tm-topic"></span>
+              <span class="tag" id="tm-diff-tag"></span>
+              <span class="tag bg-gray-100 text-gray-600" id="tm-part"></span>
+            </div>
+            <h3 class="font-black text-gray-900 text-lg" id="tm-num"></h3>
+          </div>
+          <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-700 font-bold text-xl leading-none">&times;</button>
+        </div>
+
+        <!-- Attempts -->
+        <div class="flex items-center gap-2 mb-4">
+          <span class="text-xs text-gray-500 font-medium">Попытки:</span>
+          <div class="attempt-dot" id="dot1"></div>
+          <div class="attempt-dot" id="dot2"></div>
+          <div class="attempt-dot" id="dot3"></div>
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-4 mb-4 text-sm text-gray-800 leading-relaxed" id="tm-text"></div>
+
+        <div id="tm-hint-box" class="hint-box" style="display:none">
+          <p class="font-bold text-amber-700 text-sm mb-1">💡 Подсказка</p>
+          <p class="text-sm text-amber-800" id="tm-hint"></p>
+        </div>
+
+        <div id="tm-solution-box" class="solution-box" style="display:none">
+          <p class="font-bold text-green-700 text-sm mb-2">✅ Решение</p>
+          <div id="tm-solution" class="text-sm text-green-800 space-y-1"></div>
+        </div>
+
+        <div id="tm-input-area" class="mt-4">
+          <div class="flex gap-2">
+            <input type="text" id="tm-answer" placeholder="Введи ответ..." onkeydown="if(event.key==='Enter')submitAnswer()" />
+            <button class="btn-p px-6" onclick="submitAnswer()">→</button>
+          </div>
+          <p id="tm-feedback" class="text-sm mt-2 font-medium" style="min-height:20px"></p>
+        </div>
+
+        <div id="tm-done-area" style="display:none" class="mt-4">
+          <div id="tm-result-msg" class="rounded-xl p-4 text-center font-bold"></div>
+          <button class="btn-p w-full mt-3" onclick="nextTask()">Следующее задание →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: HOMEWORK ==================== -->
+  <div class="screen" id="s-homework">
+    <div id="hw-no-tutor" class="card text-center py-12">
+      <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <h3 class="font-black text-xl text-gray-900 mb-2">Нет активного репетитора</h3>
+      <p class="text-sm text-gray-500 mb-4">Найди репетитора, чтобы получать домашние задания</p>
+      <button class="btn-p" onclick="goScreen('s-tutors')">Найти репетитора</button>
+    </div>
+
+    <div id="hw-list-area" style="display:none">
+      <div class="grid grid-cols-3 gap-4 mb-6">
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-yale" id="hw-total">0</p>
+          <p class="text-xs text-gray-500 mt-1">Всего ДЗ</p>
+        </div>
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-green-600" id="hw-done-count">0</p>
+          <p class="text-xs text-gray-500 mt-1">Сдано</p>
+        </div>
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-red-500" id="hw-pending">0</p>
+          <p class="text-xs text-gray-500 mt-1">Ожидают</p>
+        </div>
+      </div>
+      <div id="hw-cards"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: PROGRESS ==================== -->
+  <div class="screen" id="s-progress">
+    <!-- Level & XP -->
+    <div class="card mb-6">
+      <div class="flex items-center gap-6">
+        <div class="text-center">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-1" style="background:#e8f0fb" id="prog-level-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2.5"><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <p class="font-black text-yale" id="prog-level-name">Новичок</p>
+        </div>
+        <div class="flex-1">
+          <div class="flex justify-between mb-2">
+            <span class="font-bold text-gray-900" id="prog-xp-current">0 XP</span>
+            <span class="text-gray-500 text-sm" id="prog-xp-next">до следующего уровня: 100 XP</span>
+          </div>
+          <div class="xp-bar-outer" style="height:14px">
+            <div id="prog-xp-bar" class="xp-bar-inner" style="width:0%;height:14px"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-4 gap-4 mb-6">
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="prog-solved">0</p>
+        <p class="text-xs text-gray-500 mt-1">Решено</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="prog-accuracy">—</p>
+        <p class="text-xs text-gray-500 mt-1">Точность</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="prog-streak3">0</p>
+        <p class="text-xs text-gray-500 mt-1">Серия дней</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="prog-best-streak">0</p>
+        <p class="text-xs text-gray-500 mt-1">Лучшая серия</p>
+      </div>
+    </div>
+
+    <!-- Topics breakdown -->
+    <div class="card mb-6">
+      <h3 class="font-bold text-gray-900 mb-4">По темам</h3>
+      <div id="topics-breakdown" class="space-y-3"></div>
+    </div>
+
+    <!-- Achievements -->
+    <div class="card mb-6">
+      <h3 class="font-bold text-gray-900 mb-4">Достижения</h3>
+      <div id="achievements-grid" class="grid grid-cols-4 gap-3"></div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="card">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-900">Таблица лидеров</h3>
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-500">🏆 Топ-3 получают призы</span>
+        </div>
+      </div>
+      <div id="leaderboard-full"></div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: CHAT ==================== -->
+  <div class="screen" id="s-chat">
+    <div id="chat-no-tutor" class="card text-center py-12">
+      <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+      <h3 class="font-black text-xl text-gray-900 mb-2">Нет активного репетитора</h3>
+      <p class="text-sm text-gray-500 mb-4">Чат откроется после того, как ты подключишь репетитора</p>
+      <button class="btn-p" onclick="goScreen('s-tutors')">Найти репетитора</button>
+    </div>
+    <div id="chat-area" style="display:none" class="flex gap-4" style="height:calc(100vh - 160px)">
+      <div class="card flex-1 flex flex-col" style="height:calc(100vh-180px)">
+        <div id="chat-header" class="flex items-center gap-3 pb-4 border-b border-gray-100 mb-4">
+          <div id="chat-tutor-avatar" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale"></div>
+          <div>
+            <p id="chat-tutor-name" class="font-bold text-gray-900"></p>
+            <p class="text-xs text-green-500">онлайн</p>
+          </div>
+        </div>
+        <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 mb-4" style="max-height:420px;overflow-y:auto">
+          <div class="text-center text-xs text-gray-400">Начало переписки</div>
+        </div>
+        <div class="flex gap-2">
+          <input type="text" id="chat-input" placeholder="Напиши сообщение..." onkeydown="if(event.key==='Enter')sendChat()" />
+          <button class="btn-p px-5" onclick="sendChat()">→</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SCREEN: PROFILE ==================== -->
+  <div class="screen" id="s-profile">
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-1">
+        <div class="card text-center">
+          <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-black text-yale mx-auto mb-3" id="prof-avatar"></div>
+          <h3 class="font-black text-gray-900 text-xl" id="prof-name"></h3>
+          <p class="text-sm text-gray-500 mt-1" id="prof-email"></p>
+          <div class="level-badge inline-block mt-2" id="prof-level"></div>
+          <div class="mt-4 space-y-2 text-left">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Город</span>
+              <span class="font-medium" id="prof-city">—</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Школа</span>
+              <span class="font-medium" id="prof-school">—</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Экзамен</span>
+              <span class="font-medium" id="prof-exam">—</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Цель в день</span>
+              <span class="font-medium" id="prof-goal">—</span>
+            </div>
+          </div>
+          <button class="btn-o w-full mt-4 text-sm" onclick="editProfile()">Редактировать</button>
+        </div>
+      </div>
+      <div class="col-span-2 space-y-4">
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-4">Подписки и доступы</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-yellow-50 rounded-lg flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+                <div>
+                  <p class="font-bold text-sm">Самообучение</p>
+                  <p class="text-xs text-gray-500">Курсы + Банк заданий</p>
+                </div>
+              </div>
+              <span id="prof-study-status" class="tag bg-gray-200 text-gray-600">Не активно</span>
+            </div>
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#7c3aed" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+                <div>
+                  <p class="font-bold text-sm">Банк заданий</p>
+                  <p class="text-xs text-gray-500">Только задания, без курсов</p>
+                </div>
+              </div>
+              <span id="prof-bank-status" class="tag bg-gray-200 text-gray-600">Не активно</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Хобби и интересы</h3>
+          <div id="prof-hobbies" class="flex flex-wrap gap-2"></div>
+        </div>
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Настройки</h3>
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-sm">Уведомления</p>
+                <p class="text-xs text-gray-500">Напоминания о заданиях</p>
+              </div>
+              <input type="checkbox" checked class="accent-yale w-4 h-4" />
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="font-medium text-sm">Демо-режим</p>
+                <p class="text-xs text-gray-500">Показать все функции платформы</p>
+              </div>
+              <input type="checkbox" id="demo-check" onchange="toggleDemo()" class="accent-yale w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<!-- Connect Tutor Modal -->
+<div class="modal-overlay" id="connect-tutor-modal">
+  <div class="modal">
+    <h3 class="font-black text-xl text-gray-900 mb-4" id="ctm-title">Подключить репетитора</h3>
+    <div id="ctm-profile" class="flex items-center gap-4 mb-4 p-4 bg-gray-50 rounded-xl">
+      <div class="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale text-xl" id="ctm-avatar"></div>
+      <div>
+        <p class="font-black text-gray-900" id="ctm-name"></p>
+        <p class="text-sm text-gray-500" id="ctm-info"></p>
+        <div class="flex gap-1 mt-1" id="ctm-exams"></div>
+      </div>
+    </div>
+    <div class="bg-blue-50 rounded-xl p-3 mb-4 text-sm text-blue-800">
+      ℹ️ Платформа не обрабатывает оплату. Условия работы и оплату обсуждайте напрямую с репетитором.
+    </div>
+    <div class="flex gap-2">
+      <button class="btn-p flex-1" onclick="confirmConnect()">Подключить</button>
+      <button class="btn-o flex-1" onclick="closeModal('connect-tutor-modal')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<!-- End Relation Modal -->
+<div class="modal-overlay" id="end-relation-modal">
+  <div class="modal text-center">
+    <div class="text-4xl mb-3">⚠️</div>
+    <h3 class="font-black text-xl text-gray-900 mb-2">Завершить работу?</h3>
+    <p class="text-sm text-gray-500 mb-4">После этого ты сможешь подключить нового репетитора. История чата сохранится.</p>
+    <div class="flex gap-2">
+      <button class="btn-p flex-1 bg-red-500 hover:bg-red-600" onclick="confirmEndRelation()">Завершить</button>
+      <button class="btn-o flex-1" onclick="closeModal('end-relation-modal')">Отмена</button>
+    </div>
+  </div>
+</div>
+
+<script src="tasks.js"></script>
+<script>
+// ===== STATE =====
+let S = {
+  user: null,
+  demoMode: false,
+  currentTask: null,
+  currentAttempt: 0,
+  taskHistory: [],
+  bankFilter: 'all',
+  chatMessages: [],
+  todayXP: 0,
+  todayDone: 0,
+};
+
+// svg icons per level (neutral, yale-blue style)
+const _LI = `style="flex-shrink:0;display:inline-block;vertical-align:middle"`;
+const LEVEL_ICONS = [
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><circle cx="12" cy="12" r="3"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" stroke-linejoin="round"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" stroke-linejoin="round"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" ${_LI}><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" ${_LI}><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/><circle cx="12" cy="12" r="3" fill="white"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ${_LI}><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none" ${_LI}><path d="M12 1l2.75 8.46h8.9l-7.2 5.23 2.75 8.46L12 18.92l-7.2 5.23 2.75-8.46L.35 9.46h8.9z"/></svg>`,
+];
+const LEVELS = [
+  {name:'Новичок',min:0,max:100},
+  {name:'Ученик',min:100,max:250},
+  {name:'Практик',min:250,max:500},
+  {name:'Знаток',min:500,max:900},
+  {name:'Мастер',min:900,max:1500},
+  {name:'Эксперт',min:1500,max:2500},
+  {name:'Профи',min:2500,max:4000},
+  {name:'Гений',min:4000,max:99999},
+];
+
+const _TI = {
+  plus:'<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  frac:'<svg width="13" height="13" fill="none" viewBox="0 0 24 24"><circle cx="8" cy="7" r="2.5" fill="#6b7280"/><path d="M4 12h16" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"/><circle cx="16" cy="17" r="2.5" fill="#6b7280"/></svg>',
+  root:'<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 13l5 7L13 2h8"/></svg>',
+  eq:  '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><path d="M5 9h14M5 15h14"/></svg>',
+  fn:  '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round"><path d="M3 12c2-5 4-5 6 0s4 5 6 0"/></svg>',
+  ineq:'<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9L6 12l12 3"/></svg>',
+  bar: '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6M3 20h18"/></svg>',
+  tri: '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2 21h20L12 3z"/></svg>',
+  doc: '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M8 12h8M8 16h5M14 2v6h6"/></svg>',
+  alg: '<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round"><path d="M6 20L12 4l6 16M9.5 14h5"/></svg>',
+  circ:'<svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#6b7280" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg>',
+};
+const TOPIC_ICONS = {
+  'Арифметика':_TI.plus,'Вычисления':_TI.plus,
+  'Дроби':_TI.frac,'Дроби и проценты':_TI.frac,'Обыкновенные дроби':_TI.frac,'Проценты':_TI.frac,
+  'Степени':_TI.root,'Степени и корни':_TI.root,'Квадратные корни':_TI.root,
+  'Уравнения':_TI.eq,'Линейные уравнения':_TI.eq,'Квадратные уравнения':_TI.eq,'Системы линейных уравнений':_TI.eq,'Составление уравнений':_TI.eq,
+  'Функции':_TI.fn,'Функции и графики':_TI.fn,'Линейная функция':_TI.fn,'Квадратичная функция':_TI.fn,
+  'Неравенства':_TI.ineq,'Линейные неравенства':_TI.ineq,
+  'Статистика':_TI.bar,'Статистика и вероятность':_TI.bar,'Вероятность':_TI.bar,'Среднее значение':_TI.bar,
+  'Геометрия':_TI.tri,'Теорема Пифагора':_TI.tri,'Углы треугольника':_TI.tri,'Площадь треугольника':_TI.tri,'Площадь четырёхугольников':_TI.tri,'Координаты':_TI.tri,
+  'Окружность и круг':_TI.circ,
+  'Текстовые задачи':_TI.doc,'Задачи на движение':_TI.doc,'Задачи на работу':_TI.doc,
+  'Алгебра':_TI.alg,'Формулы сокращённого умножения':_TI.alg,
+};
+
+const ACHIEVEMENTS = [
+  {id:'first_solve',name:'Первый шаг',emoji:'👣',desc:'Реши первое задание'},
+  {id:'streak3',name:'3 дня подряд',emoji:'🔥',desc:'Серия 3 дня'},
+  {id:'streak7',name:'Неделя',emoji:'📅',desc:'Серия 7 дней'},
+  {id:'solve10',name:'Десятка',emoji:'🎯',desc:'Реши 10 заданий'},
+  {id:'solve50',name:'Полтинник',emoji:'💪',desc:'Реши 50 заданий'},
+  {id:'perfect',name:'Идеально',emoji:'✨',desc:'5 верных ответов подряд'},
+  {id:'allTopics',name:'Всесторонний',emoji:'🌐',desc:'Реши задания по всем темам'},
+  {id:'part2',name:'Часть 2',emoji:'🏆',desc:'Реши задачу части 2'},
+];
+
+const DEMO_TUTORS = [
+  {id:'t1',name:'Анна Петрова',initials:'АП',subject:'Математика, ОГЭ',rating:4.9,reviews:48,exams:['ОГЭ'],experience:5,bio:'Опытный репетитор, 98% учеников сдают на 4 и 5.',students:12},
+  {id:'t2',name:'Михаил Козлов',initials:'МК',subject:'Математика, ЕГЭ',rating:4.8,reviews:63,exams:['ЕГЭ База','ЕГЭ Профиль'],experience:8,bio:'КМС по математике, преподаватель вуза.',students:9},
+  {id:'t3',name:'Светлана Иванова',initials:'СИ',subject:'Математика',rating:5.0,reviews:31,exams:['ОГЭ','ЕГЭ База'],experience:3,bio:'Помогаю разобраться с нуля. Объясняю просто.',students:7},
+  {id:'t4',name:'Дмитрий Новиков',initials:'ДН',subject:'Математика, ЕГЭ Профиль',rating:4.7,reviews:55,exams:['ЕГЭ Профиль'],experience:10,bio:'Олимпиадник, помогаю с задачами повышенной сложности.',students:5},
+];
+
+// ===== INIT =====
+function init() {
+  const stored = localStorage.getItem('fibi_current_user');
+  if (!stored) { location.href='register.html'; return; }
+  S.user = JSON.parse(stored);
+  if (S.user.role !== 'student') { location.href='dashboard.html'; return; }
+  if (!S.user.onboardingDone) { location.href='student-onboarding.html'; return; }
+  renderSidebar();
+  renderHome();
+  renderTutors();
+  renderStudy();
+  renderBank();
+  renderHomework();
+  renderProgress();
+  renderProfile();
+  updateTopbar();
+}
+
+function saveUser() {
+  localStorage.setItem('fibi_current_user', JSON.stringify(S.user));
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const idx = users.findIndex(u => u.id === S.user.id);
+  if (idx !== -1) users[idx] = S.user;
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+}
+
+function getLevelInfo(xp) {
+  for (let i = LEVELS.length-1; i >= 0; i--) {
+    if (xp >= LEVELS[i].min) return {...LEVELS[i], index:i};
+  }
+  return {...LEVELS[0], index:0};
+}
+
+// ===== NAVIGATION =====
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const navId = 'nav-' + id;
+  const nav = document.getElementById(navId);
+  if (nav) nav.classList.add('active');
+
+  const titles = {
+    's-home':'Главная','s-tutors':'Репетиторы','s-study':'Самообучение',
+    's-bank':'Банк заданий','s-homework':'Домашние задания',
+    's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль'
+  };
+  const subs = {
+    's-home':'Твои успехи и цели','s-tutors':'Управление репетитором',
+    's-study':'Курсы и теория','s-bank':'Практика и задания',
+    's-homework':'Задания от репетитора','s-progress':'Статистика и достижения',
+    's-chat':'Сообщения','s-profile':'Настройки аккаунта'
+  };
+  document.getElementById('page-title').textContent = titles[id] || '';
+  document.getElementById('page-sub').textContent = subs[id] || '';
+
+  if (id === 's-chat') renderChat();
+}
+
+function openChat() { goScreen('s-chat'); }
+
+// ===== DEMO MODE =====
+function toggleDemo() {
+  S.demoMode = !S.demoMode;
+  const btn = document.getElementById('demo-btn');
+  const chk = document.getElementById('demo-check');
+  btn.classList.toggle('on', S.demoMode);
+  if (chk) chk.checked = S.demoMode;
+  if (S.demoMode) activateDemo(); else deactivateDemo();
+}
+
+function activateDemo() {
+  S.user.hasStudyAccess = true;
+  S.user.hasBankAccess = true;
+  S.user.streak = 14;
+  S.user.xp = 820;
+  S.user.solved = 27;
+  S.user.activeTutor = DEMO_TUTORS[0];
+  S.user.pendingHW = false;
+  S.taskHistory = [{topic:'Арифметика',correct:true},{topic:'Дроби',correct:true},{topic:'Уравнения',correct:false}];
+  S.todayDone = 2;
+  S.todayXP = 40;
+  renderAll();
+}
+
+function deactivateDemo() {
+  const stored = localStorage.getItem('fibi_current_user');
+  if (stored) { S.user = JSON.parse(stored); S.user.hasStudyAccess = false; S.user.hasBankAccess = false; }
+  S.taskHistory = [];
+  S.todayDone = 0;
+  S.todayXP = 0;
+  renderAll();
+}
+
+function renderAll() {
+  renderSidebar();
+  renderHome();
+  renderTutors();
+  renderStudy();
+  renderBank();
+  renderHomework();
+  renderProgress();
+  renderProfile();
+  updateTopbar();
+}
+
+// ===== SIDEBAR =====
+function renderSidebar() {
+  const u = S.user;
+  const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
+  document.getElementById('sb-avatar').textContent = initials.toUpperCase();
+  document.getElementById('top-avatar').textContent = initials.toUpperCase();
+  document.getElementById('sb-name').textContent = u.name + (u.lastName?' '+u.lastName:'');
+  document.getElementById('sb-streak').textContent = u.streak || 0;
+
+  const lvl = getLevelInfo(u.xp||0);
+  document.getElementById('sb-level').innerHTML = LEVEL_ICONS[lvl.index] + ' ' + lvl.name;
+
+  const nextLvl = LEVELS[Math.min(lvl.index+1, LEVELS.length-1)];
+  const pct = lvl.index === LEVELS.length-1 ? 100 : Math.round(((u.xp-lvl.min)/(nextLvl.min-lvl.min))*100);
+  document.getElementById('sb-xp-bar').style.width = pct + '%';
+  document.getElementById('sb-xp').textContent = u.xp || 0;
+}
+
+function updateTopbar() {
+  const u = S.user;
+  const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
+  document.getElementById('top-avatar').textContent = initials.toUpperCase();
+}
+
+// ===== HOME =====
+function renderHome() {
+  const u = S.user;
+  const goal = u.dailyGoal || 3;
+  document.getElementById('home-goal-text').textContent = `Реши ${goal} ${pluralTasks(goal)} сегодня`;
+  document.getElementById('home-streak').textContent = u.streak || 0;
+  document.getElementById('home-streak2').textContent = u.streak || 0;
+  document.getElementById('home-xp-today').textContent = S.todayXP;
+  document.getElementById('home-solved').textContent = u.solved || 0;
+  document.getElementById('home-xp').textContent = u.xp || 0;
+  const acc = (u.solved > 0 && u.correct > 0) ? Math.round((u.correct/u.solved)*100)+'%' : '—';
+  document.getElementById('home-accuracy').textContent = acc;
+
+  const done = S.todayDone;
+  const pct = Math.min(100, Math.round((done/goal)*100));
+  document.getElementById('home-goal-bar').style.width = pct + '%';
+  document.getElementById('home-goal-done').textContent = done + ' решено';
+  document.getElementById('home-goal-target').textContent = 'цель: ' + goal;
+
+  document.getElementById('b2-tag-home').textContent = u.hasStudyAccess ? '✅ Активно' : 'Платно';
+  document.getElementById('b2-tag-home').className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700');
+  document.getElementById('b3-tag-home').textContent = u.hasBankAccess ? '✅ Активно' : 'Платно';
+  document.getElementById('b3-tag-home').className = 'tag ' + (u.hasBankAccess ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700');
+
+  renderQuickTask();
+  renderLeaderboardMini();
+}
+
+async function renderQuickTask() {
+  const area = document.getElementById('quick-task-area');
+  if (!S.user || !(S.user.hasBankAccess || S.user.hasStudyAccess || S.user.demoMode)) {
+    area.innerHTML = `<div class="text-center py-4">
+      <p class="text-sm text-gray-500 mb-3">Разблокируй Банк заданий для быстрых задач</p>
+      <button class="btn-p text-sm py-2 px-4" onclick="goScreen('s-bank')">Открыть банк</button>
+    </div>`;
+    return;
+  }
+  let tasks = _bankCache.filter(t => t.part === 1);
+  if (!tasks.length) {
+    try {
+      const r = await fetch(`${BANK_API}/api/tasks?part=1&limit=20`);
+      const d = await r.json();
+      tasks = d.tasks || [];
+      _bankCache = [..._bankCache, ...tasks.filter(t => !_bankCache.find(c=>c.id===t.id))];
+    } catch { area.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Сервер банка не запущен</p>'; return; }
+  }
+  const solved = S.user.solvedTasks || [];
+  const unsolved = tasks.filter(t => !solved.includes(t.id));
+  const t = unsolved.length ? unsolved[Math.floor(Math.random()*unsolved.length)] : tasks[0];
+  if (!t) { area.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Все задания решены!</p>'; return; }
+  area.innerHTML = `<p class="text-sm text-gray-800 mb-3 leading-relaxed">${t.description}</p>
+    <div class="flex gap-2">
+      <input type="text" id="qta" placeholder="Ответ..." style="flex:1" onkeydown="if(event.key==='Enter')checkQT('${t.id}')"/>
+      <button class="btn-p px-4 text-sm" onclick="checkQT('${t.id}')">→</button>
+    </div>
+    <p id="qt-fb" class="text-xs mt-2 font-medium" style="min-height:16px"></p>`;
+}
+
+async function checkQT(id) {
+  const input = document.getElementById('qta');
+  const fb    = document.getElementById('qt-fb');
+  const val   = input.value.trim();
+  if (!val) return;
+  try {
+    const userId = (S.user?.name||'student').replace(/\s+/g,'_').toLowerCase();
+    const r = await fetch(`${BANK_API}/api/tasks/${id}/attempt`, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ userId, answer: val }),
+    });
+    const d = await r.json();
+    if (d.isCorrect) {
+      fb.textContent='✅ Верно!'; fb.style.color='#22c55e';
+      addXP(d.xpEarned||10); S.todayDone++; S.user.solved=(S.user.solved||0)+1; S.user.correct=(S.user.correct||0)+1; saveUser();
+    } else {
+      fb.textContent='❌ Неверно, попробуй ещё'; fb.style.color='#ef4444';
+    }
+  } catch {
+    fb.textContent='❌ Нет связи с банком'; fb.style.color='#ef4444';
+  }
+}
+
+function renderLeaderboardMini() {
+  const el = document.getElementById('leaderboard-mini');
+  const users = getDemoLeaderboard().slice(0,3);
+  el.innerHTML = users.map((u,i) => `
+    <div class="flex items-center gap-3 py-2">
+      <span class="text-lg font-black ${i===0?'text-yellow-500':i===1?'text-gray-400':'text-amber-600'}">${i===0?'🥇':i===1?'🥈':'🥉'}</span>
+      <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-yale">${u.initials}</div>
+      <span class="flex-1 text-sm font-medium text-gray-800">${u.name}</span>
+      <span class="text-sm font-bold text-yale">${u.xp} XP</span>
+    </div>
+  `).join('');
+}
+
+function getDemoLeaderboard() {
+  const base = [
+    {name:'Алиса К.',initials:'АК',xp:1240,solved:89},
+    {name:'Борис Н.',initials:'БН',xp:1105,solved:76},
+    {name:'Вера С.',initials:'ВС',xp:980,solved:68},
+    {name:'Гриша Л.',initials:'ГЛ',xp:820,solved:55},
+    {name:'Дарья М.',initials:'ДМ',xp:750,solved:49},
+  ];
+  const me = {name: S.user.name+(S.user.lastName?' '+S.user.lastName[0]+'.':''), initials: (S.user.name[0]||'U')+((S.user.lastName||'')[0]||''), xp: S.user.xp||0, solved: S.user.solved||0, isMe:true};
+  const all = [...base, me].sort((a,b)=>b.xp-a.xp);
+  return all;
+}
+
+// ===== TUTORS =====
+function renderTutors() {
+  const u = S.user;
+  if (u.activeTutor) {
+    document.getElementById('tutors-no-tutor').style.display = 'none';
+    document.getElementById('tutors-active').style.display = 'block';
+    const t = u.activeTutor;
+    document.getElementById('at-avatar').textContent = t.initials || t.name[0];
+    document.getElementById('at-name').textContent = t.name;
+    document.getElementById('at-subject').textContent = t.subject;
+    document.getElementById('hw-badge').style.display = (S.demoMode) ? 'inline' : 'none';
+  } else {
+    document.getElementById('tutors-no-tutor').style.display = 'block';
+    document.getElementById('tutors-active').style.display = 'none';
+    document.getElementById('hw-badge').style.display = 'none';
+    renderTutorList(DEMO_TUTORS);
+  }
+}
+
+function renderTutorList(tutors) {
+  const el = document.getElementById('tutors-list');
+  el.innerHTML = tutors.map(t => `
+    <div class="tutor-card">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale">${t.initials}</div>
+        <div class="flex-1">
+          <p class="font-black text-gray-900">${t.name}</p>
+          <p class="text-xs text-gray-500">${t.subject}</p>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="text-yellow-400 text-xs">★</span>
+            <span class="text-xs font-bold">${t.rating}</span>
+            <span class="text-xs text-gray-400">(${t.reviews} отзывов)</span>
+          </div>
+        </div>
+      </div>
+      <p class="text-xs text-gray-600 mb-3">${t.bio}</p>
+      <div class="flex flex-wrap gap-1 mb-3">
+        ${t.exams.map(e=>`<span class="tag bg-blue-50 text-blue-700">${e}</span>`).join('')}
+      </div>
+      <div class="flex justify-between items-center text-xs text-gray-500 mb-3">
+        <span>Опыт: ${t.experience} лет</span>
+        <span>${t.students} учеников</span>
+      </div>
+      <button class="btn-p w-full text-sm py-2" onclick="showConnectModal('${t.id}')">Подключить</button>
+    </div>
+  `).join('');
+}
+
+function filterTutors() {
+  const q = document.getElementById('tutor-search').value.toLowerCase();
+  const exam = document.getElementById('tutor-exam-filter').value;
+  const filtered = DEMO_TUTORS.filter(t => {
+    const matchQ = !q || t.name.toLowerCase().includes(q) || t.subject.toLowerCase().includes(q);
+    const matchE = !exam || t.exams.includes(exam);
+    return matchQ && matchE;
+  });
+  renderTutorList(filtered);
+}
+
+let selectedTutorId = null;
+function showConnectModal(id) {
+  selectedTutorId = id;
+  const t = DEMO_TUTORS.find(t=>t.id===id);
+  document.getElementById('ctm-avatar').textContent = t.initials;
+  document.getElementById('ctm-name').textContent = t.name;
+  document.getElementById('ctm-info').textContent = `${t.subject} • ${t.experience} лет опыта`;
+  document.getElementById('ctm-exams').innerHTML = t.exams.map(e=>`<span class="tag bg-blue-50 text-blue-700">${e}</span>`).join('');
+  openModal('connect-tutor-modal');
+}
+
+function confirmConnect() {
+  const t = DEMO_TUTORS.find(t=>t.id===selectedTutorId);
+  S.user.activeTutor = t;
+  saveUser();
+  closeModal('connect-tutor-modal');
+  renderTutors();
+  renderHomework();
+  renderChat();
+}
+
+function endTutorRelation() { openModal('end-relation-modal'); }
+
+function confirmEndRelation() {
+  S.user.activeTutor = null;
+  S.user.pendingHW = false;
+  saveUser();
+  closeModal('end-relation-modal');
+  renderTutors();
+  renderBank();
+  renderHomework();
+  renderChat();
+}
+
+// ===== STUDY =====
+function renderStudy() {
+  const u = S.user;
+  document.getElementById('study-locked').style.display = u.hasStudyAccess ? 'none' : 'block';
+  document.getElementById('study-unlocked').style.display = u.hasStudyAccess ? 'block' : 'none';
+
+  if (u.hasStudyAccess) {
+    const examNames = {'ОГЭ':'ОГЭ','ЕГЭ База':'ЕГЭ База','ЕГЭ Профиль':'ЕГЭ Профиль','ogu':'ОГЭ','ege_base':'ЕГЭ База','ege_prof':'ЕГЭ Профиль'};
+    document.getElementById('study-course-name').textContent = 'Курс: ' + (examNames[u.exam] || u.exam || 'ОГЭ');
+    const progress = S.demoMode ? 3 : (u.studyProgress || 0);
+    document.getElementById('study-progress-text').textContent = progress + ' из 10 уроков';
+    document.getElementById('study-pct').textContent = Math.round(progress/10*100) + '%';
+    document.getElementById('study-bar').style.width = Math.round(progress/10*100) + '%';
+    renderLessons(progress);
+  }
+}
+
+function renderLessons(done) {
+  const lessons = [
+    {n:1,topic:'Арифметика',desc:'Числа, действия, порядок'},
+    {n:2,topic:'Дроби',desc:'Обыкновенные и десятичные'},
+    {n:3,topic:'Уравнения',desc:'Линейные и квадратные'},
+    {n:4,topic:'Функции',desc:'Графики и свойства'},
+    {n:5,topic:'Статистика',desc:'Среднее, медиана, мода'},
+    {n:6,topic:'Текстовые задачи',desc:'Движение, работа, смеси'},
+    {n:7,topic:'Неравенства',desc:'Решение и запись ответа'},
+    {n:8,topic:'Степени',desc:'Свойства и вычисления'},
+    {n:9,topic:'Алгебра',desc:'Многочлены и формулы'},
+    {n:10,topic:'Геометрия',desc:'Фигуры и формулы'},
+  ];
+  const grid = document.getElementById('lessons-grid');
+  grid.innerHTML = lessons.map((l,i) => {
+    const st = i<done ? 'done' : i===done ? 'current' : 'locked';
+    const bg = st==='done'?'bg-green-50 border-green-200':st==='current'?'bg-blue-50 border-blue-300':'bg-gray-50 border-gray-200';
+    const iconSvg = st==='done'
+      ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><circle cx="12" cy="12" r="10" fill="#16a34a"/><path d="M7 12l4 4 6-6" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      : st==='current'
+      ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><circle cx="12" cy="12" r="10" fill="#0D3B66"/><polygon points="10,8.5 17,12 10,15.5" fill="white"/></svg>`
+      : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" style="flex-shrink:0"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>`;
+    return `<div class="card border-2 ${bg} cursor-pointer" onclick="${st!=='locked'?'openLesson('+l.n+')':'void 0'}">
+      <div class="flex items-start gap-3">
+        ${iconSvg}
+        <div>
+          <p class="font-bold text-gray-900 text-sm">Урок ${l.n}. ${l.topic}</p>
+          <p class="text-xs text-gray-500">${l.desc}</p>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openLesson(n) {
+  alert(`Урок ${n} будет доступен в полной версии платформы. Скоро!`);
+}
+
+function buyStudy() {
+  if (S.demoMode) {
+    S.user.hasStudyAccess = true;
+    S.user.hasBankAccess = true;
+    saveUser();
+    renderStudy();
+    renderBank();
+    renderHome();
+    renderProfile();
+    return;
+  }
+  alert('Для покупки свяжитесь с командой ФИБИ или дождитесь запуска оплаты на платформе.');
+}
+
+function buyBankOnly() {
+  if (S.demoMode) {
+    S.user.hasBankAccess = true;
+    saveUser();
+    renderBank();
+    renderHome();
+    renderProfile();
+    return;
+  }
+  alert('Для покупки свяжитесь с командой ФИБИ.');
+}
+
+// ===== BANK =====
+// ── Bank API integration ──────────────────────────────────
+const BANK_API = 'http://localhost:3000';
+let _bankCache = [];   // cached tasks from last fetch
+
+// Static fallback — all 42 tasks embedded, works without server
+const STATIC_TASKS = [{"id":"cmpmy7z3v000o6o2mga4nv4tx","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: 2,4 · 5 − 3,8","answer":"8.2","answerAlt":"[\"8,2\"]","hint1":"Сначала умножение, потом вычитание","partialSolution":null,"fullSolution":[{"step":"Умножаем","detail":"2,4 · 5 = 12"},{"step":"Вычитаем","detail":"12 − 3,8 = 8,2"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3x000p6o2mhd0lik57","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: 3,6 : 0,4 + 1,5","answer":"10.5","answerAlt":"[\"10,5\"]","hint1":"Деление выполняется до сложения","partialSolution":null,"fullSolution":[{"step":"Делим","detail":"3,6 : 0,4 = 9"},{"step":"Складываем","detail":"9 + 1,5 = 10,5"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3y000q6o2mjqv6azwa","examType":"OGE","part":1,"taskNumber":1,"description":"Вычислите: (−3)² − 4 · 2","answer":"1","answerAlt":"[]","hint1":"Порядок: степень → умножение → вычитание","partialSolution":null,"fullSolution":[{"step":"Возводим в степень","detail":"(−3)² = 9"},{"step":"Умножаем","detail":"4 · 2 = 8"},{"step":"Вычитаем","detail":"9 − 8 = 1"}],"difficulty":1,"topics":[{"topic":{"name":"Арифметика"}}]},{"id":"cmpmy7z3z000r6o2m2aqqw83r","examType":"OGE","part":1,"taskNumber":2,"description":"Велосипед стоит 12 000 ₽. На него сделали скидку 15%. Сколько стоит велосипед со скидкой?","answer":"10200","answerAlt":"[\"10 200\"]","hint1":"Скидка 15% = умножить на 0,85","partialSolution":null,"fullSolution":[{"step":"Размер скидки","detail":"12 000 · 0,15 = 1 800 ₽"},{"step":"Итого","detail":"12 000 − 1 800 = 10 200 ₽"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z3z000s6o2mjqax4moq","examType":"OGE","part":1,"taskNumber":2,"description":"В классе 30 учеников. 40% из них — отличники. Сколько отличников?","answer":"12","answerAlt":"[]","hint1":"40% = 0,4","partialSolution":null,"fullSolution":[{"step":"Находим 40% от 30","detail":"30 · 0,4 = 12"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z40000t6o2mzwyxbrml","examType":"OGE","part":1,"taskNumber":2,"description":"Цена товара выросла с 800 ₽ до 1 000 ₽. На сколько процентов выросла цена?","answer":"25","answerAlt":"[\"25%\"]","hint1":"Прирост / старая цена × 100%","partialSolution":null,"fullSolution":[{"step":"Прирост","detail":"1 000 − 800 = 200 ₽"},{"step":"Процент","detail":"200 / 800 × 100% = 25%"}],"difficulty":2,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z44000x6o2mpn1p6jzq","examType":"OGE","part":1,"taskNumber":2,"description":"Упростите: 3/4 + 1/6","answer":"0.917","answerAlt":"[\"11/12\"]","hint1":"Найди общий знаменатель (12)","partialSolution":null,"fullSolution":[{"step":"Общий знаменатель 12","detail":"9/12 + 2/12 = 11/12 ≈ 0,917"}],"difficulty":1,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z44000y6o2m8rzvqgsu","examType":"OGE","part":1,"taskNumber":2,"description":"Вычислите: 2 2/3 · 1 1/4","answer":"3.333","answerAlt":"[\"3⅓\",\"10/3\"]","hint1":"Переведи смешанные числа в неправильные дроби","partialSolution":null,"fullSolution":[{"step":"Переводим","detail":"8/3 · 5/4 = 40/12 = 10/3 ≈ 3,33"}],"difficulty":2,"topics":[{"topic":{"name":"Дроби и проценты"}}]},{"id":"cmpmy7z41000u6o2mm3jqrqnt","examType":"OGE","part":1,"taskNumber":3,"description":"Вычислите: √144","answer":"12","answerAlt":"[]","hint1":"Найди число, квадрат которого равен 144","partialSolution":null,"fullSolution":[{"step":"Извлекаем корень","detail":"√144 = 12, так как 12² = 144"}],"difficulty":1,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z42000v6o2mdd73u6gl","examType":"OGE","part":1,"taskNumber":3,"description":"Вычислите: 2³ · 2⁻¹","answer":"4","answerAlt":"[]","hint1":"При умножении степеней с одинаковым основанием показатели складываются","partialSolution":null,"fullSolution":[{"step":"Складываем показатели","detail":"2³ · 2⁻¹ = 2^(3-1) = 2² = 4"}],"difficulty":2,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z43000w6o2mc794r4nl","examType":"OGE","part":1,"taskNumber":3,"description":"Найдите значение: (√5)⁴","answer":"25","answerAlt":"[]","hint1":"(√a)² = a","partialSolution":null,"fullSolution":[{"step":"Упрощаем","detail":"(√5)⁴ = ((√5)²)² = 5² = 25"}],"difficulty":2,"topics":[{"topic":{"name":"Степени и корни"}}]},{"id":"cmpmy7z45000z6o2msubpapki","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: 3x − 7 = 14","answer":"7","answerAlt":"[\"x=7\"]","hint1":"Переноси числа в одну сторону, x — в другую","partialSolution":null,"fullSolution":[{"step":"Переносим","detail":"3x = 14 + 7 = 21"},{"step":"Делим","detail":"x = 21 / 3 = 7"}],"difficulty":1,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4600106o2mi09v5lao","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: 2(x + 3) = 10","answer":"2","answerAlt":"[\"x=2\"]","hint1":"Сначала раскрой скобки","partialSolution":null,"fullSolution":[{"step":"Раскрываем скобки","detail":"2x + 6 = 10"},{"step":"Решаем","detail":"2x = 4; x = 2"}],"difficulty":1,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4700116o2mg3b6nger","examType":"OGE","part":1,"taskNumber":4,"description":"Решите уравнение: (x + 2) / 3 = (x − 1) / 2","answer":"8","answerAlt":"[\"x=8\"]","hint1":"Умножь обе части на НОК знаменателей","partialSolution":null,"fullSolution":[{"step":"Умножаем на 6","detail":"2(x+2) = 3(x-1)"},{"step":"Раскрываем","detail":"2x+4 = 3x-3"},{"step":"Решаем","detail":"x = 7... пересчёт: 2x+4=3x−3 → x=7"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4800126o2mfxz1v64f","examType":"OGE","part":1,"taskNumber":5,"description":"Разложите на множители: x² − 9","answer":"(x-3)(x+3)","answerAlt":"[\"(x+3)(x-3)\"]","hint1":"Разность квадратов: a² − b² = (a−b)(a+b)","partialSolution":null,"fullSolution":[{"step":"Применяем формулу","detail":"x² − 9 = x² − 3² = (x−3)(x+3)"}],"difficulty":2,"topics":[{"topic":{"name":"Алгебраические выражения"}}]},{"id":"cmpmy7z4800136o2mbmb0x4py","examType":"OGE","part":1,"taskNumber":5,"description":"Упростите: (a + b)² − 2ab","answer":"a²+b²","answerAlt":"[\"a^2+b^2\"]","hint1":"Раскрой квадрат суммы: (a+b)² = a² + 2ab + b²","partialSolution":null,"fullSolution":[{"step":"Раскрываем","detail":"a² + 2ab + b² − 2ab = a² + b²"}],"difficulty":2,"topics":[{"topic":{"name":"Алгебраические выражения"}}]},{"id":"cmpmy7z4900146o2mfmobhoqt","examType":"OGE","part":1,"taskNumber":6,"description":"При каком значении x функция f(x) = 2x − 4 обращается в ноль?","answer":"2","answerAlt":"[\"x=2\"]","hint1":"Приравняй f(x) к нулю и реши уравнение","partialSolution":null,"fullSolution":[{"step":"Приравниваем","detail":"2x − 4 = 0"},{"step":"Решаем","detail":"x = 2"}],"difficulty":1,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4a00156o2mdscnijuv","examType":"OGE","part":1,"taskNumber":6,"description":"Найдите значение функции f(x) = x² − 3x + 2 при x = 3","answer":"2","answerAlt":"[]","hint1":"Подставь x = 3 в формулу","partialSolution":null,"fullSolution":[{"step":"Подставляем","detail":"9 − 9 + 2 = 2"}],"difficulty":2,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4b00166o2mybf7666s","examType":"OGE","part":1,"taskNumber":6,"description":"Найдите наименьшее значение функции f(x) = x² − 4x + 7","answer":"3","answerAlt":"[]","hint1":"Вершина параболы: x₀ = −b/(2a)","partialSolution":null,"fullSolution":[{"step":"Вершина","detail":"x₀ = 4/2 = 2"},{"step":"Минимум","detail":"f(2) = 4 − 8 + 7 = 3"}],"difficulty":2,"topics":[{"topic":{"name":"Функции и графики"}}]},{"id":"cmpmy7z4c00176o2mtu16mogx","examType":"OGE","part":1,"taskNumber":7,"description":"В урне 5 красных и 3 синих шара. Найдите вероятность вытащить красный.","answer":"0.625","answerAlt":"[\"5/8\"]","hint1":"P = благоприятные / все исходы","partialSolution":null,"fullSolution":[{"step":"Всего шаров","detail":"5 + 3 = 8"},{"step":"Вероятность","detail":"P = 5/8 = 0,625"}],"difficulty":1,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4d00186o2mbuaym6wt","examType":"OGE","part":1,"taskNumber":7,"description":"Найдите среднее арифметическое: 4, 7, 3, 8, 3","answer":"5","answerAlt":"[]","hint1":"Сумма делить на количество","partialSolution":null,"fullSolution":[{"step":"Сумма","detail":"4+7+3+8+3 = 25"},{"step":"Среднее","detail":"25 / 5 = 5"}],"difficulty":1,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4d00196o2m2240tqw0","examType":"OGE","part":1,"taskNumber":7,"description":"Монету подбросили 3 раза. Найдите вероятность выпадения хотя бы одного орла.","answer":"0.875","answerAlt":"[\"7/8\"]","hint1":"P(хотя бы один орёл) = 1 − P(ни одного)","partialSolution":null,"fullSolution":[{"step":"P(ни одного орла)","detail":"(1/2)³ = 1/8"},{"step":"Итого","detail":"1 − 1/8 = 7/8 = 0,875"}],"difficulty":2,"topics":[{"topic":{"name":"Статистика и вероятность"}}]},{"id":"cmpmy7z4e001a6o2mccojwrjs","examType":"OGE","part":1,"taskNumber":9,"description":"Два велосипедиста выехали навстречу. Скорости 60 и 80 км/ч, расстояние 280 км. Через сколько часов они встретятся?","answer":"2","answerAlt":"[\"2 ч\",\"2 часа\"]","hint1":"При движении навстречу скорости складываются","partialSolution":null,"fullSolution":[{"step":"Скорость сближения","detail":"60 + 80 = 140 км/ч"},{"step":"Время","detail":"280 : 140 = 2 часа"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4f001b6o2mbhwbvzzk","examType":"OGE","part":1,"taskNumber":9,"description":"Один рабочий выполнит заказ за 6 дней, другой — за 12 дней. За сколько дней они справятся вместе?","answer":"4","answerAlt":"[\"4 дня\"]","hint1":"Найди, какую часть заказа каждый выполняет в день","partialSolution":null,"fullSolution":[{"step":"1-й рабочий","detail":"1/6 в день"},{"step":"2-й рабочий","detail":"1/12 в день"},{"step":"Вместе","detail":"1/6 + 1/12 = 3/12 = 1/4; т.е. 4 дня"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4g001c6o2m7pwo676a","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: x² − 5x + 6 = 0","answer":"2; 3","answerAlt":"[\"x1=2, x2=3\",\"2 и 3\",\"x₁=2; x₂=3\"]","hint1":"D = b² − 4ac","partialSolution":null,"fullSolution":[{"step":"Дискриминант","detail":"D = 25 − 24 = 1"},{"step":"Корни","detail":"x₁ = (5+1)/2 = 3; x₂ = (5−1)/2 = 2"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4h001d6o2m0qhwb679","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: 2x² − 7x + 3 = 0","answer":"0.5; 3","answerAlt":"[\"x1=3, x2=0.5\",\"3 и 0,5\",\"3; 0,5\"]","hint1":"a=2, b=−7, c=3","partialSolution":null,"fullSolution":[{"step":"D","detail":"D = 49 − 24 = 25"},{"step":"Корни","detail":"x₁ = (7+5)/4 = 3; x₂ = (7−5)/4 = 0,5"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4h001e6o2m5wx5knby","examType":"OGE","part":2,"taskNumber":12,"description":"Решите уравнение: 3x² − 12 = 0","answer":"2; -2","answerAlt":"[\"±2\",\"x=2 и x=-2\"]","hint1":"Когда b=0, уравнение решается без дискриминанта","partialSolution":null,"fullSolution":[{"step":"Делим на 3","detail":"x² − 4 = 0"},{"step":"Решаем","detail":"x = ±2"}],"difficulty":3,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4i001f6o2mx65jwi0d","examType":"OGE","part":2,"taskNumber":13,"description":"Решите систему: { 2x + y = 7; x − y = 2","answer":"x=3; y=1","answerAlt":"[\"(3;1)\",\"x=3, y=1\"]","hint1":"Сложи оба уравнения, чтобы исключить y","partialSolution":null,"fullSolution":[{"step":"Складываем","detail":"3x = 9; x = 3"},{"step":"Подставляем","detail":"6 + y = 7; y = 1"}],"difficulty":2,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4j001g6o2mb3cqt76c","examType":"OGE","part":2,"taskNumber":13,"description":"Решите систему: { 3x − 2y = 4; x + y = 3","answer":"x=2; y=1","answerAlt":"[\"(2;1)\",\"x=2, y=1\"]","hint1":"Выразить x из второго уравнения","partialSolution":null,"fullSolution":[{"step":"Из 2-го","detail":"x = 3 − y"},{"step":"Подставляем в 1-е","detail":"3(3−y) − 2y = 4 → y = 1"},{"step":"Итого","detail":"x = 2; y = 1"}],"difficulty":3,"topics":[{"topic":{"name":"Уравнения"}}]},{"id":"cmpmy7z4k001h6o2m2k4owyux","examType":"OGE","part":2,"taskNumber":14,"description":"Решите неравенство: 3x − 4 > 5","answer":"x > 3","answerAlt":"[\"(3;+∞)\"]","hint1":"Перенеси 4 вправо, потом раздели на 3","partialSolution":null,"fullSolution":[{"step":"Переносим","detail":"3x > 9"},{"step":"Делим","detail":"x > 3"}],"difficulty":2,"topics":[{"topic":{"name":"Неравенства"}}]},{"id":"cmpmy7z4k001i6o2mnlrbxoaj","examType":"OGE","part":2,"taskNumber":14,"description":"Решите неравенство: x² − 4x − 5 < 0","answer":"-1 < x < 5","answerAlt":"[\"(-1;5)\"]","hint1":"Найди корни уравнения x²−4x−5=0, затем определи знак","partialSolution":null,"fullSolution":[{"step":"Корни","detail":"x₁=−1, x₂=5"},{"step":"Параболаветвями вверх","detail":"Неравенство < 0 между корнями: −1 < x < 5"}],"difficulty":3,"topics":[{"topic":{"name":"Неравенства"}}]},{"id":"cmpmy7z4l001j6o2m7hfqhiic","examType":"OGE","part":2,"taskNumber":15,"description":"Поезд проехал 360 км за 4 часа. Найдите скорость поезда.","answer":"90","answerAlt":"[\"90 км/ч\"]","hint1":"v = s / t","partialSolution":null,"fullSolution":[{"step":"Применяем формулу","detail":"v = 360 / 4 = 90 км/ч"}],"difficulty":2,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4m001k6o2muvvy1emd","examType":"OGE","part":2,"taskNumber":15,"description":"Бассейн наполняется первой трубой за 6 ч, второй — за 4 ч. Третья опустошает за 12 ч. Через сколько часов наполнится?","answer":"4","answerAlt":"[\"4 ч\"]","hint1":"Производительности труб складываются/вычитаются","partialSolution":null,"fullSolution":[{"step":"Производительность","detail":"1/6 + 1/4 − 1/12 = 2/12 + 3/12 − 1/12 = 4/12 = 1/3"},{"step":"Время","detail":"1 : (1/3) = 3 ч"}],"difficulty":3,"topics":[{"topic":{"name":"Текстовые задачи"}}]},{"id":"cmpmy7z4n001l6o2mfleepdgi","examType":"OGE","part":2,"taskNumber":16,"description":"Найдите площадь прямоугольника со сторонами 6 и 9 см.","answer":"54","answerAlt":"[\"54 см²\"]","hint1":"S = a · b","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = 6 · 9 = 54 см²"}],"difficulty":1,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4o001m6o2m87hzsesh","examType":"OGE","part":2,"taskNumber":16,"description":"Найдите периметр квадрата со стороной 7 см.","answer":"28","answerAlt":"[\"28 см\"]","hint1":"P = 4a","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"P = 4 · 7 = 28 см"}],"difficulty":1,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4o001n6o2m4llow2wu","examType":"OGE","part":2,"taskNumber":17,"description":"В прямоугольном треугольнике катеты равны 3 и 4. Найдите гипотенузу.","answer":"5","answerAlt":"[\"5 см\"]","hint1":"Теорема Пифагора: c² = a² + b²","partialSolution":null,"fullSolution":[{"step":"Пифагор","detail":"c² = 9 + 16 = 25; c = 5"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4p001o6o2md6ep4all","examType":"OGE","part":2,"taskNumber":17,"description":"Найдите площадь треугольника с основанием 10 и высотой 6.","answer":"30","answerAlt":"[\"30 см²\"]","hint1":"S = (1/2) · a · h","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = 0,5 · 10 · 6 = 30 см²"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4q001p6o2m69ku0pum","examType":"OGE","part":2,"taskNumber":18,"description":"Найдите длину окружности с радиусом 5 (ответ через π, числом).","answer":"31.4","answerAlt":"[\"10π\",\"≈31,4\"]","hint1":"C = 2πr","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"C = 2π · 5 ≈ 31,4"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4r001q6o2mccg39hhu","examType":"OGE","part":2,"taskNumber":18,"description":"Найдите площадь круга с радиусом 3 (ответ числом, округли до целых).","answer":"28","answerAlt":"[\"9π\",\"≈28\"]","hint1":"S = πr²","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = π · 9 ≈ 28,27 ≈ 28"}],"difficulty":2,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4r001r6o2moo1u52z3","examType":"OGE","part":2,"taskNumber":19,"description":"В трапеции основания 8 и 12, высота 5. Найдите площадь.","answer":"50","answerAlt":"[\"50 см²\"]","hint1":"S = (a + b)/2 · h","partialSolution":null,"fullSolution":[{"step":"Формула","detail":"S = (8 + 12)/2 · 5 = 10 · 5 = 50 см²"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4s001s6o2m5o90d1b4","examType":"OGE","part":2,"taskNumber":19,"description":"Угол при основании равнобедренного треугольника 72°. Найдите угол при вершине.","answer":"36","answerAlt":"[\"36°\"]","hint1":"Сумма углов треугольника = 180°","partialSolution":null,"fullSolution":[{"step":"Два основания","detail":"2 · 72 = 144"},{"step":"Вершина","detail":"180 − 144 = 36°"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]},{"id":"cmpmy7z4t001t6o2m23tsedcr","examType":"OGE","part":2,"taskNumber":19,"description":"Найдите диагональ прямоугольника со сторонами 5 и 12.","answer":"13","answerAlt":"[\"13 см\"]","hint1":"Диагональ — гипотенуза прямоугольного треугольника","partialSolution":null,"fullSolution":[{"step":"Пифагор","detail":"d² = 25 + 144 = 169; d = 13"}],"difficulty":3,"topics":[{"topic":{"name":"Геометрия"}}]}];
+
+async function renderBank() {
+  const u = S.user;
+  const hasAccess = u.hasBankAccess || u.hasStudyAccess || u.demoMode;
+
+  const warn = document.getElementById('anticheat-warn');
+  if (warn) warn.style.display = (u.pendingHW && hasAccess) ? 'block' : 'none';
+
+  document.getElementById('bank-locked').style.display   = hasAccess ? 'none'  : 'block';
+  document.getElementById('bank-unlocked').style.display = hasAccess ? 'block' : 'none';
+
+  if (!hasAccess) {
+    // Blurred preview from API
+    const preview = document.getElementById('bank-tasks-preview');
+    try {
+      const r = await fetch(`${BANK_API}/api/tasks?limit=4`);
+      const d = await r.json();
+      preview.innerHTML = (d.tasks || []).map(t => `
+        <div class="task-card">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="tag bg-blue-50 text-blue-700 text-xs">${t.topics[0]?.topic?.name||''}</span>
+            ${diffTag(t.difficulty)}
+          </div>
+          <p class="text-sm font-medium text-gray-800">Задание ${t.taskNumber}</p>
+          <p class="text-xs text-gray-500 mt-1 line-clamp-2">${t.description.substring(0,80)}…</p>
+        </div>`).join('');
+    } catch { preview.innerHTML = ''; }
+    return;
+  }
+
+  await renderBankTasks();
+}
+
+function _buildTopicPills(tasks) {
+  const el = document.getElementById('topic-filters');
+  if (!el) return;
+  const seen = new Set();
+  const names = [];
+  tasks.forEach(t => t.topics?.forEach(tt => {
+    const n = tt.topic?.name;
+    if (n && !seen.has(n)) { seen.add(n); names.push(n); }
+  }));
+  el.innerHTML = `<button class="topic-pill ${S.bankFilter==='all'?'active':''}" onclick="filterBank(this,'all')">Все</button>`;
+  names.forEach(n => {
+    const b = document.createElement('button');
+    b.className = 'topic-pill' + (S.bankFilter===n?' active':'');
+    b.textContent = n;
+    b.onclick = () => filterBank(b, n);
+    el.appendChild(b);
+  });
+}
+
+function filterBank(el, topic) {
+  document.querySelectorAll('.topic-pill').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  S.bankFilter = topic;
+  renderBankTasks();
+}
+
+async function renderBankTasks() {
+  const el = document.getElementById('bank-tasks-grid');
+  el.innerHTML = '<div class="col-span-2 text-center text-gray-400 py-10 text-sm">Загрузка заданий…</div>';
+
+  const partF = document.getElementById('bank-part').value;
+  const diffF = document.getElementById('bank-diff').value;
+  const sp = new URLSearchParams({ limit: '50' });
+  if (partF) sp.set('part', partF);
+  if (diffF) sp.set('difficulty', diffF);
+
+  let tasks = [];
+  try {
+    const r = await fetch(`${BANK_API}/api/tasks?${sp}`);
+    const d = await r.json();
+    tasks = d.tasks || [];
+    _bankCache = tasks;
+  } catch(e) {
+    // Server unavailable — use embedded static tasks
+    _bankCache = STATIC_TASKS;
+    tasks = STATIC_TASKS.filter(t => {
+      if (partF && String(t.part) !== partF) return false;
+      if (diffF && String(t.difficulty) !== diffF) return false;
+      return true;
+    });
+  }
+
+  _buildTopicPills(tasks);
+
+  if (S.bankFilter && S.bankFilter !== 'all')
+    tasks = tasks.filter(t => t.topics?.some(tt => tt.topic?.name === S.bankFilter));
+
+  document.getElementById('bank-count').textContent = tasks.length;
+  const solved = S.user.solvedTasks || [];
+
+  el.innerHTML = tasks.length === 0
+    ? '<div class="col-span-2 text-center text-gray-400 py-10 text-sm">Заданий не найдено</div>'
+    : tasks.map(t => {
+        const topicName = t.topics?.[0]?.topic?.name || '';
+        const isSolved  = solved.includes(t.id);
+        return `<div class="task-card ${isSolved?'opacity-60':''}" onclick="openTask('${t.id}')">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-1.5">
+              ${(TOPIC_ICONS[topicName]||'').replace(/stroke="#6b7280"/g,'stroke="#93c5fd"').replace(/fill="#6b7280"/g,'fill="#93c5fd"')}
+              <span class="tag bg-blue-50 text-blue-700 text-xs">${topicName}</span>
+            </div>
+            <div class="flex items-center gap-1">${diffTag(t.difficulty)}<span class="tag bg-gray-100 text-gray-600 text-xs">Ч.${t.part}</span></div>
+          </div>
+          <p class="text-sm font-bold text-gray-800 mb-1">Задание ${t.taskNumber}</p>
+          <p class="text-xs text-gray-500 line-clamp-2">${t.description.substring(0,100)}${t.description.length>100?'…':''}</p>
+          ${isSolved?'<div class="mt-2"><span class="tag bg-green-100 text-green-700 text-xs">✓ Решено</span></div>':''}
+        </div>`;
+      }).join('');
+}
+
+function diffTag(d) {
+  const map = {1:['bg-green-100','text-green-700','Лёгкий'],2:['bg-yellow-100','text-yellow-700','Средний'],3:['bg-red-100','text-red-700','Сложный']};
+  const [bg,tc,label] = map[d]||map[1];
+  return `<span class="tag ${bg} ${tc} text-xs">${label}</span>`;
+}
+
+// ===== TASK MODAL =====
+async function openTask(id) {
+  S.currentAttempt = 0;
+
+  // Try cache first, else fetch
+  let t = _bankCache.find(x => x.id === id);
+  if (!t) {
+    try {
+      const r = await fetch(`${BANK_API}/api/tasks/${id}`);
+      t = await r.json();
+    } catch { return; }
+  }
+  S.currentTask = t;
+
+  const topicName = t.topics?.[0]?.topic?.name || '';
+  document.getElementById('tm-topic').textContent = topicName;
+  document.getElementById('tm-num').textContent   = 'Задание ' + t.taskNumber;
+  document.getElementById('tm-part').textContent  = 'Часть '   + t.part;
+
+  const diffColors={1:['bg-green-100','text-green-700','Лёгкий'],2:['bg-yellow-100','text-yellow-700','Средний'],3:['bg-red-100','text-red-700','Сложный']};
+  const [dBg,dTc,dLabel]=diffColors[t.difficulty]||diffColors[1];
+  const dtag=document.getElementById('tm-diff-tag');
+  if(dtag){dtag.className=`tag ${dBg} ${dTc} text-xs`;dtag.textContent=dLabel;}
+  document.getElementById('tm-text').innerHTML = t.description.replace(/\n/g,'<br>');
+
+  document.getElementById('tm-hint').textContent     = '';
+  document.getElementById('tm-hint-box').style.display     = 'none';
+  document.getElementById('tm-solution-box').style.display = 'none';
+  document.getElementById('tm-solution').innerHTML   = '';
+  document.getElementById('tm-input-area').style.display   = 'block';
+  document.getElementById('tm-done-area').style.display    = 'none';
+  document.getElementById('tm-feedback').textContent = '';
+  document.getElementById('tm-answer').value         = '';
+
+  updateDots();
+  openModal('task-modal');
+}
+
+function updateDots() {
+  for (let i=1;i<=3;i++) {
+    const dot = document.getElementById('dot'+i);
+    dot.className = 'attempt-dot';
+    if (i <= S.currentAttempt) dot.classList.add('used');
+  }
+}
+
+async function submitAnswer() {
+  const input = document.getElementById('tm-answer');
+  const val   = input.value.trim();
+  if (!val) return;
+
+  const t   = S.currentTask;
+  const btn = document.querySelector('#tm-input-area .btn-p');
+  if (btn) { btn.disabled = true; btn.textContent = '…'; }
+
+  let data;
+  try {
+    const userId = (S.user?.name || 'student').replace(/\s+/g,'_').toLowerCase();
+    const r = await fetch(`${BANK_API}/api/tasks/${t.id}/attempt`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId, answer: val }),
+    });
+    data = await r.json();
+    if (data.error === 'Max attempts reached') {
+      document.getElementById('tm-feedback').textContent = 'Все попытки уже использованы для этого задания.';
+      if (btn) { btn.disabled = false; btn.textContent = '→'; }
+      return;
+    }
+  } catch {
+    const norm = s => s.trim().toLowerCase().replace(',','.');
+    const alts = Array.isArray(t.answerAlt) ? t.answerAlt
+      : (() => { try { return JSON.parse(t.answerAlt||'[]') } catch { return [] } })();
+    const ok   = [t.answer,...alts].some(a => norm(val) === norm(String(a||'')));
+    const attemptNum = (S.currentAttempt||0)+1;
+    const fs = Array.isArray(t.fullSolution) ? t.fullSolution
+      : (() => { try { return JSON.parse(t.fullSolution||'[]') } catch { return [] } })();
+    data = {
+      isCorrect: ok,
+      attemptNum,
+      xpEarned: ok ? (attemptNum===1?20:attemptNum===2?10:5) : 0,
+      hint: attemptNum >= 1 ? (t.hint1||null) : null,
+      fullSolution: fs,
+    };
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '→'; }
+  }
+
+  S.currentAttempt = data.attemptNum;
+  updateDots();
+
+  if (data.isCorrect) {
+    for (let i=1;i<=3;i++) {
+      const d = document.getElementById('dot'+i);
+      d.className = 'attempt-dot' + (i < S.currentAttempt ? ' used' : i === S.currentAttempt ? ' correct' : '');
+    }
+    const xp = data.xpEarned || (S.currentAttempt===1?20:S.currentAttempt===2?10:5);
+    showTaskDone(true, xp);
+    markTaskSolved(t.id, true);
+
+  } else if (data.attemptNum < 3) {
+    document.getElementById('tm-feedback').textContent = '❌ Неверно. ' + (data.hint ? 'Посмотри подсказку.' : 'Попробуй ещё раз.');
+    document.getElementById('tm-feedback').style.color = '#ef4444';
+    if (data.hint) {
+      document.getElementById('tm-hint').textContent = data.hint;
+      document.getElementById('tm-hint-box').style.display = 'block';
+    }
+    if (data.partialSolution && !S.user.pendingHW) {
+      document.getElementById('tm-solution-box').style.display = 'block';
+      document.getElementById('tm-solution').innerHTML = `<p>${data.partialSolution}</p>`;
+    }
+    input.value = '';
+
+  } else {
+    ['dot1','dot2','dot3'].forEach(id => document.getElementById(id).classList.add('used'));
+    if (data.fullSolution && !S.user.pendingHW) {
+      const steps = Array.isArray(data.fullSolution) ? data.fullSolution : [];
+      document.getElementById('tm-solution-box').style.display = 'block';
+      document.getElementById('tm-solution').innerHTML = steps.map((s,i) =>
+        `<p><b>Шаг ${i+1}${s.step?' — '+s.step:''}:</b> ${s.detail||s}</p>`
+      ).join('');
+    }
+    showTaskDone(false, 0);
+    markTaskSolved(t.id, false);
+  }
+}
+
+function showTaskDone(correct, xpGain) {
+  document.getElementById('tm-input-area').style.display = 'none';
+  document.getElementById('tm-done-area').style.display = 'block';
+  const msg = document.getElementById('tm-result-msg');
+  if (correct) {
+    msg.className = 'rounded-xl p-4 text-center font-bold bg-green-50 text-green-700';
+    msg.innerHTML = `✅ Верно! <span class="font-black">+${xpGain} XP</span>`;
+    addXP(xpGain);
+  } else {
+    msg.className = 'rounded-xl p-4 text-center font-bold bg-red-50 text-red-700';
+    msg.innerHTML = '❌ Задание помечено как ошибка. Разбери решение выше.';
+  }
+}
+
+function markTaskSolved(id, correct) {
+  if (!S.user.solvedTasks) S.user.solvedTasks = [];
+  if (!S.user.solvedTasks.includes(id)) S.user.solvedTasks.push(id);
+  S.user.solved = (S.user.solved||0)+1;
+  if (correct) S.user.correct = (S.user.correct||0)+1;
+  S.todayDone++;
+  checkDailyGoal();
+  checkAchievements();
+  saveUser();
+  renderProgress();
+  renderHome();
+}
+
+function nextTask() {
+  closeModal('task-modal');
+  const solved = S.user.solvedTasks || [];
+  const next = _bankCache.find(t => !solved.includes(t.id));
+  if (next) openTask(next.id);
+  else renderBankTasks();
+}
+
+// ===== HOMEWORK =====
+function renderHomework() {
+  const u = S.user;
+  document.getElementById('hw-no-tutor').style.display = u.activeTutor ? 'none' : 'block';
+  document.getElementById('hw-list-area').style.display = u.activeTutor ? 'block' : 'none';
+
+  if (!u.activeTutor) return;
+
+  const hwItems = S.demoMode ? [
+    {title:'ДЗ №1: Арифметика и дроби',deadline:'2026-05-28',tasks:5,done:true,score:'4/5'},
+    {title:'ДЗ №2: Уравнения',deadline:'2026-05-30',tasks:4,done:false,urgent:true},
+    {title:'ДЗ №3: Функции и графики',deadline:'2026-06-02',tasks:6,done:false},
+  ] : [];
+
+  const total = hwItems.length;
+  const done = hwItems.filter(h=>h.done).length;
+  document.getElementById('hw-total').textContent = total;
+  document.getElementById('hw-done-count').textContent = done;
+  document.getElementById('hw-pending').textContent = total-done;
+
+  const cards = document.getElementById('hw-cards');
+  if (!hwItems.length) {
+    cards.innerHTML = '<div class="card text-center py-8 text-gray-500 text-sm">Заданий пока нет. Репетитор скоро пришлёт ДЗ!</div>';
+    return;
+  }
+  cards.innerHTML = hwItems.map(h => `
+    <div class="hw-card ${h.urgent?'urgent':h.done?'done':''}">
+      <div class="flex items-start justify-between">
+        <div>
+          <p class="font-bold text-gray-900">${h.title}</p>
+          <p class="text-xs text-gray-500 mt-0.5">Дедлайн: ${h.deadline} • ${h.tasks} заданий</p>
+        </div>
+        ${h.done ? `<span class="tag bg-green-100 text-green-700">✓ Сдано${h.score?' · '+h.score:''}</span>` : h.urgent ? `<span class="tag bg-red-100 text-red-700">Срочно</span>` : `<span class="tag bg-yellow-100 text-yellow-700">Ждёт</span>`}
+      </div>
+      ${!h.done?`<button class="btn-p text-sm py-2 mt-3" onclick="startHW('${h.title}')">Выполнить</button>`:''}
+    </div>
+  `).join('');
+}
+
+function startHW(title) {
+  S.user.pendingHW = true;
+  saveUser();
+  renderBank();
+  goScreen('s-bank');
+}
+
+// ===== PROGRESS =====
+function renderProgress() {
+  const u = S.user;
+  const xp = u.xp || 0;
+  const lvl = getLevelInfo(xp);
+  const nextLvl = LEVELS[Math.min(lvl.index+1, LEVELS.length-1)];
+  const pct = lvl.index === LEVELS.length-1 ? 100 : Math.round(((xp-lvl.min)/(nextLvl.min-lvl.min))*100);
+
+  const iconEl = document.getElementById('prog-level-icon');
+  if(iconEl) iconEl.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2">${['<circle cx="12" cy="12" r="3"/>','<path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" stroke-linejoin="round"/>','<path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" stroke-linejoin="round"/>','<polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/><circle cx="12" cy="12" r="3" fill="white"/>','<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>','<path fill="#0D3B66" stroke="none" d="M12 1l2.75 8.46h8.9l-7.2 5.23 2.75 8.46L12 18.92l-7.2 5.23 2.75-8.46L.35 9.46h8.9z"/>'][lvl.index]}</svg>`;
+  document.getElementById('prog-level-name').textContent = lvl.name;
+  document.getElementById('prog-xp-current').textContent = xp + ' XP';
+  document.getElementById('prog-xp-next').textContent = lvl.index<LEVELS.length-1 ? `до «${nextLvl.name}»: ${nextLvl.min-xp} XP` : 'Максимальный уровень!';
+  document.getElementById('prog-xp-bar').style.width = pct + '%';
+
+  document.getElementById('prog-solved').textContent = u.solved||0;
+  const acc = (u.solved>0&&u.correct>0) ? Math.round((u.correct/u.solved)*100)+'%' : '—';
+  document.getElementById('prog-accuracy').textContent = acc;
+  document.getElementById('prog-streak3').textContent = u.streak||0;
+  document.getElementById('prog-best-streak').textContent = u.bestStreak||u.streak||0;
+
+  renderTopicsBreakdown();
+  renderAchievements();
+  renderLeaderboard();
+}
+
+function renderTopicsBreakdown() {
+  const el = document.getElementById('topics-breakdown');
+  const solved = S.user.solvedTasks || [];
+  const tasks  = _bankCache;
+
+  // Build topic list from cache (or fallback names)
+  const seen = new Set(); const topicList = [];
+  tasks.forEach(t => t.topics?.forEach(tt => {
+    const n = tt.topic?.name;
+    if (n && !seen.has(n)) { seen.add(n); topicList.push(n); }
+  }));
+  if (!topicList.length) ['Арифметика','Дроби и проценты','Степени и корни','Уравнения','Функции и графики','Статистика и вероятность','Текстовые задачи','Неравенства','Алгебраические выражения','Геометрия'].forEach(n=>topicList.push(n));
+
+  el.innerHTML = topicList.map(tp => {
+    const matching = tasks.filter(t => t.topics?.some(tt => tt.topic?.name === tp));
+    const all  = matching.length || 0;
+    const done = matching.filter(t => solved.includes(t.id)).length;
+    const pct  = all ? Math.round(done/all*100) : 0;
+    return `<div>
+      <div class="flex justify-between text-sm mb-1">
+        <span class="font-medium text-gray-800 flex items-center gap-2">${TOPIC_ICONS[tp]||_TI.plus}${tp}</span>
+        <span class="text-gray-500">${done}/${all||'?'}</span>
+      </div>
+      <div class="xp-bar-outer"><div class="xp-bar-inner" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderAchievements() {
+  const el = document.getElementById('achievements-grid');
+  const earned = S.user.achievements || (S.demoMode ? ['first_solve','streak3','solve10'] : []);
+  el.innerHTML = ACHIEVEMENTS.map(a => `
+    <div class="achievement ${earned.includes(a.id)?'earned':''}">
+      <div class="text-2xl mb-1">${a.emoji}</div>
+      <p class="text-xs font-bold ${earned.includes(a.id)?'text-gray-900':'text-gray-400'}">${a.name}</p>
+      <p class="text-xs ${earned.includes(a.id)?'text-gray-600':'text-gray-300'} mt-0.5">${a.desc}</p>
+    </div>
+  `).join('');
+}
+
+function renderLeaderboard() {
+  const el = document.getElementById('leaderboard-full');
+  const all = getDemoLeaderboard();
+  el.innerHTML = all.map((u,i) => {
+    const medals = ['🥇','🥈','🥉'];
+    const rank = i+1;
+    return `<div class="flex items-center gap-3 py-2.5 border-b border-gray-50 last:border-0 ${u.isMe?'bg-blue-50 -mx-4 px-4 rounded-xl':''}">
+      <span class="text-lg font-black w-8 text-center ${rank<=3?'':'text-gray-400'}">${rank<=3?medals[rank-1]:rank}</span>
+      <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-yale">${u.initials}</div>
+      <span class="flex-1 text-sm font-${u.isMe?'black':'medium'} text-gray-${u.isMe?'900':'700'}">${u.name}${u.isMe?' (ты)':''}</span>
+      <span class="text-sm font-bold text-yale">${u.xp} XP</span>
+      <span class="text-xs text-gray-500">${u.solved} реш.</span>
+    </div>`;
+  }).join('');
+}
+
+// ===== CHAT =====
+function renderChat() {
+  const u = S.user;
+  const hasTutor = u.activeTutor;
+  document.getElementById('chat-no-tutor').style.display = hasTutor ? 'none' : 'block';
+  document.getElementById('chat-area').style.display = hasTutor ? 'flex' : 'none';
+  if (!hasTutor) return;
+
+  const t = u.activeTutor;
+  document.getElementById('chat-tutor-avatar').textContent = t.initials||t.name[0];
+  document.getElementById('chat-tutor-name').textContent = t.name;
+
+  if (S.demoMode && !S.chatMessages.length) {
+    S.chatMessages = [
+      {from:'tutor',text:'Привет! Я твой репетитор. Сегодня разберём функции.'},
+      {from:'student',text:'Отлично, жду!'},
+      {from:'tutor',text:'Я загрузил ДЗ №2 — уравнения. Срок до пятницы.'},
+    ];
+  }
+  renderMessages();
+}
+
+function renderMessages() {
+  const el = document.getElementById('chat-messages');
+  if (!S.chatMessages.length) {
+    el.innerHTML = '<div class="text-center text-xs text-gray-400">Начало переписки</div>';
+    return;
+  }
+  el.innerHTML = '<div class="text-center text-xs text-gray-400 mb-2">Начало переписки</div>' +
+    S.chatMessages.map(m => {
+      const isMe = m.from === 'student';
+      return `<div class="flex ${isMe?'justify-end':'justify-start'}">
+        <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${isMe?'bg-yale text-white rounded-br-sm':'bg-gray-100 text-gray-800 rounded-bl-sm'}">${m.text}</div>
+      </div>`;
+    }).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  S.chatMessages.push({from:'student',text});
+  input.value = '';
+  renderMessages();
+  setTimeout(()=>{
+    S.chatMessages.push({from:'tutor',text:'Понял, скоро отвечу!'});
+    renderMessages();
+  }, 1500);
+}
+
+// ===== PROFILE =====
+function renderProfile() {
+  const u = S.user;
+  const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
+  document.getElementById('prof-avatar').textContent = initials.toUpperCase();
+  document.getElementById('prof-name').textContent = (u.name||'') + (u.lastName?' '+u.lastName:'');
+  document.getElementById('prof-email').textContent = u.email||'';
+  const lvl = getLevelInfo(u.xp||0);
+  document.getElementById('prof-level').innerHTML = LEVEL_ICONS[lvl.index] + ' ' + lvl.name;
+  document.getElementById('prof-city').textContent = u.city||'—';
+  document.getElementById('prof-school').textContent = u.school||'—';
+  document.getElementById('prof-exam').textContent = u.exam||'—';
+  document.getElementById('prof-goal').textContent = (u.dailyGoal||3) + ' задач/день';
+
+  const studySt = document.getElementById('prof-study-status');
+  studySt.textContent = u.hasStudyAccess ? '✅ Активно' : 'Не активно';
+  studySt.className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
+  const bankSt = document.getElementById('prof-bank-status');
+  bankSt.textContent = (u.hasBankAccess||u.hasStudyAccess) ? '✅ Активно' : 'Не активно';
+  bankSt.className = 'tag ' + ((u.hasBankAccess||u.hasStudyAccess) ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
+
+  const hobbies = document.getElementById('prof-hobbies');
+  const h = u.hobbies||[];
+  hobbies.innerHTML = h.length ? h.map(x=>`<span class="tag bg-blue-50 text-blue-700">${x}</span>`).join('') : '<span class="text-sm text-gray-400">Не указаны</span>';
+}
+
+function editProfile() {
+  alert('Редактирование профиля будет доступно в следующем обновлении!');
+}
+
+// ===== GAMIFICATION =====
+function addXP(amount) {
+  S.user.xp = (S.user.xp||0) + amount;
+  S.todayXP += amount;
+  saveUser();
+  renderSidebar();
+  renderProgress();
+}
+
+function checkDailyGoal() {
+  const goal = S.user.dailyGoal || 3;
+  if (S.todayDone >= goal) {
+    S.user.streak = (S.user.streak||0) + 1;
+    if (S.user.streak > (S.user.bestStreak||0)) S.user.bestStreak = S.user.streak;
+    addXP(25);
+    showStreakNotif();
+    saveUser();
+    renderSidebar();
+  }
+}
+
+function showStreakNotif() {
+  const notif = document.createElement('div');
+  notif.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0D3B66;color:white;border-radius:16px;padding:16px 20px;z-index:999;font-weight:700;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  notif.innerHTML = '🔥 Цель достигнута! +25 XP';
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(), 3000);
+}
+
+function checkAchievements() {
+  if (!S.user.achievements) S.user.achievements = [];
+  const u = S.user;
+  const earn = (id) => { if (!u.achievements.includes(id)) { u.achievements.push(id); showAchievementNotif(id); }};
+  if (u.solved >= 1) earn('first_solve');
+  if (u.streak >= 3) earn('streak3');
+  if (u.streak >= 7) earn('streak7');
+  if (u.solved >= 10) earn('solve10');
+  if (u.solved >= 50) earn('solve50');
+  if (u.solvedTasks && [...new Set(_bankCache.filter(t=>u.solvedTasks.includes(t.id)).flatMap(t=>t.topics?.map(tt=>tt.topic?.name)||[]))].length >= 10) earn('allTopics');
+}
+
+function showAchievementNotif(id) {
+  const a = ACHIEVEMENTS.find(x=>x.id===id);
+  if (!a) return;
+  const notif = document.createElement('div');
+  notif.style.cssText = 'position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#fef9c3,#fde68a);border:2px solid #fbbf24;border-radius:16px;padding:16px 20px;z-index:999;font-weight:700;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,0.15)';
+  notif.innerHTML = `${a.emoji} Достижение: «${a.name}»!`;
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(), 3500);
+}
+
+// ===== UTILS =====
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeTaskModal() { closeModal('task-modal'); }
+function logout() { localStorage.removeItem('fibi_current_user'); location.href='index.html'; }
+function pluralTasks(n) { if(n%10===1&&n%100!==11)return'задачу';if(n%10>=2&&n%10<=4&&!(n%100>=12&&n%100<=14))return'задачи';return'задач'; }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+});
+
+// ===== RUN =====
+init();
+</script>
+</body>
+</html>
