@@ -110,7 +110,7 @@ export default function StudentsPage() {
       </div>
       {filtered.length === 0
         ? <EmptyState title="Ученики не найдены"/>
-        : <motion.div layout className="grid grid-cols-2 gap-4">
+        : <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {filtered.map(s => <StudentCard key={s.id} s={s} onClick={() => setSelected(s)}/>)}
           </motion.div>}
       <AnimatePresence>

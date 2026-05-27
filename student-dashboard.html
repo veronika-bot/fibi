@@ -68,10 +68,37 @@ body{background:#f4f6fb;margin:0}
 .progress-ring{transform:rotate(-90deg);transform-origin:50%}
 input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;width:100%}
 input:focus,textarea:focus,select:focus{border-color:#0D3B66}
+
+/* ── RESPONSIVE ── */
+.sidebar{transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:39;backdrop-filter:blur(2px)}
+.sidebar-overlay.open{display:block}
+#burger-btn{display:none;position:fixed;top:14px;left:14px;z-index:50;background:#0D3B66;border:none;border-radius:10px;padding:9px;cursor:pointer;box-shadow:0 2px 12px rgba(13,59,102,.3)}
+.main-content{overflow-x:hidden}
+.text-clamp{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media(max-width:767px){
+  #burger-btn{display:flex;align-items:center;justify-content:center}
+  .sidebar{transform:translateX(-100%);position:fixed;z-index:40}
+  .sidebar.mobile-open{transform:translateX(0)}
+  .main-content{margin-left:0!important;padding:18px 16px!important;padding-top:60px!important}
+  .topbar{flex-wrap:wrap;gap:10px}
+  .topbar h1{font-size:18px!important}
+  .modal{padding:20px!important;width:95%!important}
+}
+@media(min-width:768px){
+  .sidebar{transform:translateX(0)!important}
+  .sidebar-overlay{display:none!important}
+  .main-content{margin-left:240px;padding:28px 32px}
+}
 </style>
 </head>
 <body>
 
+<button id="burger-btn" onclick="toggleSidebar()" aria-label="Меню">
+  <svg width="20" height="20" fill="none" stroke="white" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+</button>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="px-5 py-5 flex items-center gap-2.5">
@@ -154,7 +181,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 <div class="main-content">
 
   <!-- TOPBAR -->
-  <div class="topbar">
+  <div class="topbar min-w-0">
     <div>
       <h1 id="page-title" class="text-2xl font-black text-gray-900">Главная</h1>
       <p id="page-sub" class="text-sm text-gray-500 mt-0.5">Добро пожаловать!</p>
@@ -203,7 +230,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <!-- 3 blocks -->
-    <div class="grid grid-cols-3 gap-4 mb-6">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
       <!-- Block 1: Find Tutor -->
       <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-tutors')">
         <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
@@ -215,26 +242,26 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       </div>
       <!-- Block 2: Self-Study -->
       <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-study')">
-        <div class="w-12 h-12 bg-yellow-50 rounded-2xl flex items-center justify-center mb-3">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#d97706" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
         </div>
         <h3 class="font-bold text-gray-900 mb-1">Самообучение</h3>
         <p class="text-xs text-gray-500 mb-3">Теория, видео, практика</p>
-        <span class="tag bg-yellow-100 text-yellow-700" id="b2-tag-home">Платно</span>
+        <span class="tag bg-blue-100 text-blue-700" id="b2-tag-home">Платно</span>
       </div>
       <!-- Block 3: Task Bank -->
       <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-bank')">
-        <div class="w-12 h-12 bg-purple-50 rounded-2xl flex items-center justify-center mb-3">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#7c3aed" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+        <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
         </div>
         <h3 class="font-bold text-gray-900 mb-1">Банк заданий</h3>
         <p class="text-xs text-gray-500 mb-3">42 задания, 10 тем</p>
-        <span class="tag bg-purple-100 text-purple-700" id="b3-tag-home">Платно</span>
+        <span class="tag bg-blue-100 text-blue-700" id="b3-tag-home">Платно</span>
       </div>
     </div>
 
     <!-- Stats row -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="stat-chip">
         <p class="text-2xl font-black text-yale" id="home-solved">0</p>
         <p class="text-xs text-gray-500 mt-1">Решено задач</p>
@@ -254,7 +281,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <!-- Recent activity + Quick tasks -->
-    <div class="grid grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Quick task -->
       <div class="card">
         <h3 class="font-bold text-gray-900 mb-4">Быстрое задание</h3>
@@ -298,7 +325,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         </select>
       </div>
 
-      <div id="tutors-list" class="grid grid-cols-2 gap-4"></div>
+      <div id="tutors-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
 
     <!-- Active tutor view -->
@@ -373,7 +400,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <div id="study-bar" class="h-full bg-white rounded-full transition-all" style="width:0%"></div>
         </div>
       </div>
-      <div id="lessons-grid" class="grid grid-cols-2 gap-4"></div>
+      <div id="lessons-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
   </div>
 
@@ -415,7 +442,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <div id="bank-locked" style="position:relative;min-height:420px">
-      <div id="bank-tasks-preview" class="grid grid-cols-2 gap-3" style="opacity:0.35;pointer-events:none"></div>
+      <div id="bank-tasks-preview" class="grid grid-cols-1 sm:grid-cols-2 gap-3" style="opacity:0.35;pointer-events:none"></div>
       <div class="paywall-overlay">
         <div class="paywall-card">
           <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-3"><svg width="34" height="34" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h5"/></svg></div>
@@ -431,12 +458,12 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <div id="bank-unlocked" style="display:none">
-      <div id="bank-tasks-grid" class="grid grid-cols-2 gap-3"></div>
+      <div id="bank-tasks-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </div>
 
     <!-- Task solving modal -->
     <div class="modal-overlay" id="task-modal">
-      <div class="modal w-full max-w-xl">
+      <div class="modal w-full max-w-xl" style="padding:20px">
         <div class="flex items-start justify-between mb-4">
           <div>
             <div class="flex items-center gap-2 mb-1">
@@ -495,7 +522,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <div id="hw-list-area" style="display:none">
-      <div class="grid grid-cols-3 gap-4 mb-6">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div class="stat-chip">
           <p class="text-2xl font-black text-yale" id="hw-total">0</p>
           <p class="text-xs text-gray-500 mt-1">Всего ДЗ</p>
@@ -537,7 +564,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <!-- Stats grid -->
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <div class="stat-chip">
         <p class="text-2xl font-black text-yale" id="prog-solved">0</p>
         <p class="text-xs text-gray-500 mt-1">Решено</p>
@@ -565,7 +592,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <!-- Achievements -->
     <div class="card mb-6">
       <h3 class="font-bold text-gray-900 mb-4">Достижения</h3>
-      <div id="achievements-grid" class="grid grid-cols-4 gap-3"></div>
+      <div id="achievements-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
     </div>
 
     <!-- Leaderboard -->
@@ -610,8 +637,8 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 
   <!-- ==================== SCREEN: PROFILE ==================== -->
   <div class="screen" id="s-profile">
-    <div class="grid grid-cols-3 gap-6">
-      <div class="col-span-1">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1">
         <div class="card text-center">
           <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-black text-yale mx-auto mb-3" id="prof-avatar"></div>
           <h3 class="font-black text-gray-900 text-xl" id="prof-name"></h3>
@@ -631,14 +658,14 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
               <span class="font-medium" id="prof-exam">—</span>
             </div>
             <div class="flex justify-between text-sm">
-              <span class="text-gray-500">Цель в день</span>
+              <span class="text-gray-500">Цель</span>
               <span class="font-medium" id="prof-goal">—</span>
             </div>
           </div>
           <button class="btn-o w-full mt-4 text-sm" onclick="editProfile()">Редактировать</button>
         </div>
       </div>
-      <div class="col-span-2 space-y-4">
+      <div class="lg:col-span-2 space-y-4">
         <div class="card">
           <h3 class="font-bold text-gray-900 mb-4">Подписки и доступы</h3>
           <div class="space-y-3">
@@ -654,7 +681,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
             </div>
             <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
               <div class="flex items-center gap-3">
-                <div class="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#7c3aed" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+                <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
                 <div>
                   <p class="font-bold text-sm">Банк заданий</p>
                   <p class="text-xs text-gray-500">Только задания, без курсов</p>
@@ -1765,7 +1792,7 @@ function renderProfile() {
   document.getElementById('prof-city').textContent = u.city||'—';
   document.getElementById('prof-school').textContent = u.school||'—';
   document.getElementById('prof-exam').textContent = u.exam||'—';
-  document.getElementById('prof-goal').textContent = (u.dailyGoal||3) + ' задач/день';
+  document.getElementById('prof-goal').textContent = (u.dailyGoal||3) + ' задач';
 
   const studySt = document.getElementById('prof-study-status');
   studySt.textContent = u.hasStudyAccess ? 'Активно' : 'Не активно';
@@ -1891,6 +1918,27 @@ document.querySelectorAll('.modal-overlay').forEach(o => {
 
 // ===== RUN =====
 init();
+
+// ── MOBILE SIDEBAR ──────────────────────────────────────────────────────────
+function toggleSidebar() {
+  const s = document.querySelector('.sidebar');
+  const o = document.getElementById('sidebar-overlay');
+  s.classList.toggle('mobile-open');
+  o.classList.toggle('open');
+}
+function closeSidebar() {
+  document.querySelector('.sidebar').classList.remove('mobile-open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+}
+// Close sidebar when nav item clicked on mobile
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => {
+      if (window.innerWidth < 768) closeSidebar();
+    });
+  });
+});
+
 </script>
 </body>
 </html>

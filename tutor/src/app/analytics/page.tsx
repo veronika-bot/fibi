@@ -36,14 +36,14 @@ export default function AnalyticsPage() {
         <p className="text-gray-500 text-sm mt-1">Обзор за последние 30 дней</p>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <KPICard label="Учеников" value={MOCK_STUDENTS.length} trend={+25} icon={<Users size={20} strokeWidth={1.8}/>}/>
         <KPICard label="Ср. балл" value={avgScore+'%'} trend={+8} icon={<TrendingUp size={20} strokeWidth={1.8}/>}/>
         <KPICard label="ДЗ выполнено" value={`${hwDone}/${hwTotal}`} icon={<CheckCircle2 size={20} strokeWidth={1.8}/>}/>
         <KPICard label="Активных дней" value={18} trend={+3} icon={<BarChart2 size={20} strokeWidth={1.8}/>}/>
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
           <SectionTitle>Активность по дням</SectionTitle>
           <div className="flex items-end justify-between h-32 gap-2">

@@ -32,9 +32,9 @@ export default function HomePage() {
   return (
     <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-start md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">Добро пожаловать, {MOCK_TUTOR.name}</h1>
+          <h1 className="text-xl md:text-3xl font-black text-gray-900 truncate">Добро пожаловать, {MOCK_TUTOR.name}</h1>
           <p className="text-gray-500 mt-1 text-sm">Сегодня {new Date().toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long' })}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -48,7 +48,7 @@ export default function HomePage() {
       </div>
 
       {/* KPIs */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
         <KPICard label="Учеников" value={MOCK_STUDENTS.length} sub="активных" trend={+25}
           icon={<Users size={20} strokeWidth={1.8}/>}/>
         <KPICard label="Активных ДЗ" value={MOCK_HW.filter(h=>h.status==='assigned').length} sub="на проверку скоро"
@@ -60,9 +60,9 @@ export default function HomePage() {
       </div>
 
       {/* Main grid */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Activity chart */}
-        <Card className="col-span-2">
+        <Card className="lg:col-span-2">
           <SectionTitle>Активность за неделю</SectionTitle>
           <div className="flex items-end justify-between px-2">
             {ACTIVITY_DATA.map(d => <ActivityBar key={d.day} value={d.checks} max={maxChecks} day={d.day}/>)}
@@ -100,9 +100,9 @@ export default function HomePage() {
       </div>
 
       {/* Bottom grid */}
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent HW */}
-        <Card className="col-span-2">
+        <Card className="lg:col-span-2">
           <SectionTitle action={<a href="/homework" className="text-xs text-yale font-semibold hover:underline">Все ДЗ</a>}>
             Домашние задания
           </SectionTitle>
@@ -158,7 +158,7 @@ export default function HomePage() {
       {/* Quick actions */}
       <Card>
         <SectionTitle>Быстрые действия</SectionTitle>
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { href:'/homework?new=1', icon: <ClipboardList size={20}/>, label: 'Выдать ДЗ' },
             { href:'/checking',       icon: <FileCheck size={20}/>,    label: 'Проверить работу' },
