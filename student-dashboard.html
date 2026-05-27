@@ -714,6 +714,22 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
             </div>
           </div>
         </div>
+        <div class="card">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <h3 class="font-bold text-gray-900">Доступ для родителей</h3>
+          </div>
+          <p class="text-xs text-gray-500 mb-3">Поделитесь кодом с родителем — он сможет отслеживать ваш прогресс</p>
+          <div class="flex items-center justify-center p-4 bg-blue-50 rounded-xl mb-3">
+            <span class="font-mono font-black text-3xl text-yale tracking-[0.25em]" id="prof-invite-code">——————</span>
+          </div>
+          <div class="flex gap-2">
+            <button id="copy-parent-btn" class="btn-o flex-1 text-sm" onclick="copyParentLink()">Скопировать ссылку</button>
+            <button class="btn-p text-sm px-4" onclick="window.open('parent-dashboard.html?code='+getOrCreateInviteCode(),'_blank')">Открыть</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1585,12 +1601,38 @@ function markTaskSolved(id, correct) {
   if (!S.user.solvedTasks.includes(id)) S.user.solvedTasks.push(id);
   S.user.solved = (S.user.solved||0)+1;
   if (correct) S.user.correct = (S.user.correct||0)+1;
+  const today = new Date().toISOString().split('T')[0];
+  if (!S.user.activityLog) S.user.activityLog = [];
+  const entry = S.user.activityLog.find(e => e.date === today);
+  if (entry) entry.tasks = (entry.tasks||0)+1;
+  else S.user.activityLog.push({date: today, tasks: 1, xp: 0});
   S.todayDone++;
   checkDailyGoal();
   checkAchievements();
   saveUser();
   renderProgress();
   renderHome();
+}
+
+function getOrCreateInviteCode() {
+  if (!S.user.inviteCode) {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    S.user.inviteCode = Array.from({length:6}, ()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+    saveUser();
+  }
+  return S.user.inviteCode;
+}
+
+function copyParentLink() {
+  const code = getOrCreateInviteCode();
+  const base = location.href.replace(/[^/]*$/, '');
+  const link = base + 'parent-dashboard.html?code=' + code;
+  navigator.clipboard.writeText(link).then(() => {
+    const btn = document.getElementById('copy-parent-btn');
+    if (btn) { btn.textContent = 'Скопировано!'; setTimeout(()=>btn.textContent='Скопировать ссылку',2000); }
+  }).catch(() => {
+    prompt('Скопируйте ссылку:', base + 'parent-dashboard.html?code=' + code);
+  });
 }
 
 function nextTask() {
@@ -1806,6 +1848,8 @@ function renderProfile() {
   const hobbies = document.getElementById('prof-hobbies');
   const h = u.hobbies||[];
   hobbies.innerHTML = h.length ? h.map(x=>`<span class="tag bg-blue-50 text-blue-700">${x}</span>`).join('') : '<span class="text-sm text-gray-400">Не указаны</span>';
+
+  document.getElementById('prof-invite-code').textContent = getOrCreateInviteCode();
 }
 
 function editProfile() {
@@ -1857,6 +1901,12 @@ function saveProfile() {
 function addXP(amount) {
   S.user.xp = (S.user.xp||0) + amount;
   S.todayXP += amount;
+  const today = new Date().toISOString().split('T')[0];
+  if (!S.user.activityLog) S.user.activityLog = [];
+  const entry = S.user.activityLog.find(e => e.date === today);
+  if (entry) entry.xp = (entry.xp||0) + amount;
+  else S.user.activityLog.push({date: today, tasks: 0, xp: amount});
+  if (S.user.activityLog.length > 60) S.user.activityLog = S.user.activityLog.slice(-60);
   saveUser();
   renderSidebar();
   renderProgress();
