@@ -153,15 +153,15 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-6 mb-6">
-      <div class="card">
+    <div class="grid grid-cols-2 gap-6 mb-6" style="align-items:stretch">
+      <div class="card flex flex-col">
         <h3 class="font-bold text-gray-900 mb-4">Активные ученики</h3>
-        <div id="ov-students-list" class="space-y-2"></div>
+        <div id="ov-students-list" class="space-y-2 flex-1"></div>
         <button class="btn-o w-full mt-4 text-sm py-2" onclick="goScreen('t-students')">Все ученики →</button>
       </div>
-      <div class="card">
+      <div class="card flex flex-col">
         <h3 class="font-bold text-gray-900 mb-4">Последние ДЗ</h3>
-        <div id="ov-hw-list" class="space-y-2"></div>
+        <div id="ov-hw-list" class="space-y-2 flex-1"></div>
         <button class="btn-o w-full mt-4 text-sm py-2" onclick="goScreen('t-homework')">Все ДЗ →</button>
       </div>
     </div>
@@ -290,44 +290,44 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 
   <!-- ==================== COURSES ==================== -->
   <div class="screen" id="t-courses">
-    <div class="grid grid-cols-3 gap-6">
-      <div class="card relative overflow-hidden" id="course-oge">
-        <div class="absolute top-3 right-3" id="oge-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
+    <div class="grid grid-cols-3 gap-6" style="align-items:stretch">
+      <div class="card relative overflow-hidden flex flex-col" id="course-oge">
+        <div class="absolute top-3 right-3" id="oge-lock-badge"><span class="tag bg-gray-200 text-gray-600">Не куплен</span></div>
         <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
         <h3 class="font-black text-gray-900 text-lg mb-1">ОГЭ Математика</h3>
         <p class="text-xs text-gray-500 mb-3">Презентации уроков, задания, скрипт проверки ДЗ</p>
-        <div class="space-y-1.5 mb-4">
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 10 презентаций</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 42 задания с разбором</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Скрипт проверки ДЗ</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Конструктор ДЗ</div>
+        <div class="space-y-1.5 mb-4 flex-1">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> 10 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> 42 задания с разбором</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Скрипт проверки ДЗ</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Конструктор ДЗ</div>
         </div>
-        <button class="btn-p w-full" id="oge-btn" onclick="buyCourse('oge')">Приобрести</button>
+        <button class="btn-p w-full mt-auto" id="oge-btn" onclick="buyCourse('oge')">Приобрести</button>
       </div>
-      <div class="card relative overflow-hidden" id="course-ege-base">
-        <div class="absolute top-3 right-3" id="egeb-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
-        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#059669" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+      <div class="card relative overflow-hidden flex flex-col" id="course-ege-base">
+        <div class="absolute top-3 right-3" id="egeb-lock-badge"><span class="tag bg-gray-200 text-gray-600">Не куплен</span></div>
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
         <h3 class="font-black text-gray-900 text-lg mb-1">ЕГЭ База</h3>
         <p class="text-xs text-gray-500 mb-3">Базовый уровень ЕГЭ по математике</p>
-        <div class="space-y-1.5 mb-4">
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 12 презентаций</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Задания части 1</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Скрипт проверки</div>
+        <div class="space-y-1.5 mb-4 flex-1">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> 12 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Задания части 1</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Скрипт проверки</div>
         </div>
-        <button class="btn-p w-full" id="egeb-btn" onclick="buyCourse('ege-base')">Приобрести</button>
+        <button class="btn-p w-full mt-auto" id="egeb-btn" onclick="buyCourse('ege-base')">Приобрести</button>
       </div>
-      <div class="card relative overflow-hidden" id="course-ege-prof">
-        <div class="absolute top-3 right-3" id="egep-lock-badge"><span class="tag bg-gray-200 text-gray-600">🔒 Не куплен</span></div>
-        <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#dc2626" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
+      <div class="card relative overflow-hidden flex flex-col" id="course-ege-prof">
+        <div class="absolute top-3 right-3" id="egep-lock-badge"><span class="tag bg-gray-200 text-gray-600">Не куплен</span></div>
+        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-3"><svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg></div>
         <h3 class="font-black text-gray-900 text-lg mb-1">ЕГЭ Профиль</h3>
         <p class="text-xs text-gray-500 mb-3">Профильный ЕГЭ, часть 2 включена</p>
-        <div class="space-y-1.5 mb-4">
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> 15 презентаций</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Задания ч.1 и ч.2</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Интерфейс проверки ч.2</div>
-          <div class="flex items-center gap-2 text-sm text-gray-600"><span class="text-green-500">✓</span> Комментарии и аннотации</div>
+        <div class="space-y-1.5 mb-4 flex-1">
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> 15 презентаций</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Задания ч.1 и ч.2</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Интерфейс проверки ч.2</div>
+          <div class="flex items-center gap-2 text-sm text-gray-600"><svg width="14" height="14" fill="none" stroke="#22c55e" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Комментарии и аннотации</div>
         </div>
-        <button class="btn-p w-full" id="egep-btn" onclick="buyCourse('ege-prof')">Приобрести</button>
+        <button class="btn-p w-full mt-auto" id="egep-btn" onclick="buyCourse('ege-prof')">Приобрести</button>
       </div>
     </div>
 
