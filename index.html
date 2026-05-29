@@ -71,7 +71,15 @@ html{scroll-behavior:smooth}
 .progress-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;border-radius:3px;background:#0D3B66;transition:width 1s ease}
 /* Mobile */
-@media(max-width:768px){.hero-mascot{width:260px!important}}
+@media(max-width:768px){.hero-mascot{width:220px!important}}
+@media(max-width:480px){
+  .hero-section-main{min-height:100svh!important;padding-top:80px!important;padding-bottom:40px!important}
+  .bento-grid{grid-template-columns:1fr!important}
+  .grid.grid-cols-2:not(.answers-grid){grid-template-columns:1fr!important}
+  .hide-xs{display:none!important}
+  section.py-24{padding-top:48px!important;padding-bottom:48px!important}
+  section.py-20{padding-top:40px!important;padding-bottom:40px!important}
+}
 </style>
 </head>
 <body class="bg-white text-gray-900 overflow-x-hidden">
@@ -112,7 +120,7 @@ html{scroll-behavior:smooth}
 </nav>
 
 <!-- ===== HERO ===== -->
-<section class="relative min-h-screen flex items-center pt-20 overflow-hidden" style="background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
+<section class="hero-section-main relative flex items-center pt-20 overflow-hidden" style="min-height:100svh;background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
   <!-- bg math -->
   <div class="math-bg" style="top:8%;left:5%;font-size:22px;transform:rotate(-12deg)">√x² + y²</div>
   <div class="math-bg" style="top:15%;right:8%;font-size:18px;transform:rotate(8deg)">ax² + bx + c = 0</div>

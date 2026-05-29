@@ -38,9 +38,42 @@
 .bubble-out{background:#0D3B66;color:white;border-radius:18px 18px 4px 18px;padding:10px 14px;max-width:76%;font-size:14px;line-height:1.5}
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#0D3B66;border-radius:3px}
 html{scroll-behavior:smooth}
+/* Mobile sidebar */
+.par-mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:49}
+.par-mob-overlay.open{display:block}
+.par-mob-bar{display:none;position:fixed;top:0;left:0;right:0;height:54px;background:#0D3B66;z-index:48;align-items:center;justify-content:space-between;padding:0 16px}
+@media(max-width:767px){
+  .sidebar{position:fixed;left:0;top:0;height:100svh;z-index:50;transform:translateX(-100%);transition:transform .3s ease;width:252px!important}
+  .sidebar.open{transform:translateX(0)}
+  .par-mob-bar{display:flex}
+  .par-mob-overlay.open{display:block}
+  #app-shell{height:auto!important;overflow:visible!important}
+  .main{padding-top:54px}
+  .main > div{padding:16px!important}
+  .card{padding:16px!important}
+  .grid-cols-3,.grid.grid-cols-3{grid-template-columns:repeat(1,1fr)!important}
+  .grid-cols-2,.grid.grid-cols-2{grid-template-columns:repeat(1,1fr)!important}
+  [style*="height:calc(100vh"]{height:auto!important;min-height:300px}
+  .overflow-x-auto table{min-width:500px}
+  .btn-p,.btn-o{font-size:13px}
+}
+@media(max-width:480px){
+  .text-2xl.font-extrabold{font-size:20px!important}
+  .par-prog-fill{transition:width .5s ease}
+}
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900">
+
+<!-- Mobile overlay + topbar -->
+<div class="par-mob-overlay" id="par-mob-overlay" onclick="parCloseSidebar()"></div>
+<div class="par-mob-bar" id="par-mob-bar">
+  <button onclick="parOpenSidebar()" style="background:none;border:none;cursor:pointer;padding:6px">
+    <svg width="22" height="22" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <span class="text-white font-extrabold text-base">ФИБИ</span>
+  <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#FAF0CA;color:#0D3B66" id="par-mob-av">МП</div>
+</div>
 
 <!-- ═══════════════════ ЭКРАН ВХОДА ═══════════════════ -->
 <div id="screen-login" class="screen active items-center justify-center p-6" style="background:linear-gradient(135deg,#fff 0%,#fdf8ed 50%,#f8f0d0 100%)">
@@ -133,7 +166,7 @@ html{scroll-behavior:smooth}
 <div id="app-shell">
 
   <!-- Sidebar -->
-  <aside class="sidebar">
+  <aside class="sidebar" id="par-sidebar">
     <a href="index.html" class="flex items-center gap-3 mb-8 px-1">
       <img src="Иконки.png" class="w-9 h-9 rounded-xl flex-shrink-0" style="object-fit:cover">
       <div>
@@ -799,6 +832,19 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('today-date') && (document.getElementById('today-date').textContent =
     new Date().toLocaleDateString('ru-RU', { day:'numeric', month:'long', year:'numeric' }))
 })
+
+function parOpenSidebar() {
+  document.getElementById('par-sidebar').classList.add('open');
+  document.getElementById('par-mob-overlay').classList.add('open');
+}
+function parCloseSidebar() {
+  document.getElementById('par-sidebar').classList.remove('open');
+  document.getElementById('par-mob-overlay').classList.remove('open');
+}
+
+// Close sidebar on tab switch (mobile)
+const _origSwitchTab = switchTab;
+window.switchTab = function(n) { parCloseSidebar(); _origSwitchTab(n); };
 </script>
 </body>
 </html>

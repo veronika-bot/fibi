@@ -54,12 +54,46 @@ input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;bor
 input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 .student-row{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:2px solid #f3f4f6;background:white;transition:all .2s;cursor:pointer}
 .student-row:hover{border-color:#0D3B66;background:#f0f6ff}
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:39}
+.mob-overlay.open{display:block}
+.mob-topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:white;z-index:38;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 1px 8px rgba(0,0,0,.08)}
+@media(max-width:767px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s ease;min-height:100svh}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{margin-left:0!important;padding:72px 16px 24px!important;min-height:100svh}
+  .mob-topbar{display:flex}
+  .topbar{display:none}
+  .grid.grid-cols-4{grid-template-columns:repeat(2,1fr)!important}
+  .grid.grid-cols-3{grid-template-columns:repeat(1,1fr)!important}
+  .grid.grid-cols-2{grid-template-columns:repeat(1,1fr)!important}
+  .card{padding:16px!important;border-radius:16px!important}
+  .modal{padding:20px!important;width:95%!important;border-radius:20px!important}
+  .btn-p,.btn-o{font-size:13px;padding:10px 16px}
+  [style*="height:calc(100vh"]{height:auto!important;min-height:300px!important}
+  [style*="col-span-1"],[style*="col-span-2"]{grid-column:span 1/span 1!important}
+  .paywall-card{padding:20px!important}
+}
 </style>
 </head>
 <body>
 
+<!-- Mobile overlay -->
+<div class="mob-overlay" id="mob-overlay" onclick="closeMobSidebar()"></div>
+
+<!-- Mobile topbar -->
+<div class="mob-topbar">
+  <button onclick="openMobSidebar()" style="background:none;border:none;cursor:pointer;padding:6px">
+    <svg width="22" height="22" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <a href="index.html" class="flex items-center gap-2">
+    <img src="Иконки.png" class="w-7 h-7" style="border-radius:8px">
+    <span class="font-black text-yale text-base">ФИБИ</span>
+  </a>
+  <div id="mob-top-avatar" onclick="goScreen('t-profile')" class="w-8 h-8 rounded-full bg-yellow-200 flex items-center justify-center text-yale font-bold text-xs cursor-pointer"></div>
+</div>
+
 <!-- SIDEBAR -->
-<div class="sidebar">
+<div class="sidebar" id="tutor-sidebar">
   <div class="px-5 py-5 flex items-center gap-2.5">
     <a href="index.html"><img src="Иконки.png" alt="ФИБИ" class="w-9 h-9" style="border-radius:10px;object-fit:cover;background:#f4f6fb"></a>
     <div>
@@ -662,6 +696,7 @@ function saveUser() {
 
 // ===== NAV =====
 function goScreen(id) {
+  closeMobSidebar();
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -715,8 +750,12 @@ function renderAll() {
 function renderSidebar() {
   const u = T.user;
   const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
-  document.getElementById('sb-avatar').textContent = initials.toUpperCase();
-  document.getElementById('top-avatar').textContent = initials.toUpperCase();
+  const ini = initials.toUpperCase();
+  ['sb-avatar','top-avatar','mob-top-avatar'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    if (u.avatar) { el.style.backgroundImage=`url(${u.avatar})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';el.style.overflow='hidden'; }
+    else { el.style.backgroundImage=''; el.textContent=ini; }
+  });
   document.getElementById('sb-name').textContent = (u.name||'') + (u.lastName?' '+u.lastName:'');
   const isFounder = u.name==='Дина'||u.name==='Вероника';
   document.getElementById('sb-tag').textContent = isFounder ? '👑 Основатель' : 'Репетитор';
@@ -1247,6 +1286,8 @@ function diffTagSmall(d) {
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
 function logout(){localStorage.removeItem('fibi_current_user');location.href='index.html'}
+function openMobSidebar(){document.getElementById('tutor-sidebar').classList.add('open');document.getElementById('mob-overlay').classList.add('open')}
+function closeMobSidebar(){document.getElementById('tutor-sidebar').classList.remove('open');document.getElementById('mob-overlay').classList.remove('open')}
 
 document.querySelectorAll('.modal-overlay').forEach(o=>{
   o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')});
