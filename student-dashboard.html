@@ -1030,13 +1030,22 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
             </div>
             <h3 class="font-bold text-gray-900">Доступ для родителей</h3>
           </div>
-          <p class="text-xs text-gray-500 mb-3">Поделитесь кодом с родителем — он сможет отслеживать ваш прогресс</p>
-          <div class="flex items-center justify-center p-4 bg-blue-50 rounded-xl mb-3">
+          <p class="text-xs text-gray-500 mb-3">Передайте этот код родителю — он вводит его в своём кабинете в поле «Введите код ребёнка»</p>
+          <div class="flex items-center justify-center p-4 bg-blue-50 rounded-xl mb-3 cursor-pointer" onclick="copyParentCode()" title="Нажмите, чтобы скопировать">
             <span class="font-mono font-black text-3xl text-yale tracking-[0.25em]" id="prof-invite-code">——————</span>
           </div>
-          <div class="flex gap-2">
-            <button id="copy-parent-btn" class="btn-o flex-1 text-sm" onclick="copyParentLink()">Скопировать ссылку</button>
-            <button class="btn-p text-sm px-4" onclick="window.open('parent-dashboard.html?code='+getOrCreateInviteCode(),'_blank')">Открыть</button>
+          <button id="copy-parent-btn" class="btn-p w-full text-sm" onclick="copyParentCode()">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Скопировать код
+          </button>
+          <div class="mt-3 rounded-xl p-3 text-xs text-gray-500 leading-relaxed" style="background:#f8fafc;border:1px solid #e5e7eb">
+            <p class="font-semibold text-gray-700 mb-1">Как подвязать аккаунты:</p>
+            <ol class="space-y-1 list-none">
+              <li><span class="font-semibold text-yale">1.</span> Родитель регистрируется в Фиби с ролью «Родитель»</li>
+              <li><span class="font-semibold text-yale">2.</span> В своём кабинете он вводит этот код в поле «Введите код ребёнка»</li>
+              <li><span class="font-semibold text-yale">3.</span> После ввода аккаунты связываются — родитель видит ваш прогресс, серию и готовность к экзамену</li>
+            </ol>
+            <p class="mt-1.5 text-gray-400">Код одноразовый. После подвязки он становится недействительным.</p>
           </div>
         </div>
       </div>
@@ -1091,6 +1100,20 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <div class="space-y-4">
+
+      <!-- Photo upload -->
+      <div class="flex justify-center mb-2">
+        <label for="ep-photo-input" class="relative cursor-pointer group" style="width:80px;height:80px">
+          <div id="ep-photo-preview" class="w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl text-white overflow-hidden select-none" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)"></div>
+          <div class="absolute inset-0 rounded-full bg-black flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-40"></div>
+          <svg class="absolute inset-0 m-auto w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <div class="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center" style="background:#0D3B66">
+            <svg class="w-3 h-3 text-white" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+          </div>
+        </label>
+        <input type="file" id="ep-photo-input" accept="image/*" style="display:none" onchange="epPhotoChange(event)">
+      </div>
+
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Имя</label>
@@ -1341,11 +1364,26 @@ function renderAll() {
 }
 
 // ===== SIDEBAR =====
+function setAvatarEl(el, u) {
+  if (!el) return;
+  const initials = ((u.name||'?')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
+  if (u.avatar) {
+    el.style.backgroundImage = `url(${u.avatar})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.textContent = '';
+    el.style.overflow = 'hidden';
+  } else {
+    el.style.backgroundImage = '';
+    el.textContent = initials;
+  }
+}
+
 function renderSidebar() {
   const u = S.user;
   const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
-  document.getElementById('sb-avatar').textContent = initials.toUpperCase();
-  document.getElementById('top-avatar').textContent = initials.toUpperCase();
+  setAvatarEl(document.getElementById('sb-avatar'), u);
+  setAvatarEl(document.getElementById('top-avatar'), u);
   document.getElementById('sb-name').textContent = u.name + (u.lastName?' '+u.lastName:'');
   document.getElementById('sb-streak').textContent = u.streak || 0;
 
@@ -1967,17 +2005,22 @@ function getOrCreateInviteCode() {
   return S.user.inviteCode;
 }
 
-function copyParentLink() {
+function copyParentCode() {
   const code = getOrCreateInviteCode();
-  const base = location.href.replace(/[^/]*$/, '');
-  const link = base + 'parent-dashboard.html?code=' + code;
-  navigator.clipboard.writeText(link).then(() => {
+  navigator.clipboard.writeText(code).then(() => {
     const btn = document.getElementById('copy-parent-btn');
-    if (btn) { btn.textContent = 'Скопировано!'; setTimeout(()=>btn.textContent='Скопировать ссылку',2000); }
+    if (btn) {
+      btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> Скопировано!';
+      setTimeout(() => {
+        btn.innerHTML = '<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> Скопировать код';
+      }, 2000);
+    }
   }).catch(() => {
-    prompt('Скопируйте ссылку:', base + 'parent-dashboard.html?code=' + code);
+    prompt('Скопируйте код и передайте родителю:', code);
   });
 }
+
+function copyParentLink() { copyParentCode(); }
 
 function nextTask() {
   closeModal('task-modal');
@@ -2188,8 +2231,7 @@ function examDisplayName(raw) {
 
 function renderProfile() {
   const u = S.user;
-  const initials = (u.name||'?')[0] + ((u.lastName||'')[0]||'');
-  document.getElementById('prof-avatar').textContent = initials.toUpperCase();
+  setAvatarEl(document.getElementById('prof-avatar'), u);
   document.getElementById('prof-name').textContent = (u.name||'') + (u.lastName?' '+u.lastName:'');
   document.getElementById('prof-email').textContent = u.email||'';
   const lvl = getLevelInfo(u.xp||0);
@@ -2215,14 +2257,43 @@ function renderProfile() {
   document.getElementById('prof-invite-code').textContent = getOrCreateInviteCode();
 }
 
+let _epPhotoBase64 = null;
+
+function epPhotoChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    _epPhotoBase64 = ev.target.result;
+    const prev = document.getElementById('ep-photo-preview');
+    prev.style.backgroundImage = `url(${_epPhotoBase64})`;
+    prev.style.backgroundSize = 'cover';
+    prev.style.backgroundPosition = 'center';
+    prev.textContent = '';
+  };
+  reader.readAsDataURL(file);
+}
+
 function editProfile() {
   const u = S.user;
+  _epPhotoBase64 = null;
   document.getElementById('ep-name').value     = u.name     || '';
   document.getElementById('ep-lastName').value = u.lastName || '';
   document.getElementById('ep-city').value     = u.city     || '';
   document.getElementById('ep-school').value   = u.school   || '';
   document.getElementById('ep-exam').value     = u.exam     || '';
   document.getElementById('ep-goal').value     = u.dailyGoal || 3;
+  const prev = document.getElementById('ep-photo-preview');
+  if (u.avatar) {
+    prev.style.backgroundImage = `url(${u.avatar})`;
+    prev.style.backgroundSize = 'cover';
+    prev.style.backgroundPosition = 'center';
+    prev.textContent = '';
+  } else {
+    prev.style.backgroundImage = '';
+    prev.textContent = ((u.name||'?')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
+  }
+  document.getElementById('ep-photo-input').value = '';
   openModal('edit-profile-modal');
 }
 
@@ -2254,6 +2325,7 @@ function saveProfile() {
   u.school    = document.getElementById('ep-school').value.trim();
   u.exam      = document.getElementById('ep-exam').value;
   u.dailyGoal = Math.max(1, Number(document.getElementById('ep-goal').value)||3);
+  if (_epPhotoBase64) u.avatar = _epPhotoBase64;
   saveUser();
   closeModal('edit-profile-modal');
   renderSidebar();

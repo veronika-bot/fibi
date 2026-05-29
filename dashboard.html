@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Фиби — Дашборд</title>
+<title>Фиби — Главная</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>tailwind.config={theme:{extend:{colors:{yale:'#0D3B66','yale-d':'#0a2f50',lemon:'#FAF0CA'}}}}</script>
@@ -31,6 +31,7 @@
 .chat-msg-right{background:#0D3B66;border-radius:18px 18px 4px 18px;padding:10px 14px;font-size:14px;color:white;max-width:72%;line-height:1.5;margin-left:auto}
 .stat-ring{transform:rotate(-90deg);transform-origin:50% 50%}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .float{animation:float 5s ease-in-out infinite}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:#0D3B66;border-radius:2px}
@@ -58,7 +59,7 @@
     <!-- Nav -->
     <a onclick="showScreen('dashboard')" class="nav-item active" id="n-dashboard">
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      Дашборд
+      Главная
     </a>
     <a onclick="showScreen('tasks')" class="nav-item" id="n-tasks">
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -77,9 +78,27 @@
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
       Прогресс
     </a>
+    <!-- Parent-only nav items -->
     <a onclick="showScreen('parent')" class="nav-item" id="n-parent" style="display:none">
-      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-      Мои ученики
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+      Главная
+    </a>
+    <a onclick="showScreen('parent-tutors')" class="nav-item" id="n-parent-tutors" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+      Репетиторы
+    </a>
+    <a onclick="showScreen('parent-chat')" class="nav-item" id="n-parent-chat" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      Чаты
+    </a>
+    <a onclick="showScreen('parent-profile')" class="nav-item" id="n-parent-profile" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+      Мой профиль
+    </a>
+    <a onclick="showScreen('parent-payment')" class="nav-item" id="n-parent-payment" style="display:none">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+      Оплата
+      <span id="pay-alert-dot" class="ml-auto w-2 h-2 rounded-full" style="background:#ef4444;display:none"></span>
     </a>
     <!-- Tutor nav items (hidden by default) -->
     <a onclick="showTutorTab('students')" class="nav-item" id="tn-students" style="display:none">
@@ -100,6 +119,12 @@
     </a>
 
     <div class="border-t mt-2 mb-2" style="border-color:rgba(255,255,255,.12)"></div>
+
+    <!-- Support (visible to all roles) -->
+    <a onclick="openSupport()" class="nav-item" id="n-support">
+      <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+      Поддержка
+    </a>
 
     <a href="index.html" class="nav-item">
       <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
@@ -129,7 +154,7 @@
       <button onclick="openSidebar()" class="md:hidden p-1.5 rounded-lg text-gray-500 mr-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
       </button>
-      <div id="page-title" class="font-bold text-gray-800">Дашборд</div>
+      <div id="page-title" class="font-bold text-gray-800">Главная</div>
       <div class="flex items-center gap-3">
         <div id="streak-badge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-semibold" style="background:#FAF0CA;color:#0D3B66"><svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg> 14</div>
         <div class="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white user-avatar" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">АК</div>
@@ -281,13 +306,22 @@
         </div>
       </div>
 
-      <!-- Mascot banner -->
-      <div class="rounded-2xl p-5 flex items-center gap-5" style="background:#0D3B66">
-        <img src="mascot.png" alt="" class="float w-20 flex-shrink-0" style="border-radius:30px">
+      <!-- Mascot banner (student version, hidden for parent) -->
+      <div id="banner-student" class="rounded-2xl p-5 flex items-center gap-5" style="background:#0D3B66">
+        <img src="осьминог2.png" alt="" class="float w-20 flex-shrink-0" style="border-radius:30px">
         <div class="flex-1">
           <div class="text-white font-bold text-lg mb-1 mascot-greeting">Ты молодец!</div>
-          <div class="text-sm mb-3" style="color:rgba(255,255,255,.75)">14 дней подряд — это отличный результат! Осталось 21 день до ОГЭ. Верю в тебя!</div>
+          <div class="text-sm mb-3" style="color:rgba(255,255,255,.75)" id="banner-student-text">14 дней подряд — это отличный результат! Осталось 21 день до ОГЭ. Так держать!</div>
           <button onclick="showScreen('tasks')" class="btn-p text-sm" style="background:white;color:#0D3B66;box-shadow:none;padding:9px 18px">Решать задачи →</button>
+        </div>
+      </div>
+      <!-- Mascot banner (parent version) -->
+      <div id="banner-parent" class="rounded-2xl p-5 flex items-center gap-5" style="background:#0D3B66;display:none">
+        <img src="осьминог2.png" alt="" class="w-20 flex-shrink-0" style="border-radius:30px">
+        <div class="flex-1">
+          <div class="text-white font-bold text-lg mb-1" id="banner-parent-title">Ваш ребёнок занимается!</div>
+          <div class="text-sm mb-3" style="color:rgba(255,255,255,.75)" id="banner-parent-text">Серия занятий продолжается. Прогресс подтягивается из профиля ученика.</div>
+          <button onclick="showScreen('parent')" class="btn-p text-sm" style="background:white;color:#0D3B66;box-shadow:none;padding:9px 18px">Смотреть прогресс →</button>
         </div>
       </div>
 
@@ -738,46 +772,522 @@
     <!-- ==================== PARENT SCREEN ==================== -->
     <div id="s-parent" class="screen flex-col p-5 md:p-6 gap-5">
 
-      <div class="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 class="text-2xl font-bold text-gray-900">Мои ученики</h1>
-          <p class="text-gray-500 text-sm mt-0.5">Прогресс ваших детей в Фиби</p>
+      <!-- Header (shown only when child is linked) -->
+      <div id="parent-header-linked" class="flex items-center justify-between flex-wrap gap-3" style="display:none!important">
+        <p class="text-gray-500 text-sm" id="parent-subtitle">Обновляется автоматически</p>
+        <div class="flex gap-2 flex-wrap">
+          <div id="parent-refresh-badge" class="flex items-center gap-1.5 text-xs text-gray-400 px-3 py-1.5 rounded-full" style="background:#f3f4f6;display:none">
+            <span class="w-1.5 h-1.5 rounded-full" style="background:#10b981;animation:pulse 2s infinite"></span>
+            Обновлено только что
+          </div>
+          <button onclick="toggleAddChildForm()" id="btn-add-child-linked" class="btn-o text-sm" style="padding:8px 14px">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+            Добавить ребёнка
+          </button>
         </div>
-        <button onclick="toggleAddChildForm()" class="btn-p text-sm">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-          Добавить ученика
-        </button>
       </div>
 
-      <!-- Add child form -->
+      <!-- Add child form (for linked state) -->
       <div id="add-child-form" class="card p-5" style="display:none">
-        <h3 class="font-bold text-gray-800 mb-1">Привязать ученика по коду</h3>
-        <p class="text-sm text-gray-500 mb-4">Попроси ребёнка открыть дашборд Фиби — там внизу будет 6-значный код. Введи его здесь.</p>
+        <h3 class="font-bold text-gray-800 mb-1">Привязать ещё одного ребёнка</h3>
+        <p class="text-sm text-gray-500 mb-4">Ребёнок найдёт 6-значный код внизу своего дашборда в разделе «Настройки».</p>
         <div class="flex gap-3 flex-wrap">
           <input id="parent-code-input" type="text" maxlength="6" placeholder="ABC123"
-            class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-yale font-bold uppercase tracking-widest"
-            style="letter-spacing:.2em;min-width:160px;transition:border-color .2s"
+            class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none font-bold uppercase tracking-widest"
+            style="letter-spacing:.2em;min-width:160px;transition:border-color .2s;border-color:#e5e7eb"
             oninput="this.value=this.value.toUpperCase()"
             onkeydown="if(event.key==='Enter')submitParentCode()">
-          <button onclick="submitParentCode()" class="btn-p">Привязать</button>
+          <button onclick="submitParentCode()" class="btn-p">Подключить</button>
           <button onclick="toggleAddChildForm()" class="btn-o">Отмена</button>
         </div>
         <div id="code-error" class="text-xs text-red-500 mt-2" style="display:none"></div>
       </div>
 
-      <!-- Empty state -->
-      <div id="parent-empty" class="card p-10 text-center" style="display:none">
-        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(13,59,102,0.09)">
-          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      <!-- Empty state — code input visible directly -->
+      <div id="parent-empty" style="display:none">
+
+        <!-- Welcome card -->
+        <div class="card p-8 text-center mb-4">
+          <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(13,59,102,0.08)">
+            <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+          </div>
+          <p class="font-bold text-gray-900 text-lg mb-1">Добро пожаловать в кабинет родителя</p>
+          <p class="text-sm text-gray-500 max-w-sm mx-auto">Введите код ребёнка, чтобы видеть его прогресс, серию занятий и готовность к экзамену.</p>
         </div>
-        <p class="font-semibold text-gray-800 mb-2">Учеников ещё нет</p>
-        <p class="text-sm text-gray-500 max-w-xs mx-auto">Нажмите «Добавить ученика» и введите код — ребёнок найдёт его внизу своего дашборда.</p>
+
+        <!-- Code input card -->
+        <div class="card p-6 mb-4" style="border:2px solid rgba(13,59,102,.12)">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+            </div>
+            <div>
+              <div class="font-bold text-gray-800 text-sm">Введите код ребёнка</div>
+              <div class="text-xs text-gray-500">Ребёнок найдёт код внизу своего дашборда → «Настройки»</div>
+            </div>
+          </div>
+          <div class="flex gap-3 flex-wrap">
+            <input id="parent-code-input-empty" type="text" maxlength="6" placeholder="ABC123"
+              class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none font-bold uppercase tracking-widest flex-1"
+              style="letter-spacing:.2em;min-width:160px;transition:border-color .2s"
+              oninput="this.value=this.value.toUpperCase()"
+              onkeydown="if(event.key==='Enter')submitParentCodeEmpty()">
+            <button onclick="submitParentCodeEmpty()" class="btn-p">Подключить</button>
+          </div>
+          <div id="code-error-empty" class="text-xs text-red-500 mt-2" style="display:none"></div>
+        </div>
+
+        <!-- Demo button -->
+        <div class="card p-5 flex items-center justify-between gap-4 flex-wrap">
+          <div>
+            <div class="font-semibold text-gray-800 text-sm">Посмотреть пример</div>
+            <div class="text-xs text-gray-500 mt-0.5">Как выглядит дашборд с реальными успехами ученика</div>
+          </div>
+          <button onclick="showParentDemo()" class="btn-o text-sm" style="padding:9px 18px;white-space:nowrap">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Демо-режим
+          </button>
+        </div>
+
       </div>
 
-      <!-- Children grid -->
-      <div id="parent-children-grid" class="grid grid-cols-1 md:grid-cols-2 gap-5" style="display:none"></div>
+      <!-- Child selector (if multiple children) -->
+      <div id="parent-child-selector" class="flex gap-2 flex-wrap" style="display:none"></div>
+
+      <!-- Demo banner -->
+      <div id="parent-demo-banner" class="rounded-2xl px-4 py-3 flex items-center justify-between gap-3 flex-wrap text-sm" style="background:#fef9c3;border:1px solid #f59e0b;display:none">
+        <div class="flex items-center gap-2" style="color:#92400e">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span class="font-semibold">Демо-режим</span> — это пример. Введите код ребёнка, чтобы видеть реальные данные.
+        </div>
+        <button onclick="hideParentDemo()" class="text-xs font-semibold px-3 py-1.5 rounded-xl" style="background:#f59e0b;color:white">Ввести код</button>
+      </div>
+
+      <!-- Dashboard content (filled by JS) -->
+      <div id="parent-dashboard-content" style="display:none"></div>
 
     </div>
+
+    <!-- ==================== PARENT TUTORS SCREEN ==================== -->
+    <div id="s-parent-tutors" class="screen flex-col p-5 md:p-6 gap-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Репетиторы</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Репетиторы вашего ребёнка и каталог специалистов</p>
+      </div>
+
+      <!-- Active tutors for child -->
+      <div class="card p-6">
+        <h2 class="font-bold text-gray-800 mb-4">Активные занятия</h2>
+        <div class="flex items-center gap-4 p-4 rounded-xl" style="background:#f8fafc;border:1px solid #e5e7eb">
+          <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+          <div class="flex-1">
+            <div class="font-semibold text-gray-900">Анна Петрова</div>
+            <div class="text-sm text-gray-500">Математика · ОГЭ и ЕГЭ</div>
+            <div style="color:#f59e0b;font-size:12px">★★★★★ <span class="text-xs text-gray-600">5.0</span></div>
+          </div>
+          <button onclick="showScreen('parent-chat')" class="btn-p text-sm" style="padding:8px 16px">Написать</button>
+        </div>
+      </div>
+
+      <!-- Tutor catalog -->
+      <div class="card p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="font-bold text-gray-800">База репетиторов</h2>
+          <div class="flex gap-2">
+            <select class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none" style="min-width:120px">
+              <option>Все предметы</option>
+              <option>Математика</option>
+              <option>Русский язык</option>
+              <option>Физика</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl border border-gray-200 hover:border-yale transition-colors">
+            <div class="flex items-start gap-3 mb-3">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+              <div class="flex-1">
+                <div class="font-semibold text-gray-900 text-sm">Анна Петрова</div>
+                <div class="text-xs text-gray-400">Математика · 5 лет опыта</div>
+                <div style="color:#f59e0b;font-size:11px">★★★★★ <span class="text-xs text-gray-600 font-bold">5.0</span></div>
+              </div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:rgba(13,59,102,.1);color:#0D3B66">Эксперт</span>
+            </div>
+            <div class="text-xs text-gray-500 mb-3">98% учеников сдают ОГЭ на «4» и «5»</div>
+            <button class="btn-p w-full text-xs" style="padding:8px">Записаться на занятие</button>
+          </div>
+          <div class="p-4 rounded-xl border border-gray-200 hover:border-yale transition-colors">
+            <div class="flex items-start gap-3 mb-3">
+              <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">ЕС</div>
+              <div class="flex-1">
+                <div class="font-semibold text-gray-900 text-sm">Елена Смирнова</div>
+                <div class="text-xs text-gray-400">Математика · 12 лет опыта</div>
+                <div style="color:#f59e0b;font-size:11px">★★★★★ <span class="text-xs text-gray-600 font-bold">5.0</span></div>
+              </div>
+              <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:rgba(13,59,102,.1);color:#0D3B66">Эксперт</span>
+            </div>
+            <div class="text-xs text-gray-500 mb-3">Проверила 340+ задач 2-й части</div>
+            <button class="btn-p w-full text-xs" style="padding:8px">Записаться на занятие</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PARENT CHAT SCREEN ==================== -->
+    <div id="s-parent-chat" class="screen" style="height:calc(100vh - 57px)">
+      <div class="flex h-full">
+        <!-- Chat list -->
+        <div class="flex flex-col border-r border-gray-100" style="width:260px;flex-shrink:0;background:white">
+          <div class="p-4 border-b border-gray-100">
+            <h2 class="font-bold text-gray-900 text-sm mb-2">Чаты</h2>
+            <input type="text" placeholder="Поиск..." class="w-full border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none" style="transition:border-color .2s">
+          </div>
+          <div class="flex-1 overflow-y-auto divide-y divide-gray-50">
+            <div class="p-3 cursor-pointer bg-blue-50">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-white text-xs flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-xs text-gray-800">Анна Петрова</div>
+                  <div class="text-xs text-gray-400 truncate">Прогресс отличный!</div>
+                </div>
+                <span class="text-xs text-gray-400">14:30</span>
+              </div>
+            </div>
+            <div class="p-3 cursor-pointer hover:bg-gray-50">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style="background:#ede9fe">👥</div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-xs text-gray-800">Чат родителей</div>
+                  <div class="text-xs text-gray-400 truncate">Обмен опытом</div>
+                </div>
+              </div>
+            </div>
+            <div class="p-3 cursor-pointer hover:bg-gray-50">
+              <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#FAF0CA"><img src="Иконки.png" class="w-5 h-5 rounded-lg" style="object-fit:cover"></div>
+                <div class="flex-1 min-w-0">
+                  <div class="font-semibold text-xs text-gray-800">Поддержка ФИБИ</div>
+                  <div class="text-xs text-gray-400 truncate">Чем можем помочь?</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Chat window -->
+        <div class="flex-1 flex flex-col bg-white">
+          <div class="p-4 border-b border-gray-100 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-white text-xs" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+            <div><div class="font-bold text-sm text-gray-800">Анна Петрова</div><div class="text-xs text-gray-400">Репетитор по математике</div></div>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4 space-y-3">
+            <div class="flex gap-2"><div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div><div><div class="chat-msg-left">Здравствуйте! Ваш ребёнок отлично справляется с уравнениями, но нужно поработать над геометрией.</div><div class="text-xs text-gray-400 mt-1">вчера 14:30</div></div></div>
+            <div class="flex gap-2 justify-end"><div><div class="chat-msg-right">Спасибо! Что посоветуете?</div><div class="text-xs text-gray-400 mt-1 text-right">вчера 15:02</div></div></div>
+            <div class="flex gap-2"><div class="w-6 h-6 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div><div><div class="chat-msg-left">Прогресс отличный — серия уже 14 дней! Выдала ДЗ по геометрии 👍</div><div class="text-xs text-gray-400 mt-1">сегодня 14:30</div></div></div>
+          </div>
+          <div class="p-3 border-t border-gray-100 flex gap-2">
+            <input type="text" id="parent-chat-input" placeholder="Написать сообщение..." class="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none" onkeydown="if(event.key==='Enter')sendParentMsg()">
+            <button onclick="sendParentMsg()" class="btn-p text-sm" style="padding:10px 14px">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PARENT PROFILE SCREEN ==================== -->
+    <div id="s-parent-profile" class="screen flex-col p-5 md:p-6 gap-5">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Мой профиль</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Настройки кабинета родителя</p>
+      </div>
+
+      <!-- Parent info -->
+      <div class="card p-6">
+        <div class="flex items-center gap-4 mb-5">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-xl overflow-hidden flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)" id="parent-profile-av">МП</div>
+          <div class="flex-1 min-w-0">
+            <div class="font-bold text-gray-900 text-lg sb-user-name">Мария Петрова</div>
+            <div class="text-sm text-gray-500">Родитель</div>
+          </div>
+          <button onclick="openParentProfileEdit()" class="btn-o text-sm" style="padding:8px 16px;flex-shrink:0">Редактировать</button>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="rounded-xl p-3" style="background:#f8fafc">
+            <div class="text-xs text-gray-400 mb-0.5">Email</div>
+            <div class="text-sm font-semibold text-gray-800 truncate" id="pp-email">—</div>
+          </div>
+          <div class="rounded-xl p-3" style="background:#f8fafc">
+            <div class="text-xs text-gray-400 mb-0.5">Телефон</div>
+            <div class="text-sm font-semibold text-gray-800" id="pp-phone">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Connect child cabinet -->
+      <div class="card p-6" style="border:2px solid rgba(13,59,102,.12)">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/></svg>
+          </div>
+          <div>
+            <div class="font-bold text-gray-800">Подключить кабинет ребёнка</div>
+            <div class="text-xs text-gray-500">Ученик создаёт код в Настройках → «Добавить родителя»</div>
+          </div>
+        </div>
+        <div class="flex gap-3 flex-wrap mb-3">
+          <input id="profile-code-input" type="text" maxlength="6" placeholder="AB3K7X" class="border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none font-bold uppercase tracking-widest" style="letter-spacing:.2em;min-width:150px;transition:border-color .2s;focus:border-color:#0D3B66" oninput="this.value=this.value.toUpperCase()">
+          <button onclick="submitProfileCode()" class="btn-p">Подключить</button>
+        </div>
+        <div id="profile-code-status" class="text-xs mt-1"></div>
+
+        <!-- Connected children -->
+        <div id="profile-children" class="mt-3 space-y-2"></div>
+      </div>
+
+      <!-- Notifications settings -->
+      <div class="card p-6">
+        <h2 class="font-bold text-gray-800 mb-4">Уведомления</h2>
+        <div class="space-y-3">
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-gray-700">Новые сообщения от репетитора</span>
+            <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#0D3B66">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-gray-700">Прогресс ребёнка</span>
+            <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#0D3B66">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-gray-700">Домашние задания</span>
+            <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#0D3B66">
+          </label>
+          <label class="flex items-center justify-between cursor-pointer">
+            <span class="text-sm text-gray-700">Напоминание об оплате</span>
+            <input type="checkbox" checked class="w-4 h-4 rounded" style="accent-color:#0D3B66">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== PARENT PAYMENT SCREEN ==================== -->
+    <div id="s-parent-payment" class="screen flex-col p-5 md:p-6 gap-5">
+
+      <!-- Header -->
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Оплата и баланс</h1>
+        <p class="text-gray-500 text-sm mt-0.5">Управление подпиской и платежами</p>
+      </div>
+
+      <!-- Subscription expiry alert -->
+      <div id="pay-sub-alert" class="rounded-2xl p-4 flex items-center justify-between" style="background:#fef9c3;border:1px solid #f59e0b;display:none">
+        <div class="flex items-center gap-3">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#d97706" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z"/></svg>
+          <span class="text-sm font-semibold text-amber-800" id="pay-sub-alert-text">Подписка истекает через 5 дней</span>
+        </div>
+        <button onclick="openTopUp()" class="text-xs font-bold text-amber-700 border border-amber-400 rounded-xl px-3 py-1.5 hover:bg-amber-100 transition-colors">Продлить</button>
+      </div>
+
+      <!-- Balance + Subscription -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+        <!-- Balance card -->
+        <div class="rounded-3xl p-6 text-white" style="background:#0D3B66">
+          <div class="text-xs font-bold uppercase tracking-widest mb-3" style="color:rgba(255,255,255,.55)">Баланс</div>
+          <div class="text-4xl font-extrabold mb-1" id="pay-balance-display">1 321 ₽</div>
+          <div class="text-sm mb-5" style="color:rgba(255,255,255,.55)">Готово к оплате</div>
+          <button onclick="openTopUp()" class="w-full flex items-center justify-center gap-2 rounded-2xl py-3 font-bold text-sm transition-all hover:opacity-90" style="background:#FAF0CA;color:#0D3B66">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
+            Пополнить
+          </button>
+        </div>
+
+        <!-- Subscription card -->
+        <div class="md:col-span-2 rounded-2xl p-6 bg-white" style="border:1px solid rgba(13,59,102,.08);box-shadow:0 2px 16px rgba(13,59,102,.06)">
+          <div class="font-bold text-gray-800 mb-4">Активная подписка</div>
+          <!-- Active sub -->
+          <div id="pay-active-sub" class="rounded-2xl p-4 mb-4" style="background:#FAF0CA">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-bold text-sm" style="color:#0D3B66" id="pay-plan-name">Самостоятельная подготовка</span>
+              <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:#0D3B66;color:white">Активна</span>
+            </div>
+            <div class="text-sm text-gray-600 mb-1">679 ₽ / месяц</div>
+            <div class="text-xs text-gray-500">До: <span class="font-semibold" id="pay-expires">28 июня 2026</span> · <span class="font-semibold" id="pay-days-left" style="color:#0D3B66">31 день</span></div>
+          </div>
+          <!-- Free sub -->
+          <div id="pay-free-sub" class="rounded-2xl p-4 mb-4 bg-gray-50" style="display:none">
+            <div class="font-bold text-sm text-gray-600 mb-1">Бесплатный тариф</div>
+            <div class="text-xs text-gray-400">Часть заданий, базовый прогресс</div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="renewSub()" class="btn-p text-sm" style="padding:10px">Продлить</button>
+            <button onclick="togglePlans()" class="btn-o text-sm" style="padding:8px">Изменить тариф</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan selector (hidden by default) -->
+      <div id="plan-selector" class="rounded-2xl bg-white p-6" style="border:2px solid #0D3B66;display:none">
+        <h3 class="font-bold text-gray-800 mb-4">Выберите тариф</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-2xl p-5 border-2 border-gray-200 hover:border-yale transition-colors cursor-pointer" onclick="selectPlan(this,'FREE','Бесплатно','0 ₽')">
+            <div class="font-bold text-gray-700 mb-1">Бесплатно</div>
+            <div class="text-2xl font-extrabold text-gray-900 mb-2">0 ₽</div>
+            <ul class="text-xs text-gray-500 space-y-1">
+              <li>✓ Часть заданий из банка</li>
+              <li>✓ Базовый прогресс</li>
+              <li>✗ Полный банк заданий</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl p-5 border-2 cursor-pointer" style="border-color:#0D3B66;box-shadow:0 4px 20px rgba(13,59,102,.12)" onclick="selectPlan(this,'SELF_STUDY','Самостоятельная','679 ₽/мес')">
+            <div class="text-xs font-bold mb-1" style="color:#0D3B66">ПОПУЛЯРНЫЙ</div>
+            <div class="font-bold mb-1" style="color:#0D3B66">Самостоятельная подготовка</div>
+            <div class="text-2xl font-extrabold text-gray-900 mb-2">679 ₽<span class="text-sm font-normal text-gray-400">/мес</span></div>
+            <ul class="text-xs text-gray-500 space-y-1">
+              <li>✓ Полный банк заданий</li>
+              <li>✓ ИИ-помощник без ограничений</li>
+              <li>✓ Персональный план на год</li>
+              <li>✓ Карта знаний</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl p-5 border-2 border-gray-200 hover:border-yale transition-colors cursor-pointer" onclick="selectPlan(this,'WITH_TUTOR','С репетитором','от 1 200 ₽')">
+            <div class="font-bold text-gray-700 mb-1">С репетитором</div>
+            <div class="text-2xl font-extrabold text-gray-900 mb-2">от <span style="font-size:1.1rem">1 200 ₽</span></div>
+            <ul class="text-xs text-gray-500 space-y-1">
+              <li>✓ Всё из «Самостоятельной»</li>
+              <li>✓ Занятия с репетитором</li>
+              <li>✓ Проверка 2-й части</li>
+              <li>✓ Оплата через ФИБИ</li>
+            </ul>
+          </div>
+        </div>
+        <div class="flex gap-3 mt-4">
+          <button onclick="confirmPlan()" class="btn-p" style="padding:11px 24px">Выбрать</button>
+          <button onclick="togglePlans()" class="btn-o" style="padding:9px 20px">Отмена</button>
+        </div>
+      </div>
+
+      <!-- Top-up panel (hidden by default) -->
+      <div id="topup-panel" class="rounded-2xl bg-white p-6" style="border:2px solid #0D3B66;display:none">
+        <h3 class="font-bold text-gray-800 mb-4">Пополнить баланс</h3>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <button onclick="setAmt(500)"  class="rounded-xl px-4 py-2.5 text-sm font-bold transition-all hover:opacity-80" style="background:#FAF0CA;color:#0D3B66;border:1px solid rgba(13,59,102,.1)">500 ₽</button>
+          <button onclick="setAmt(1000)" class="rounded-xl px-4 py-2.5 text-sm font-bold transition-all hover:opacity-80" style="background:#FAF0CA;color:#0D3B66;border:1px solid rgba(13,59,102,.1)">1 000 ₽</button>
+          <button onclick="setAmt(2500)" class="rounded-xl px-4 py-2.5 text-sm font-bold transition-all hover:opacity-80" style="background:#FAF0CA;color:#0D3B66;border:1px solid rgba(13,59,102,.1)">2 500 ₽</button>
+          <button onclick="setAmt(5000)" class="rounded-xl px-4 py-2.5 text-sm font-bold transition-all hover:opacity-80" style="background:#FAF0CA;color:#0D3B66;border:1px solid rgba(13,59,102,.1)">5 000 ₽</button>
+        </div>
+        <div class="flex gap-3 mb-3">
+          <input id="topup-amount" type="number" min="100" max="50000" placeholder="Другая сумма (₽)" class="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none" style="transition:border-color .2s;min-width:0">
+          <button onclick="doTopUp()" class="btn-p whitespace-nowrap" style="padding:12px 20px">Оплатить</button>
+        </div>
+        <div class="flex items-center gap-2 text-xs text-gray-400">
+          <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+          Безопасная оплата через YooKassa · Visa / Mastercard / СБП
+        </div>
+        <button onclick="document.getElementById('topup-panel').style.display='none'" class="mt-3 text-xs text-gray-400 hover:text-gray-600 transition-colors">Закрыть ↑</button>
+      </div>
+
+      <!-- Lesson payment -->
+      <div class="rounded-2xl bg-white p-6" style="border:1px solid rgba(13,59,102,.08);box-shadow:0 2px 16px rgba(13,59,102,.06)">
+        <h3 class="font-bold text-gray-800 mb-4">Оплата занятий с репетитором</h3>
+        <div class="space-y-3" id="lesson-payments">
+          <div class="flex items-center justify-between p-4 rounded-xl" style="background:#fef9c3;border:1px solid #f59e0b">
+            <div>
+              <div class="font-semibold text-sm text-gray-800">Занятие с Анной Петровой</div>
+              <div class="text-xs text-gray-500">1 июня · 60 мин</div>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="font-bold" style="color:#0D3B66">1 200 ₽</span>
+              <button onclick="payLesson(this,'1200')" class="btn-p text-xs" style="padding:7px 14px">Оплатить</button>
+            </div>
+          </div>
+          <div class="text-xs text-gray-400 text-center py-2">Нет других ожидающих платежей</div>
+        </div>
+      </div>
+
+      <!-- Payment history -->
+      <div class="rounded-2xl bg-white p-6" style="border:1px solid rgba(13,59,102,.08);box-shadow:0 2px 16px rgba(13,59,102,.06)">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-gray-800">История платежей</h3>
+          <button onclick="exportPayments()" class="text-xs font-bold flex items-center gap-1" style="color:#0D3B66">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+            Скачать PDF
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm" id="pay-history-table">
+            <thead>
+              <tr class="text-left text-xs text-gray-400 border-b border-gray-100">
+                <th class="pb-3 font-semibold">Дата</th>
+                <th class="pb-3 font-semibold">Описание</th>
+                <th class="pb-3 font-semibold">Сумма</th>
+                <th class="pb-3 font-semibold">Статус</th>
+                <th class="pb-3 font-semibold">Чек</th>
+              </tr>
+            </thead>
+            <tbody id="pay-history-body" class="divide-y divide-gray-50">
+              <tr>
+                <td class="py-3 text-xs text-gray-400">25 мая 2026</td>
+                <td class="py-3 text-gray-700">Занятие с репетитором</td>
+                <td class="py-3 font-semibold text-red-500">−1 200 ₽</td>
+                <td class="py-3"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:#d1fae5;color:#065f46">Успешно</span></td>
+                <td class="py-3"><button class="text-xs" style="color:#0D3B66">↓ PDF</button></td>
+              </tr>
+              <tr>
+                <td class="py-3 text-xs text-gray-400">20 мая 2026</td>
+                <td class="py-3 text-gray-700">Подписка — Самостоятельная</td>
+                <td class="py-3 font-semibold text-red-500">−679 ₽</td>
+                <td class="py-3"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:#d1fae5;color:#065f46">Успешно</span></td>
+                <td class="py-3"><button class="text-xs" style="color:#0D3B66">↓ PDF</button></td>
+              </tr>
+              <tr>
+                <td class="py-3 text-xs text-gray-400">15 мая 2026</td>
+                <td class="py-3 text-gray-700">Пополнение баланса</td>
+                <td class="py-3 font-semibold text-emerald-500">+2 000 ₽</td>
+                <td class="py-3"><span class="text-xs font-bold px-2 py-1 rounded-full" style="background:#d1fae5;color:#065f46">Успешно</span></td>
+                <td class="py-3"><button class="text-xs" style="color:#0D3B66">↓ PDF</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==================== SUPPORT MODAL ==================== -->
+    <div id="support-modal" class="fixed inset-0 flex items-center justify-center z-50" style="display:none!important;background:rgba(0,0,0,.45)">
+      <div class="bg-white rounded-3xl p-7 shadow-2xl w-full max-w-sm mx-4">
+        <div class="flex items-center gap-3 mb-5">
+          <img src="Иконки.png" class="w-10 h-10 rounded-2xl" style="object-fit:cover">
+          <div>
+            <div class="font-bold text-gray-900">Поддержка ФИБИ</div>
+            <div class="text-xs text-gray-400">Обычно отвечаем в течение часа</div>
+          </div>
+          <button onclick="closeSupport()" class="ml-auto text-gray-400 hover:text-gray-600">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <div class="space-y-3 mb-5">
+          <a href="mailto:support@fibi.ru" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+              <svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-sm text-gray-800">Email</div>
+              <div class="text-xs text-gray-500">support@fibi.ru</div>
+            </div>
+          </a>
+          <a href="#" class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 transition-colors border border-gray-100">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+              <svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 9.75a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375m-13.5 3.01c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 01.778-.332 48.294 48.294 0 005.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"/></svg>
+            </div>
+            <div>
+              <div class="font-semibold text-sm text-gray-800">Telegram</div>
+              <div class="text-xs text-gray-500">@fibi_support</div>
+            </div>
+          </a>
+        </div>
+        <textarea placeholder="Опишите вашу проблему..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none resize-none mb-3" rows="3" style="transition:border-color .2s"></textarea>
+        <button onclick="closeSupport()" class="btn-p w-full" style="padding:12px">Отправить обращение</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -802,7 +1312,7 @@ function showScreen(name) {
   document.getElementById('s-' + name).classList.add('active');
   const ni = document.getElementById('n-' + name);
   if (ni) ni.classList.add('active');
-  const titles = {dashboard:'Дашборд',tasks:'Задания',tutors:'Репетиторы',chat:'Чаты',progress:'Прогресс',parent:'Мои ученики',tutor:'Кабинет репетитора'};
+  const titles = {dashboard:'Главная',tasks:'Задания',tutors:'Репетиторы',chat:'Чаты',progress:'Прогресс',parent:'Главная',tutor:'Кабинет репетитора','parent-tutors':'Репетиторы','parent-chat':'Чаты','parent-profile':'Профиль'};
   document.getElementById('page-title').textContent = titles[name] || '';
   if (name === 'tasks' && taskQueue.length === 0) loadTaskScreen(null);
   if (window.innerWidth < 768) closeSidebar();
@@ -1710,6 +2220,67 @@ function submitParentCode() {
   loadParentScreen();
 }
 
+function submitParentCodeEmpty() {
+  const inp = document.getElementById('parent-code-input-empty');
+  const errEl = document.getElementById('code-error-empty');
+  if (!inp || !errEl) return;
+  const code = inp.value.trim().toUpperCase();
+  errEl.style.display = 'none';
+  if (code.length < 4) { errEl.textContent = 'Введи код из 6 символов'; errEl.style.display = 'block'; return; }
+  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
+  const studentId = codes[code];
+  if (!studentId) { errEl.textContent = 'Код не найден. Попроси ребёнка обновить код в настройках.'; errEl.style.display = 'block'; return; }
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!parent) return;
+  const studentIdx = users.findIndex(u => u.id === studentId);
+  if (studentIdx < 0) { errEl.textContent = 'Ученик не найден'; errEl.style.display = 'block'; return; }
+  if ((parent.childrenIds || []).includes(studentId)) { errEl.textContent = 'Уже привязан'; errEl.style.display = 'block'; return; }
+  if (!parent.childrenIds) parent.childrenIds = [];
+  parent.childrenIds.push(studentId);
+  const student = users[studentIdx];
+  if (!student.parentIds) student.parentIds = [];
+  if (!student.parentIds.includes(parent.id)) student.parentIds.push(parent.id);
+  users[studentIdx] = student;
+  const parentIdx = users.findIndex(u => u.id === parent.id);
+  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
+  delete codes[code];
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
+  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
+  inp.value = '';
+  loadParentScreen();
+}
+
+const DEMO_CHILD = {
+  id: '__demo__', name: 'Александра', lastName: 'Новикова',
+  grade: 9, streak: 12, solved: 87, accuracy: 74, xp: 820,
+  registeredAt: new Date(Date.now() - 45 * 86400000).toISOString()
+};
+
+function showParentDemo() {
+  const empty = document.getElementById('parent-empty');
+  const content = document.getElementById('parent-dashboard-content');
+  const banner = document.getElementById('parent-demo-banner');
+  const badge = document.getElementById('parent-refresh-badge');
+  if (empty) empty.style.display = 'none';
+  if (content) { content.style.display = 'block'; content.innerHTML = renderParentDashboard(DEMO_CHILD); }
+  if (banner) banner.style.display = 'flex';
+  if (badge) badge.style.display = 'none';
+  setTimeout(() => {
+    document.querySelectorAll('.parent-prog-fill').forEach(el => { el.style.width = el.dataset.w + '%'; });
+  }, 50);
+}
+
+function hideParentDemo() {
+  const empty = document.getElementById('parent-empty');
+  const content = document.getElementById('parent-dashboard-content');
+  const banner = document.getElementById('parent-demo-banner');
+  if (empty) empty.style.display = '';
+  if (content) { content.style.display = 'none'; content.innerHTML = ''; }
+  if (banner) banner.style.display = 'none';
+}
+
 function removeChild(childId) {
   const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
   const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
@@ -1730,6 +2301,9 @@ function removeChild(childId) {
   loadParentScreen();
 }
 
+let _parentSelectedChildId = null;
+let _parentRefreshTimer = null;
+
 function loadParentScreen() {
   const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
   if (!parent) return;
@@ -1739,63 +2313,299 @@ function loadParentScreen() {
     .map(id => users.find(u => u.id === id))
     .filter(Boolean);
 
-  const grid = document.getElementById('parent-children-grid');
   const empty = document.getElementById('parent-empty');
-  if (!grid || !empty) return;
+  const content = document.getElementById('parent-dashboard-content');
+  const selector = document.getElementById('parent-child-selector');
+  const badge = document.getElementById('parent-refresh-badge');
+  const demoBanner = document.getElementById('parent-demo-banner');
+  if (!empty || !content) return;
 
   if (!children.length) {
-    grid.style.display = 'none';
     empty.style.display = '';
-  } else {
-    empty.style.display = 'none';
-    grid.style.display = 'grid';
-    grid.innerHTML = children.map(child => {
-      const ini = ((child.name[0] || '') + (child.lastName ? child.lastName[0] : '')).toUpperCase() || child.name.slice(0, 2).toUpperCase();
-      const grade = child.grade ? child.grade + ' класс' : '';
-      const streak = child.streak || 0;
-      const solved = child.solved || 0;
-      const acc = child.accuracy || 0;
-      const rank = getRankLabel(child.xp || 0);
-      const fullName = child.name + (child.lastName ? ' ' + child.lastName : '');
-      const regDate = child.registeredAt
-        ? new Date(child.registeredAt).toLocaleDateString('ru', { day: 'numeric', month: 'long' })
-        : '—';
-      return `
-        <div class="card p-5">
-          <div class="flex items-start justify-between mb-4">
-            <div class="flex items-center gap-3">
-              <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-white text-sm flex-shrink-0" style="background:linear-gradient(135deg,#3b82f6,#8b5cf6)">${ini}</div>
-              <div>
-                <div class="font-bold text-gray-900">${fullName}</div>
-                <div class="text-xs text-gray-500">${grade}</div>
-                <div class="text-xs font-semibold mt-0.5" style="color:#0D3B66">Звание: ${rank}</div>
-              </div>
-            </div>
-            <button onclick="removeChild(${child.id})" class="p-1.5 rounded-lg text-gray-300 hover:text-red-400 hover:bg-red-50 transition-all" title="Отвязать">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-          <div class="grid grid-cols-3 gap-2 mb-4">
-            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
-              <div class="text-xl font-bold" style="color:#0D3B66">${streak}</div>
-              <div class="text-xs text-gray-500 mt-0.5">серия</div>
-            </div>
-            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
-              <div class="text-xl font-bold" style="color:#0D3B66">${solved}</div>
-              <div class="text-xs text-gray-500 mt-0.5">задач</div>
-            </div>
-            <div class="text-center p-3 rounded-xl" style="background:#f8fafc">
-              <div class="text-xl font-bold" style="color:#0D3B66">${acc}%</div>
-              <div class="text-xs text-gray-500 mt-0.5">точность</div>
-            </div>
-          </div>
-          <div class="flex items-center gap-1.5 text-xs text-gray-400">
-            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            Зарегистрирован: ${regDate}
-          </div>
-        </div>`;
-    }).join('');
+    content.style.display = 'none';
+    if (selector) selector.style.display = 'none';
+    if (badge) badge.style.display = 'none';
+    return;
   }
+
+  // Real data: hide empty state and demo banner
+  empty.style.display = 'none';
+  if (demoBanner) demoBanner.style.display = 'none';
+  content.style.display = 'block';
+  if (badge) badge.style.display = 'flex';
+
+  // Child selector for multiple children
+  if (children.length > 1 && selector) {
+    selector.style.display = 'flex';
+    if (!_parentSelectedChildId || !children.find(c => c.id === _parentSelectedChildId)) {
+      _parentSelectedChildId = children[0].id;
+    }
+    selector.innerHTML = children.map(c => {
+      const active = c.id === _parentSelectedChildId;
+      return `<button onclick="selectParentChild(${c.id})"
+        class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+        style="${active ? 'background:#0D3B66;color:white' : 'background:#f3f4f6;color:#374151'}"
+      >${c.name}${c.lastName ? ' ' + c.lastName : ''}</button>`;
+    }).join('');
+  } else {
+    if (selector) selector.style.display = 'none';
+    _parentSelectedChildId = children[0].id;
+  }
+
+  const child = children.find(c => c.id === _parentSelectedChildId) || children[0];
+
+  // Update parent banner
+  const childReadiness = Math.min(100, Math.round((child.solved || 0) / 2));
+  updateParentBanner(child.name, child.streak || 0, childReadiness);
+
+  // Render dashboard
+  content.innerHTML = renderParentDashboard(child);
+
+  // Animate progress bars
+  setTimeout(() => {
+    document.querySelectorAll('.parent-prog-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 50);
+}
+
+function selectParentChild(id) {
+  _parentSelectedChildId = id;
+  loadParentScreen();
+}
+
+function renderParentDashboard(child) {
+  const fullName = child.name + (child.lastName ? ' ' + child.lastName : '');
+  const ini = ((child.name[0] || '') + (child.lastName ? child.lastName[0] : '')).toUpperCase() || child.name.slice(0, 2).toUpperCase();
+  const grade = child.grade ? child.grade + ' класс' : '';
+  const streak = child.streak || 0;
+  const solved = child.solved || 0;
+  const acc = child.accuracy || 0;
+  const xp = child.xp || 0;
+  const rank = getRankLabel(xp);
+  const readiness = Math.min(100, Math.round(solved / 2));
+
+  // XP to next rank
+  const xpThresholds = [100, 500, 1000, 2500, 5000, 9999];
+  const nextThresh = xpThresholds.find(t => t > xp) || 9999;
+  const prevThresh = xpThresholds[xpThresholds.indexOf(nextThresh) - 1] || 0;
+  const xpPct = nextThresh === 9999 ? 100 : Math.round(((xp - prevThresh) / (nextThresh - prevThresh)) * 100);
+  const xpLeft = nextThresh === 9999 ? 0 : nextThresh - xp;
+  const nextRank = getRankLabel(nextThresh);
+
+  // Streak color
+  const streakColor = streak >= 14 ? '#10b981' : streak >= 7 ? '#f59e0b' : streak >= 1 ? '#3b82f6' : '#d1d5db';
+  const streakLabel = streak === 0 ? 'нет серии' : streak + ' ' + (streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней');
+
+  // Accuracy color
+  const accColor = acc >= 80 ? '#10b981' : acc >= 60 ? '#f59e0b' : '#ef4444';
+  const accLabel = acc >= 80 ? 'Отлично' : acc >= 60 ? 'Хорошо' : 'Нужна работа';
+
+  // Days studying
+  const daysStudying = child.registeredAt
+    ? Math.max(1, Math.floor((Date.now() - new Date(child.registeredAt).getTime()) / 86400000))
+    : 0;
+
+  // Weekly activity (simulate from streak)
+  const weekDays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+  const today = new Date().getDay(); // 0=Sun
+  const todayIdx = today === 0 ? 6 : today - 1;
+  const weekActivity = weekDays.map((d, i) => {
+    const daysAgo = (todayIdx - i + 7) % 7;
+    const active = daysAgo < streak;
+    const isToday = i === todayIdx;
+    return { d, active, isToday };
+  });
+
+  // Motivational message
+  let motivMsg = '';
+  if (streak >= 14) motivMsg = '🔥 Горит серия ' + streak + ' дней — фантастика!';
+  else if (streak >= 7) motivMsg = '⚡ Уже ' + streak + ' дней подряд — продолжайте!';
+  else if (streak >= 1) motivMsg = '✅ ' + streak + ' ' + (streak === 1 ? 'день' : 'дня') + ' подряд — хорошее начало!';
+  else if (solved > 0) motivMsg = '📚 Решено ' + solved + ' задач — двигаемся вперёд!';
+  else motivMsg = '🎯 Готов к первому занятию!';
+
+  const regDate = child.registeredAt
+    ? new Date(child.registeredAt).toLocaleDateString('ru', { day: 'numeric', month: 'long', year: 'numeric' })
+    : '—';
+
+  return `
+  <!-- Hero card -->
+  <div class="card p-5 mb-5" style="background:linear-gradient(135deg,#0D3B66 0%,#1e4d8c 100%)">
+    <div class="flex items-start justify-between gap-4 flex-wrap">
+      <div class="flex items-center gap-4">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center font-bold text-white text-xl flex-shrink-0"
+          style="background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.3)">${ini}</div>
+        <div>
+          <div class="text-white font-bold text-lg leading-tight">${fullName}</div>
+          <div class="text-sm mt-0.5" style="color:rgba(255,255,255,.65)">${grade}</div>
+          <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,.15);color:white">⭐ ${rank}</span>
+            ${streak > 0 ? `<span class="text-xs font-bold px-2.5 py-1 rounded-full" style="background:rgba(255,255,255,.15);color:white">🔥 ${streakLabel}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <button onclick="removeChild(${child.id})" class="text-xs px-3 py-1.5 rounded-xl transition-all" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)" title="Отвязать ученика">Отвязать</button>
+    </div>
+    <div class="mt-4 text-sm font-medium" style="color:rgba(255,255,255,.85)">${motivMsg}</div>
+  </div>
+
+  <!-- Key stats grid -->
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+    <div class="card p-4 text-center">
+      <div class="text-2xl font-bold mb-1" style="color:${streakColor}">${streak}</div>
+      <div class="text-xs text-gray-500 font-medium">Серия дней</div>
+      <div class="text-xs mt-1" style="color:${streakColor}">${streakLabel}</div>
+    </div>
+    <div class="card p-4 text-center">
+      <div class="text-2xl font-bold mb-1" style="color:#0D3B66">${solved}</div>
+      <div class="text-xs text-gray-500 font-medium">Задач решено</div>
+      <div class="text-xs mt-1 text-gray-400">${daysStudying > 0 ? (solved / daysStudying).toFixed(1) + '/день' : '—'}</div>
+    </div>
+    <div class="card p-4 text-center">
+      <div class="text-2xl font-bold mb-1" style="color:${accColor}">${acc}%</div>
+      <div class="text-xs text-gray-500 font-medium">Точность</div>
+      <div class="text-xs mt-1 font-semibold" style="color:${accColor}">${accLabel}</div>
+    </div>
+    <div class="card p-4 text-center">
+      <div class="text-2xl font-bold mb-1" style="color:#8b5cf6">${xp}</div>
+      <div class="text-xs text-gray-500 font-medium">Очки XP</div>
+      <div class="text-xs mt-1 text-gray-400">${xpLeft > 0 ? 'До «' + nextRank + '»: ' + xpLeft : 'Максимум!'}</div>
+    </div>
+  </div>
+
+  <!-- Progress section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+
+    <!-- Exam readiness -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="font-semibold text-gray-800 text-sm">Готовность к ОГЭ</div>
+          <div class="text-xs text-gray-400 mt-0.5">На основе решённых задач</div>
+        </div>
+        <div class="text-2xl font-bold" style="color:${readiness >= 70 ? '#10b981' : readiness >= 40 ? '#f59e0b' : '#0D3B66'}">${readiness}%</div>
+      </div>
+      <div class="progress-bar mb-2">
+        <div class="parent-prog-fill progress-fill" data-w="${readiness}"
+          style="width:0%;background:${readiness >= 70 ? 'linear-gradient(90deg,#10b981,#059669)' : readiness >= 40 ? 'linear-gradient(90deg,#f59e0b,#d97706)' : 'linear-gradient(90deg,#3b82f6,#0D3B66)'}"></div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-400">
+        <span>0%</span>
+        <span>${readiness >= 70 ? '🎉 Отличный результат!' : readiness >= 40 ? 'Хороший прогресс' : 'Начало пути'}</span>
+        <span>100%</span>
+      </div>
+    </div>
+
+    <!-- XP progress -->
+    <div class="card p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="font-semibold text-gray-800 text-sm">Прогресс звания</div>
+          <div class="text-xs text-gray-400 mt-0.5">Текущее: <b style="color:#8b5cf6">${rank}</b>${xpLeft > 0 ? ' → ' + nextRank : ''}</div>
+        </div>
+        <div class="text-2xl font-bold" style="color:#8b5cf6">${xpPct}%</div>
+      </div>
+      <div class="progress-bar mb-2">
+        <div class="parent-prog-fill progress-fill" data-w="${xpPct}"
+          style="width:0%;background:linear-gradient(90deg,#8b5cf6,#6d28d9)"></div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-400">
+        <span>${prevThresh} XP</span>
+        <span>${xpLeft > 0 ? xpLeft + ' XP до следующего' : '🏆 Высший ранг!'}</span>
+        <span>${nextThresh === 9999 ? '∞' : nextThresh + ' XP'}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weekly activity -->
+  <div class="card p-5 mb-5">
+    <div class="font-semibold text-gray-800 text-sm mb-3">Активность за неделю</div>
+    <div class="flex gap-2">
+      ${weekActivity.map(({ d, active, isToday }) => `
+        <div class="flex-1 flex flex-col items-center gap-1.5">
+          <div class="w-full rounded-xl transition-all" style="height:36px;background:${active ? 'linear-gradient(180deg,#0D3B66,#1e4d8c)' : '#f3f4f6'};${isToday ? 'box-shadow:0 0 0 2px #0D3B66' : ''}"></div>
+          <div class="text-xs font-medium" style="color:${isToday ? '#0D3B66' : '#9ca3af'}">${d}</div>
+        </div>`).join('')}
+    </div>
+    <div class="flex items-center gap-3 mt-3 text-xs text-gray-400">
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded inline-block" style="background:#0D3B66"></span>Занимался</span>
+      <span class="flex items-center gap-1"><span class="w-3 h-3 rounded inline-block" style="background:#f3f4f6;border:1px solid #e5e7eb"></span>Не занимался</span>
+    </div>
+  </div>
+
+  <!-- Info & actions row -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+    <!-- Info card -->
+    <div class="card p-5">
+      <div class="font-semibold text-gray-800 text-sm mb-3">Информация об ученике</div>
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">Класс</span>
+          <span class="font-semibold text-gray-800">${grade || '—'}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">Дней в Фиби</span>
+          <span class="font-semibold text-gray-800">${daysStudying}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">Зарегистрирован</span>
+          <span class="font-semibold text-gray-800">${regDate}</span>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">Задач в день</span>
+          <span class="font-semibold text-gray-800">${daysStudying > 0 ? (solved / daysStudying).toFixed(1) : '—'}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick actions -->
+    <div class="card p-5">
+      <div class="font-semibold text-gray-800 text-sm mb-3">Быстрые действия</div>
+      <div class="space-y-2.5">
+        <button onclick="showScreen('parent-chat')" class="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:bg-blue-50" style="border:1px solid #e5e7eb">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#eff6ff">
+            <svg class="w-4 h-4" style="color:#3b82f6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-gray-800">Написать репетитору</div>
+            <div class="text-xs text-gray-400">Чаты с преподавателями</div>
+          </div>
+        </button>
+        <button onclick="showScreen('parent-payment')" class="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:bg-green-50" style="border:1px solid #e5e7eb">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#f0fdf4">
+            <svg class="w-4 h-4" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-gray-800">Оплата и баланс</div>
+            <div class="text-xs text-gray-400">Управление подпиской</div>
+          </div>
+        </button>
+        <button onclick="showScreen('parent-tutors')" class="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all hover:bg-purple-50" style="border:1px solid #e5e7eb">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0" style="background:#f5f3ff">
+            <svg class="w-4 h-4" style="color:#8b5cf6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/></svg>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-gray-800">Репетиторы</div>
+            <div class="text-xs text-gray-400">Просмотр и поиск</div>
+          </div>
+        </button>
+      </div>
+    </div>
+
+  </div>`;
+}
+
+function startParentAutoRefresh() {
+  if (_parentRefreshTimer) clearInterval(_parentRefreshTimer);
+  _parentRefreshTimer = setInterval(() => {
+    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+    const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+    if (!parent) return;
+    const children = (parent.childrenIds || []).map(id => users.find(u => u.id === id)).filter(Boolean);
+    if (children.length) loadParentScreen();
+  }, 15000);
 }
 
 // ─── Load user from localStorage ──────────────────────────
@@ -1839,19 +2649,80 @@ function loadUser() {
     if (sb) sb.style.display = 'none';
     showTutorTab('students');
   } else if (u.role === 'parent') {
-    ['n-tasks', 'n-tutors', 'n-chat', 'n-progress'].forEach(id => {
+    // Hide student-only nav items
+    ['n-dashboard', 'n-tasks', 'n-progress', 'n-tutors', 'n-chat'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'none';
     });
-    const pn = document.getElementById('n-parent');
-    if (pn) pn.style.display = 'flex';
+    // Show parent-specific nav
+    ['n-parent', 'n-parent-tutors', 'n-parent-chat', 'n-parent-profile', 'n-parent-payment'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'flex';
+    });
     const sb2 = document.getElementById('streak-badge');
     if (sb2) sb2.style.display = 'none';
+    // Switch banner to parent version
+    const bs = document.getElementById('banner-student');
+    if (bs) bs.style.display = 'none';
+    const bp = document.getElementById('banner-parent');
+    if (bp) bp.style.display = 'flex';
+    // Update greeting
+    const greet = document.querySelector('#s-dashboard h1');
+    if (greet) greet.textContent = 'Добро пожаловать, ' + short + '!';
     showScreen('parent');
     loadParentScreen();
+    startParentAutoRefresh();
+    renderParentProfileInfo();
   } else {
     // Student: show parent link card
     renderStudentLinkCard(u);
+  }
+}
+
+// ─── Support modal ────────────────────────────────────────
+function openSupport() {
+  const m = document.getElementById('support-modal');
+  if (m) { m.style.display = 'flex'; m.style.setProperty('display','flex','important'); }
+}
+function closeSupport() {
+  const m = document.getElementById('support-modal');
+  if (m) { m.style.display = 'none'; m.style.setProperty('display','none','important'); }
+}
+
+// ─── Parent chat send ─────────────────────────────────────
+function sendParentMsg() {
+  const inp = document.getElementById('parent-chat-input');
+  if (!inp || !inp.value.trim()) return;
+  const msgs = inp.closest('.screen').querySelector('.flex-1.overflow-y-auto');
+  if (msgs) {
+    msgs.innerHTML += `<div class="flex gap-2 justify-end"><div><div class="chat-msg-right">${inp.value.trim()}</div><div class="text-xs text-gray-400 mt-1 text-right">сейчас</div></div></div>`;
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+  inp.value = '';
+}
+
+// ─── Profile connect child by code ───────────────────────
+function submitProfileCode() {
+  const code = (document.getElementById('profile-code-input')?.value || '').trim().toUpperCase();
+  const statusEl = document.getElementById('profile-code-status');
+  if (code.length !== 6) { if (statusEl) { statusEl.textContent = 'Код должен быть 6 символов'; statusEl.style.color = '#ef4444'; } return; }
+  // Reuse existing submitParentCode logic
+  const inp = document.getElementById('parent-code-input');
+  if (inp) { inp.value = code; submitParentCode(); }
+  if (statusEl) { statusEl.textContent = 'Ученик успешно подключён!'; statusEl.style.color = '#10b981'; }
+  if (document.getElementById('profile-code-input')) document.getElementById('profile-code-input').value = '';
+}
+
+// ─── Update parent banner with child data ─────────────────
+function updateParentBanner(childName, streak, readinessPct) {
+  const title = document.getElementById('banner-parent-title');
+  const text  = document.getElementById('banner-parent-text');
+  if (title) title.textContent = `Ваш ребёнок ${childName} занимается!`;
+  if (text) {
+    const msg = streak > 0
+      ? `${streak} ${streak === 1 ? 'день' : streak < 5 ? 'дня' : 'дней'} подряд — отличный результат! Готовность к ОГЭ: ${readinessPct}%.`
+      : `Прогресс подтягивается из профиля ученика. Готовность: ${readinessPct}%.`;
+    text.textContent = msg;
   }
 }
 
@@ -1861,11 +2732,161 @@ function logout() {
   window.location.href = 'register.html';
 }
 
+// ─── Parent profile edit ──────────────────────────────────
+let _ppPhotoBase64 = null;
+
+function ppPhotoChange(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    _ppPhotoBase64 = ev.target.result;
+    const prev = document.getElementById('pp-photo-preview');
+    prev.style.backgroundImage = `url(${_ppPhotoBase64})`;
+    prev.style.backgroundSize = 'cover';
+    prev.style.backgroundPosition = 'center';
+    prev.textContent = '';
+  };
+  reader.readAsDataURL(file);
+}
+
+function openParentProfileEdit() {
+  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!u) return;
+  _ppPhotoBase64 = null;
+  document.getElementById('pp-edit-name').value = u.name || '';
+  document.getElementById('pp-edit-lastName').value = u.lastName || '';
+  document.getElementById('pp-edit-email').value = u.email || '';
+  document.getElementById('pp-edit-phone').value = u.phone || '';
+  document.getElementById('pp-photo-input').value = '';
+  const prev = document.getElementById('pp-photo-preview');
+  const ini = ((u.name||'?')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
+  if (u.avatar) {
+    prev.style.backgroundImage = `url(${u.avatar})`;
+    prev.style.backgroundSize = 'cover';
+    prev.style.backgroundPosition = 'center';
+    prev.textContent = '';
+  } else {
+    prev.style.backgroundImage = '';
+    prev.textContent = ini;
+  }
+  const modal = document.getElementById('parent-profile-edit-modal');
+  modal.style.display = 'flex';
+}
+
+function closeParentProfileEdit() {
+  document.getElementById('parent-profile-edit-modal').style.display = 'none';
+}
+
+function saveParentProfile() {
+  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!u) return;
+  const name = document.getElementById('pp-edit-name').value.trim();
+  if (!name) { document.getElementById('pp-edit-name').style.borderColor = '#ef4444'; return; }
+  u.name = name;
+  u.lastName = document.getElementById('pp-edit-lastName').value.trim();
+  u.email = document.getElementById('pp-edit-email').value.trim() || u.email;
+  u.phone = document.getElementById('pp-edit-phone').value.trim();
+  if (_ppPhotoBase64) u.avatar = _ppPhotoBase64;
+
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const idx = users.findIndex(us => us.id === u.id);
+  if (idx >= 0) users[idx] = { ...users[idx], ...u };
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+  localStorage.setItem('fibi_current_user', JSON.stringify(u));
+
+  // Update all avatar displays
+  const ini = ((u.name[0]||'') + ((u.lastName||'')[0]||'')).toUpperCase();
+  const fullName = u.name + (u.lastName ? ' ' + u.lastName : '');
+  document.querySelectorAll('.user-avatar').forEach(el => {
+    if (u.avatar) { el.style.backgroundImage=`url(${u.avatar})`;el.style.backgroundSize='cover';el.style.backgroundPosition='center';el.textContent='';el.style.overflow='hidden'; }
+    else { el.style.backgroundImage='';el.textContent=ini; }
+  });
+  document.querySelectorAll('.sb-user-name').forEach(el => el.textContent = fullName);
+  const av = document.getElementById('parent-profile-av');
+  if (av) {
+    if (u.avatar) { av.style.backgroundImage=`url(${u.avatar})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';av.style.overflow='hidden'; }
+    else { av.style.backgroundImage='';av.textContent=ini; }
+  }
+  const emailEl = document.getElementById('pp-email');
+  if (emailEl) emailEl.textContent = u.email || '—';
+  const phoneEl = document.getElementById('pp-phone');
+  if (phoneEl) phoneEl.textContent = u.phone || '—';
+  closeParentProfileEdit();
+}
+
+function renderParentProfileInfo() {
+  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  if (!u) return;
+  const ini = ((u.name||'?')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
+  const av = document.getElementById('parent-profile-av');
+  if (av) {
+    if (u.avatar) { av.style.backgroundImage=`url(${u.avatar})`;av.style.backgroundSize='cover';av.style.backgroundPosition='center';av.textContent='';av.style.overflow='hidden'; }
+    else { av.style.backgroundImage='';av.textContent=ini; }
+  }
+  const emailEl = document.getElementById('pp-email');
+  if (emailEl) emailEl.textContent = u.email || '—';
+  const phoneEl = document.getElementById('pp-phone');
+  if (phoneEl) phoneEl.textContent = u.phone || '—';
+}
+
 window.addEventListener('load', function() {
   loadUser();
   loadTaskScreen(null);
   selectChat('mi');
 });
 </script>
+
+<!-- ==================== PARENT PROFILE EDIT MODAL ==================== -->
+<div id="parent-profile-edit-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeParentProfileEdit()">
+  <div style="background:white;border-radius:24px;padding:28px;max-width:460px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(13,59,102,.2)">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-bold text-gray-900 text-xl">Редактировать профиль</h3>
+      <button onclick="closeParentProfileEdit()" style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center">
+        <svg width="14" height="14" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Photo upload -->
+    <div style="display:flex;justify-content:center;margin-bottom:20px">
+      <label for="pp-photo-input" style="position:relative;width:80px;height:80px;cursor:pointer;display:block">
+        <div id="pp-photo-preview" style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#0D3B66,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:24px;color:white;overflow:hidden;user-select:none"></div>
+        <div style="position:absolute;inset:0;border-radius:50%;background:rgba(0,0,0,0);transition:background .2s" onmouseover="this.style.background='rgba(0,0,0,.35)'" onmouseout="this.style.background='rgba(0,0,0,0)'">
+          <svg style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0;transition:opacity .2s;pointer-events:none" width="22" height="22" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24" onmouseover="this.style.opacity=1"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </div>
+        <div style="position:absolute;bottom:-2px;right:-2px;width:24px;height:24px;border-radius:50%;background:#0D3B66;border:2px solid white;display:flex;align-items:center;justify-content:center">
+          <svg width="10" height="10" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+        </div>
+      </label>
+      <input type="file" id="pp-photo-input" accept="image/*" style="display:none" onchange="ppPhotoChange(event)">
+    </div>
+    <p style="text-align:center;font-size:12px;color:#9ca3af;margin-top:-12px;margin-bottom:16px">Нажмите на фото, чтобы изменить</p>
+
+    <div class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="text-xs font-semibold text-gray-500 mb-1 block" style="text-transform:uppercase;letter-spacing:.05em">Имя</label>
+          <input id="pp-edit-name" type="text" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="border:2px solid #e5e7eb;transition:border-color .2s" onfocus="this.style.borderColor='#0D3B66'" onblur="this.style.borderColor='#e5e7eb'">
+        </div>
+        <div>
+          <label class="text-xs font-semibold text-gray-500 mb-1 block" style="text-transform:uppercase;letter-spacing:.05em">Фамилия</label>
+          <input id="pp-edit-lastName" type="text" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="border:2px solid #e5e7eb;transition:border-color .2s" onfocus="this.style.borderColor='#0D3B66'" onblur="this.style.borderColor='#e5e7eb'">
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500 mb-1 block" style="text-transform:uppercase;letter-spacing:.05em">Email</label>
+        <input id="pp-edit-email" type="email" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="border:2px solid #e5e7eb;transition:border-color .2s" onfocus="this.style.borderColor='#0D3B66'" onblur="this.style.borderColor='#e5e7eb'">
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-500 mb-1 block" style="text-transform:uppercase;letter-spacing:.05em">Телефон</label>
+        <input id="pp-edit-phone" type="tel" placeholder="+7 (900) 000-00-00" class="w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none" style="border:2px solid #e5e7eb;transition:border-color .2s" onfocus="this.style.borderColor='#0D3B66'" onblur="this.style.borderColor='#e5e7eb'">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="saveParentProfile()" class="btn-p flex-1">Сохранить</button>
+        <button onclick="closeParentProfileEdit()" class="btn-o flex-1">Отмена</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
