@@ -35,6 +35,15 @@ tailwind.config = {
 html{scroll-behavior:smooth}
 ::-webkit-scrollbar{width:5px}
 ::-webkit-scrollbar-thumb{background:#0D3B66;border-radius:3px}
+/* Mobile */
+@media(max-width:768px){
+  .hero-blob{display:none}
+  .hero-card{max-width:100%!important;box-shadow:0 4px 24px rgba(13,59,102,.12)!important;margin-top:0}
+  .hero-section{min-height:auto!important;padding-top:80px!important;padding-bottom:40px!important}
+  .hero-grid{gap:32px!important}
+  .btn-p,.btn-o{width:100%;justify-content:center}
+  .btn-row{flex-direction:column!important}
+}
 </style>
 </head>
 <body class="bg-white text-gray-900 overflow-x-hidden">
@@ -75,17 +84,17 @@ html{scroll-behavior:smooth}
 </nav>
 
 <!-- HERO -->
-<section class="relative min-h-screen flex items-center pt-20 overflow-hidden" style="background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
-  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;filter:blur(1px)"></div>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full py-16">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<section class="hero-section relative flex items-center overflow-hidden" style="min-height:100svh;background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%);padding-top:96px;padding-bottom:60px">
+  <div class="hero-blob absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;pointer-events:none"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full">
+    <div class="hero-grid grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div class="relative z-10">
         <div class="tag mb-8" style="background:rgba(212,165,32,.12);color:#a07a10">Для репетитора</div>
         <h1 class="font-extrabold leading-[1.08] mb-8 text-gray-900" style="font-size:clamp(40px,5.5vw,72px)">
           Работай с учениками<br><span class="tg">через платформу</span>
         </h1>
         <p class="text-xl text-gray-600 mb-6 max-w-lg leading-relaxed">ФИБИ находит тебе учеников, организует запись и проводит оплату. Ты занимаешься — платформа берёт на себя всё остальное.</p>
-        <div class="flex flex-wrap gap-3 mb-8">
+        <div class="btn-row flex flex-wrap gap-3 mb-8">
           <a href="register.html" class="btn-p" style="background:#D4A520;box-shadow:0 4px 16px rgba(212,165,32,.4)">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
             Подать заявку
@@ -100,8 +109,8 @@ html{scroll-behavior:smooth}
       </div>
 
       <!-- Right: profile mockup -->
-      <div class="flex justify-center lg:justify-end">
-        <div class="rounded-3xl shadow-2xl p-6 w-full max-w-sm" style="background:white;border:1px solid rgba(13,59,102,.08)">
+      <div class="flex justify-center lg:justify-end" style="position:relative;z-index:10">
+        <div class="hero-card rounded-3xl p-6 w-full" style="max-width:380px;background:white;border:1px solid rgba(13,59,102,.08);box-shadow:0 8px 40px rgba(13,59,102,.14)">
           <div class="flex items-center gap-4 mb-5">
             <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-2xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
             <div>
@@ -115,18 +124,18 @@ html{scroll-behavior:smooth}
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold" style="background:#FAF0CA;color:#0D3B66">ЕГЭ база</span>
             <span class="px-2.5 py-1 rounded-full text-xs font-semibold" style="background:rgba(212,165,32,.12);color:#a07a10">Проверено</span>
           </div>
-          <div class="grid grid-cols-3 gap-3 mb-5">
-            <div class="rounded-xl p-3 text-center" style="background:#f8fafc">
-              <div class="text-lg font-bold" style="color:#0D3B66">5 лет</div>
-              <div class="text-xs text-gray-400">опыт</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+            <div style="background:#f0f4ff;border-radius:14px;padding:14px 8px;text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#0D3B66;line-height:1.1">5 лет</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:3px">опыт</div>
             </div>
-            <div class="rounded-xl p-3 text-center" style="background:#f8fafc">
-              <div class="text-lg font-bold" style="color:#0D3B66">98%</div>
-              <div class="text-xs text-gray-400">сдают 4–5</div>
+            <div style="background:#f0fdf4;border-radius:14px;padding:14px 8px;text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#059669;line-height:1.1">98%</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:3px">сдают 4–5</div>
             </div>
-            <div class="rounded-xl p-3 text-center" style="background:#f8fafc">
-              <div class="text-lg font-bold" style="color:#0D3B66">340</div>
-              <div class="text-xs text-gray-400">задач проверено</div>
+            <div style="background:#fdf4ff;border-radius:14px;padding:14px 8px;text-align:center">
+              <div style="font-size:18px;font-weight:800;color:#7c3aed;line-height:1.1">340</div>
+              <div style="font-size:11px;color:#6b7280;margin-top:3px">задач проверено</div>
             </div>
           </div>
           <!-- Incoming request -->
