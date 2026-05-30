@@ -284,7 +284,7 @@
         </div>
 
         <!-- ===== SUCCESS SCREEN ===== -->
-        <div id="success-screen" class="text-center py-4">
+        <div id="success-screen" class="text-center py-4" style="display:none">
           <div class="check-circle scale-in">
             <svg class="w-10 h-10" style="color:#16a34a" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
           </div>
@@ -292,6 +292,36 @@
           <p class="text-gray-500 mb-6 text-sm">Аккаунт создан. Переходим в твой дашборд…</p>
           <div class="w-full rounded-full overflow-hidden" style="height:4px;background:#e5e7eb">
             <div id="progress-bar" style="height:100%;background:#0D3B66;border-radius:2px;width:0;transition:width 1.5s ease"></div>
+          </div>
+        </div>
+
+        <!-- Email verification screen -->
+        <div id="email-verify-screen" style="display:none" class="py-2">
+          <div style="width:64px;height:64px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;margin:0 auto 20px">
+            <svg class="w-8 h-8" style="color:#1d4ed8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"/></svg>
+          </div>
+          <h2 class="text-xl font-extrabold text-gray-900 mb-2 text-center">Подтвердите email</h2>
+          <p class="text-gray-500 text-sm text-center mb-1">Письмо с подтверждением отправлено на</p>
+          <p class="font-bold text-gray-800 text-sm text-center mb-5" id="verify-email-display">email@example.com</p>
+
+          <!-- TODO: интеграция с реальным email-сервисом (Resend / SendGrid / etc.) -->
+          <div class="rounded-xl p-4 mb-5 text-sm" style="background:#fef3c7;border:1px solid #f59e0b">
+            <p class="font-semibold text-amber-800 mb-1">Для разработчиков</p>
+            <p class="text-amber-700 text-xs">Email-подтверждение пока в режиме заглушки. Интегрируйте реальную отправку через email-провайдер.</p>
+          </div>
+
+          <!-- Simulate verification (dev mode only) -->
+          <button onclick="skipEmailVerification()" class="btn-p w-full mb-3">
+            Продолжить без подтверждения (dev) →
+          </button>
+
+          <div id="resend-area" class="text-center">
+            <p class="text-xs text-gray-400 mb-2">Не пришло письмо?</p>
+            <button id="resend-btn" onclick="resendVerification()" class="text-sm font-semibold text-yale hover:underline" style="background:none;border:none;cursor:pointer">
+              Отправить повторно
+            </button>
+            <p id="resend-ok" class="text-xs text-green-600 font-semibold mt-1" style="display:none">Письмо отправлено повторно!</p>
+            <p id="resend-countdown" class="text-xs text-gray-400 mt-1" style="display:none"></p>
           </div>
         </div>
 
@@ -441,7 +471,7 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
   btn.disabled = true;
 
   setTimeout(() => {
-    // Save user
+    // Save user with emailVerified: false
     const user = {
       id: Date.now(),
       name, lastName: last,
@@ -450,34 +480,16 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
       grade: selectedRole === 'student' ? selectedGrade : null,
       registeredAt: new Date().toISOString(),
       streak: 0, solved: 0, accuracy: 0, xp: 0,
-      childrenIds: [], parentIds: []
+      childrenIds: [], parentIds: [],
+      emailVerified: false, // TODO: set to true after real email verification
     };
     existing.push(user);
     localStorage.setItem('fibi_users', JSON.stringify(existing));
     localStorage.setItem('fibi_current_user', JSON.stringify(user));
 
-    // Show success
+    // Show email verification screen instead of immediate redirect
     document.getElementById('form-reg').style.display = 'none';
-    const ss = document.getElementById('success-screen');
-    ss.style.display = 'block';
-    document.getElementById('success-name').textContent =
-      `Привет, ${name}! 👋`;
-
-    // Animate progress bar
-    setTimeout(() => {
-      document.getElementById('progress-bar').style.width = '100%';
-    }, 50);
-
-    // Redirect based on role
-    setTimeout(() => {
-      if (user.role === 'tutor') {
-        window.location.href = 'tutor-dashboard.html';
-      } else if (user.role === 'student') {
-        window.location.href = 'student-onboarding.html';
-      } else {
-        window.location.href = 'dashboard.html';
-      }
-    }, 1700);
+    showEmailVerification(email, name, user);
   }, 900);
 });
 
@@ -547,11 +559,67 @@ window.addEventListener('load', () => {
   const cur = localStorage.getItem('fibi_current_user');
   if (cur) {
     const u = JSON.parse(cur);
-    // Pre-fill login email
     const le = document.getElementById('l-email');
     if (le) le.value = u.email;
   }
 });
+
+// ─── Email Verification ────────────────────────────────────
+let _pendingUser = null;
+let _resendCooldown = 0;
+
+function showEmailVerification(email, name, user) {
+  _pendingUser = user;
+  document.getElementById('email-verify-screen').style.display = '';
+  document.getElementById('verify-email-display').textContent = email;
+  // TODO: вызвать реальный API для отправки письма с подтверждением
+  // Пример: await fetch('/api/send-verification', { method:'POST', body: JSON.stringify({ email, name }) })
+  console.log('[TODO] Send verification email to:', email);
+}
+
+function skipEmailVerification() {
+  // DEV: пропускаем подтверждение, помечаем emailVerified: true
+  if (_pendingUser) {
+    _pendingUser.emailVerified = true;
+    localStorage.setItem('fibi_current_user', JSON.stringify(_pendingUser));
+    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+    const idx = users.findIndex(u => u.id === _pendingUser.id);
+    if (idx >= 0) { users[idx].emailVerified = true; localStorage.setItem('fibi_users', JSON.stringify(users)); }
+  }
+  document.getElementById('email-verify-screen').style.display = 'none';
+  const ss = document.getElementById('success-screen');
+  ss.style.display = 'block';
+  document.getElementById('success-name').textContent = `Привет, ${_pendingUser?.name || ''}! 👋`;
+  setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 50);
+  setTimeout(() => {
+    const u = _pendingUser;
+    if (!u) return;
+    if (u.role === 'tutor') window.location.href = 'tutor-dashboard.html';
+    else if (u.role === 'student') window.location.href = 'student-onboarding.html';
+    else window.location.href = 'dashboard.html';
+  }, 1700);
+}
+
+function resendVerification() {
+  if (_resendCooldown > 0) return;
+  document.getElementById('resend-ok').style.display = 'block';
+  document.getElementById('resend-btn').style.display = 'none';
+  // TODO: вызвать API повторной отправки
+  console.log('[TODO] Resend verification email to:', _pendingUser?.email);
+  _resendCooldown = 60;
+  const countEl = document.getElementById('resend-countdown');
+  countEl.style.display = '';
+  const timer = setInterval(() => {
+    _resendCooldown--;
+    countEl.textContent = `Повторная отправка через ${_resendCooldown} сек`;
+    if (_resendCooldown <= 0) {
+      clearInterval(timer);
+      document.getElementById('resend-ok').style.display = 'none';
+      document.getElementById('resend-btn').style.display = '';
+      countEl.style.display = 'none';
+    }
+  }, 1000);
+}
 </script>
 </body>
 </html>
