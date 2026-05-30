@@ -900,41 +900,111 @@
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-bold text-gray-800">База репетиторов</h2>
           <div class="flex gap-2">
-            <select class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none" style="min-width:120px">
-              <option>Все предметы</option>
-              <option>Математика</option>
-              <option>Русский язык</option>
-              <option>Физика</option>
+            <select id="tutor-catalog-filter" class="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none" style="min-width:120px">
+              <option value="">Все предметы</option>
+              <option value="Математика">Математика</option>
+              <option value="Русский язык">Русский язык</option>
+              <option value="Физика">Физика</option>
+              <option value="Английский язык">Английский язык</option>
             </select>
           </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="p-4 rounded-xl border border-gray-200 hover:border-yale transition-colors">
-            <div class="flex items-start gap-3 mb-3">
-              <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
-              <div class="flex-1">
-                <div class="font-semibold text-gray-900 text-sm">Анна Петрова</div>
-                <div class="text-xs text-gray-400">Математика · 5 лет опыта</div>
-                <div style="color:#f59e0b;font-size:11px">★★★★★ <span class="text-xs text-gray-600 font-bold">5.0</span></div>
-              </div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:rgba(13,59,102,.1);color:#0D3B66">Эксперт</span>
-            </div>
-            <div class="text-xs text-gray-500 mb-3">98% учеников сдают ОГЭ на «4» и «5»</div>
-            <button class="btn-p w-full text-xs" style="padding:8px">Записаться на занятие</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="tutor-catalog-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TUTOR FULL CARD MODAL ==================== -->
+    <div id="tutor-card-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center;padding:16px;overflow-y:auto" onclick="if(event.target===this)closeTutorCard()">
+      <div style="background:white;border-radius:24px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(13,59,102,.2);position:relative" id="tutor-card-inner">
+        <button onclick="closeTutorCard()" style="position:sticky;top:12px;float:right;margin:12px 12px 0 0;width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10">
+          <svg width="14" height="14" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+        <div id="tutor-card-content" style="padding:24px"></div>
+      </div>
+    </div>
+
+    <!-- ==================== REVIEW FORM MODAL ==================== -->
+    <div id="review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:210;align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)closeReviewModal()">
+      <div style="background:white;border-radius:24px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(13,59,102,.2);padding:28px">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="font-bold text-gray-900 text-lg">Оставить отзыв</h3>
+          <button onclick="closeReviewModal()" style="width:32px;height:32px;border-radius:50%;background:#f3f4f6;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center">
+            <svg width="14" height="14" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
+        <p class="text-sm text-gray-500 mb-4">Отзыв о репетиторе: <span id="review-tutor-name" class="font-semibold text-gray-800"></span></p>
+
+        <!-- Star rating -->
+        <div class="mb-4">
+          <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Общая оценка <span style="color:#ef4444">*</span></p>
+          <div class="flex gap-2" id="review-stars">
+            <span class="star text-2xl cursor-pointer" data-n="1" onclick="setReviewStar(1)">★</span>
+            <span class="star text-2xl cursor-pointer" data-n="2" onclick="setReviewStar(2)">★</span>
+            <span class="star text-2xl cursor-pointer" data-n="3" onclick="setReviewStar(3)">★</span>
+            <span class="star text-2xl cursor-pointer" data-n="4" onclick="setReviewStar(4)">★</span>
+            <span class="star text-2xl cursor-pointer" data-n="5" onclick="setReviewStar(5)">★</span>
           </div>
-          <div class="p-4 rounded-xl border border-gray-200 hover:border-yale transition-colors">
-            <div class="flex items-start gap-3 mb-3">
-              <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">ЕС</div>
-              <div class="flex-1">
-                <div class="font-semibold text-gray-900 text-sm">Елена Смирнова</div>
-                <div class="text-xs text-gray-400">Математика · 12 лет опыта</div>
-                <div style="color:#f59e0b;font-size:11px">★★★★★ <span class="text-xs text-gray-600 font-bold">5.0</span></div>
+        </div>
+
+        <!-- Text review -->
+        <div class="mb-4">
+          <label class="text-xs font-bold text-gray-500 mb-1 block uppercase tracking-wide">Комментарий <span style="color:#ef4444">*</span></label>
+          <textarea id="review-text" style="width:100%;border:2px solid #e5e7eb;border-radius:12px;padding:12px;font-family:inherit;font-size:14px;outline:none;resize:vertical;min-height:100px" placeholder="Расскажите о вашем опыте работы с репетитором..." onfocus="this.style.borderColor='#0D3B66'" onblur="this.style.borderColor='#e5e7eb'"></textarea>
+        </div>
+
+        <!-- Optional criteria -->
+        <div class="mb-5">
+          <p class="text-xs font-bold text-gray-500 mb-3 uppercase tracking-wide">Дополнительные критерии (необязательно)</p>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">Понятность объяснений</span>
+              <div class="flex gap-1">
+                <span class="star text-base cursor-pointer" data-c="clarity" data-n="1" onclick="setCriteria('clarity',1)">★</span>
+                <span class="star text-base cursor-pointer" data-c="clarity" data-n="2" onclick="setCriteria('clarity',2)">★</span>
+                <span class="star text-base cursor-pointer" data-c="clarity" data-n="3" onclick="setCriteria('clarity',3)">★</span>
+                <span class="star text-base cursor-pointer" data-c="clarity" data-n="4" onclick="setCriteria('clarity',4)">★</span>
+                <span class="star text-base cursor-pointer" data-c="clarity" data-n="5" onclick="setCriteria('clarity',5)">★</span>
               </div>
-              <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:rgba(13,59,102,.1);color:#0D3B66">Эксперт</span>
             </div>
-            <div class="text-xs text-gray-500 mb-3">Проверила 340+ задач 2-й части</div>
-            <button class="btn-p w-full text-xs" style="padding:8px">Записаться на занятие</button>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">Пунктуальность</span>
+              <div class="flex gap-1">
+                <span class="star text-base cursor-pointer" data-c="punctuality" data-n="1" onclick="setCriteria('punctuality',1)">★</span>
+                <span class="star text-base cursor-pointer" data-c="punctuality" data-n="2" onclick="setCriteria('punctuality',2)">★</span>
+                <span class="star text-base cursor-pointer" data-c="punctuality" data-n="3" onclick="setCriteria('punctuality',3)">★</span>
+                <span class="star text-base cursor-pointer" data-c="punctuality" data-n="4" onclick="setCriteria('punctuality',4)">★</span>
+                <span class="star text-base cursor-pointer" data-c="punctuality" data-n="5" onclick="setCriteria('punctuality',5)">★</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">Результат обучения</span>
+              <div class="flex gap-1">
+                <span class="star text-base cursor-pointer" data-c="result" data-n="1" onclick="setCriteria('result',1)">★</span>
+                <span class="star text-base cursor-pointer" data-c="result" data-n="2" onclick="setCriteria('result',2)">★</span>
+                <span class="star text-base cursor-pointer" data-c="result" data-n="3" onclick="setCriteria('result',3)">★</span>
+                <span class="star text-base cursor-pointer" data-c="result" data-n="4" onclick="setCriteria('result',4)">★</span>
+                <span class="star text-base cursor-pointer" data-c="result" data-n="5" onclick="setCriteria('result',5)">★</span>
+              </div>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-gray-600">Комфорт общения</span>
+              <div class="flex gap-1">
+                <span class="star text-base cursor-pointer" data-c="comfort" data-n="1" onclick="setCriteria('comfort',1)">★</span>
+                <span class="star text-base cursor-pointer" data-c="comfort" data-n="2" onclick="setCriteria('comfort',2)">★</span>
+                <span class="star text-base cursor-pointer" data-c="comfort" data-n="3" onclick="setCriteria('comfort',3)">★</span>
+                <span class="star text-base cursor-pointer" data-c="comfort" data-n="4" onclick="setCriteria('comfort',4)">★</span>
+                <span class="star text-base cursor-pointer" data-c="comfort" data-n="5" onclick="setCriteria('comfort',5)">★</span>
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div id="review-error" class="text-xs text-red-500 mb-3" style="display:none"></div>
+        <div class="flex gap-3">
+          <button onclick="submitReview()" class="btn-p flex-1">Отправить отзыв</button>
+          <button onclick="closeReviewModal()" class="btn-o flex-1">Отмена</button>
         </div>
       </div>
     </div>
@@ -1321,6 +1391,7 @@ function showScreen(name) {
   const titles = {dashboard:'Главная',tasks:'Задания',tutors:'Репетиторы',chat:'Чаты',progress:'Прогресс',parent:'Главная',tutor:'Кабинет репетитора','parent-tutors':'Репетиторы','parent-chat':'Чаты','parent-profile':'Профиль'};
   document.getElementById('page-title').textContent = titles[name] || '';
   if (name === 'tasks' && taskQueue.length === 0) loadTaskScreen(null);
+  if (name === 'parent-tutors') setTimeout(renderTutorCatalog, 50);
   if (window.innerWidth < 768) closeSidebar();
   window.scrollTo(0, 0);
 }
@@ -2835,6 +2906,235 @@ function renderParentProfileInfo() {
   const phoneEl = document.getElementById('pp-phone');
   if (phoneEl) phoneEl.textContent = u.phone || '—';
 }
+
+// ─── Tutor Catalog & Full Card ─────────────────────────────
+const DEMO_TUTORS_CATALOG = [
+  {
+    id:'t1', name:'Анна Петрова', avatar:null, initials:'АП', color:'linear-gradient(135deg,#0D3B66,#8b5cf6)',
+    subjects:'Математика', grades:'7–11 класс, ОГЭ, ЕГЭ', city:'Москва', format:'Онлайн',
+    price:2000, experience:5, education:'МГУ, механико-математический факультет, 2018',
+    about:'Помогаю ученикам полюбить математику. Нахожу индивидуальный подход к каждому.',
+    methodology:'Начинаю с диагностики. Выстраиваю систему занятий от простого к сложному.',
+    avgResult:'98% учеников сдают ОГЭ на 4 и 5', profileStatus:'approved',
+    reviews:[
+      {parentName:'Мария П.',rating:5,text:'Отличный репетитор! Ребёнок сдал ОГЭ на 5.',date:'2024-05-10',criteria:{clarity:5,punctuality:5,result:5,comfort:5}},
+      {parentName:'Алексей В.',rating:4,text:'Хороший специалист, всегда готовится.',date:'2024-04-22',criteria:{clarity:4,punctuality:5,result:4,comfort:5}},
+    ]
+  },
+  {
+    id:'t2', name:'Елена Смирнова', avatar:null, initials:'ЕС', color:'linear-gradient(135deg,#8b5cf6,#6d28d9)',
+    subjects:'Математика', grades:'8–11 класс, ЕГЭ', city:'Москва', format:'Онлайн и офлайн',
+    price:2500, experience:12, education:'МПГУ, математический факультет, 2012',
+    about:'12 лет опыта подготовки к ЕГЭ. Специализируюсь на сложных темах и части 2.',
+    methodology:'Много практики. Детальный разбор ошибок. Индивидуальный темп.',
+    avgResult:'Все ученики 2024 сдали на 4 и 5', profileStatus:'approved',
+    reviews:[
+      {parentName:'Наталья С.',rating:5,text:'Профессиональный подход. Дочь стала увереннее.',date:'2024-03-15',criteria:{clarity:5,punctuality:4,result:5,comfort:5}},
+    ]
+  },
+];
+
+let _activeTutorId = null;
+let _reviewRating = 0;
+let _reviewCriteria = {};
+let _hasCollaboration = true; // mock: parent has completed sessions
+
+function renderTutorCatalog() {
+  const grid = document.getElementById('tutor-catalog-grid');
+  if (!grid) return;
+  const filter = document.getElementById('tutor-catalog-filter')?.value || '';
+  const tutors = DEMO_TUTORS_CATALOG.filter(t =>
+    t.profileStatus === 'approved' && (!filter || t.subjects.includes(filter))
+  );
+  grid.innerHTML = tutors.map(t => {
+    const avg = t.reviews.length ? (t.reviews.reduce((s,r)=>s+r.rating,0)/t.reviews.length).toFixed(1) : null;
+    const stars = avg ? '★'.repeat(Math.round(parseFloat(avg))) + '☆'.repeat(5-Math.round(parseFloat(avg))) : '';
+    return `<div class="p-4 rounded-xl border border-gray-200 hover:border-yale transition-colors cursor-pointer" onclick="openTutorCard('${t.id}')">
+      <div class="flex items-start gap-3 mb-3">
+        <div class="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-white flex-shrink-0" style="background:${t.color}">${t.initials}</div>
+        <div class="flex-1">
+          <div class="font-semibold text-gray-900 text-sm">${t.name}</div>
+          <div class="text-xs text-gray-400">${t.subjects} · ${t.experience} ${t.experience===1?'год':t.experience<5?'года':'лет'} опыта</div>
+          ${avg ? `<div style="color:#f59e0b;font-size:11px">${stars} <span class="text-xs text-gray-600 font-bold">${avg}</span> (${t.reviews.length})</div>` : '<div class="text-xs text-gray-400">Нет отзывов</div>'}
+        </div>
+        <span class="text-xs font-bold px-2 py-1 rounded-full" style="background:#dcfce7;color:#166534">✓ Проверен</span>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-gray-500 mb-3">
+        <span>📍 ${t.city}</span>
+        <span>·</span>
+        <span>${t.format}</span>
+        <span>·</span>
+        <span class="font-semibold text-yale">${t.price} ₽/час</span>
+      </div>
+      <p class="text-xs text-gray-500 mb-3 line-clamp-2">${t.avgResult||t.about}</p>
+      <button class="btn-p w-full text-xs" style="padding:8px" onclick="event.stopPropagation();openTutorCard('${t.id}')">Посмотреть карточку →</button>
+    </div>`;
+  }).join('') || '<p class="text-sm text-gray-400 col-span-2 text-center py-4">Репетиторов не найдено</p>';
+}
+
+function openTutorCard(id) {
+  const tutor = DEMO_TUTORS_CATALOG.find(t => t.id === id);
+  if (!tutor) return;
+  _activeTutorId = id;
+  const modal = document.getElementById('tutor-card-modal');
+  const content = document.getElementById('tutor-card-content');
+  const avg = tutor.reviews.length ? (tutor.reviews.reduce((s,r)=>s+r.rating,0)/tutor.reviews.length).toFixed(1) : null;
+  const stars = avg ? '★'.repeat(Math.round(parseFloat(avg))) + '☆'.repeat(5-Math.round(parseFloat(avg))) : '';
+
+  const reviewsHTML = tutor.reviews.length ? tutor.reviews.map(r => {
+    const d = new Date(r.date).toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'});
+    const rs = '★'.repeat(r.rating) + '☆'.repeat(5-r.rating);
+    const crit = r.criteria ? `<div class="flex flex-wrap gap-2 mt-1">
+      <span class="text-xs text-gray-400">Понятность: ${r.criteria.clarity}/5</span>
+      <span class="text-xs text-gray-400">Пунктуальность: ${r.criteria.punctuality}/5</span>
+      <span class="text-xs text-gray-400">Результат: ${r.criteria.result}/5</span>
+      <span class="text-xs text-gray-400">Комфорт: ${r.criteria.comfort}/5</span>
+    </div>` : '';
+    return `<div style="background:#f9fafb;border-radius:12px;padding:14px;border:1px solid #e5e7eb;margin-bottom:8px">
+      <div class="flex items-start justify-between gap-2 mb-1">
+        <div class="flex items-center gap-2">
+          <div style="width:28px;height:28px;border-radius:50%;background:#0D3B66;color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">${r.parentName[0]}</div>
+          <span class="font-semibold text-sm text-gray-900">${r.parentName}</span>
+          <span class="text-xs text-gray-400">${d}</span>
+        </div>
+        <span style="color:#f59e0b;font-size:13px">${rs}</span>
+      </div>
+      <p class="text-sm text-gray-700">${r.text}</p>${crit}
+    </div>`;
+  }).join('') : '<p class="text-sm text-gray-400 text-center py-3">Отзывов пока нет</p>';
+
+  content.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:20px;padding-right:40px">
+      <div style="width:72px;height:72px;border-radius:20px;background:${tutor.color};color:white;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;flex-shrink:0">${tutor.initials}</div>
+      <div>
+        <h2 style="font-weight:900;font-size:20px;color:#111827;margin:0 0 4px">${tutor.name}</h2>
+        <div class="flex flex-wrap gap-2">
+          <span style="background:#dcfce7;color:#166534;border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700">✅ Проверенный репетитор</span>
+          ${avg ? `<span style="color:#f59e0b;font-size:13px">${stars} <strong style="color:#374151">${avg}</strong> (${tutor.reviews.length} отз.)</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+      <div style="background:#f8fafc;border-radius:12px;padding:12px"><p style="font-size:11px;color:#9ca3af;margin:0 0 2px">Предмет</p><p style="font-size:13px;font-weight:700;color:#1f2937;margin:0">${tutor.subjects}</p></div>
+      <div style="background:#f8fafc;border-radius:12px;padding:12px"><p style="font-size:11px;color:#9ca3af;margin:0 0 2px">Классы</p><p style="font-size:13px;font-weight:700;color:#1f2937;margin:0">${tutor.grades}</p></div>
+      <div style="background:#f8fafc;border-radius:12px;padding:12px"><p style="font-size:11px;color:#9ca3af;margin:0 0 2px">Город / Формат</p><p style="font-size:13px;font-weight:700;color:#1f2937;margin:0">${tutor.city} · ${tutor.format}</p></div>
+      <div style="background:#f8fafc;border-radius:12px;padding:12px"><p style="font-size:11px;color:#9ca3af;margin:0 0 2px">Стоимость</p><p style="font-size:13px;font-weight:700;color:#0D3B66;margin:0">${tutor.price} ₽/час</p></div>
+      <div style="background:#f8fafc;border-radius:12px;padding:12px"><p style="font-size:11px;color:#9ca3af;margin:0 0 2px">Опыт</p><p style="font-size:13px;font-weight:700;color:#1f2937;margin:0">${tutor.experience} лет</p></div>
+    </div>
+
+    <div style="margin-bottom:16px"><p style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px">Образование</p><p style="font-size:14px;color:#374151">${tutor.education}</p></div>
+    <div style="margin-bottom:16px"><p style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px">О себе</p><p style="font-size:14px;color:#374151">${tutor.about}</p></div>
+    <div style="margin-bottom:16px"><p style="font-size:12px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px">Методика</p><p style="font-size:14px;color:#374151">${tutor.methodology}</p></div>
+    ${tutor.avgResult?`<div style="background:#f0fdf4;border-radius:12px;padding:12px 16px;margin-bottom:20px;border:1px solid #86efac"><p style="font-size:13px;color:#166534;font-weight:600;margin:0">📊 ${tutor.avgResult}</p></div>`:''}
+
+    <div style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h3 style="font-weight:700;font-size:16px;color:#1f2937;margin:0">Отзывы</h3>
+        ${_hasCollaboration ? `<button onclick="openReviewModal('${tutor.id}','${tutor.name}')" style="background:#0D3B66;color:white;border:none;border-radius:10px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">+ Оставить отзыв</button>` : ''}
+      </div>
+      ${reviewsHTML}
+      ${!_hasCollaboration ? '<p class="text-xs text-gray-400 text-center mt-2">Отзыв можно оставить только после завершённого занятия с репетитором.</p>' : ''}
+    </div>
+
+    <div style="display:flex;gap:10px">
+      <button onclick="showScreen('parent-chat')" class="btn-p" style="flex:1">Написать репетитору</button>
+      <button onclick="closeTutorCard()" class="btn-o" style="flex:1">Закрыть</button>
+    </div>`;
+
+  modal.style.display = 'flex';
+}
+
+function closeTutorCard() {
+  document.getElementById('tutor-card-modal').style.display = 'none';
+}
+
+// ─── Review form ──────────────────────────────────────────
+function openReviewModal(tutorId, tutorName) {
+  _activeTutorId = tutorId;
+  _reviewRating = 0;
+  _reviewCriteria = {};
+  document.getElementById('review-tutor-name').textContent = tutorName;
+  document.getElementById('review-text').value = '';
+  document.getElementById('review-error').style.display = 'none';
+  updateReviewStars(0);
+  ['clarity','punctuality','result','comfort'].forEach(c => updateCriteriaStars(c, 0));
+  document.getElementById('review-modal').style.display = 'flex';
+}
+
+function closeReviewModal() {
+  document.getElementById('review-modal').style.display = 'none';
+}
+
+function setReviewStar(n) {
+  _reviewRating = n;
+  updateReviewStars(n);
+}
+
+function updateReviewStars(n) {
+  document.querySelectorAll('#review-stars .star').forEach(s => {
+    s.style.color = parseInt(s.dataset.n) <= n ? '#f59e0b' : '#d1d5db';
+  });
+}
+
+function setCriteria(crit, n) {
+  _reviewCriteria[crit] = n;
+  updateCriteriaStars(crit, n);
+}
+
+function updateCriteriaStars(crit, n) {
+  document.querySelectorAll(`.star[data-c="${crit}"]`).forEach(s => {
+    s.style.color = parseInt(s.dataset.n) <= n ? '#f59e0b' : '#d1d5db';
+  });
+}
+
+function submitReview() {
+  const errEl = document.getElementById('review-error');
+  const text = document.getElementById('review-text').value.trim();
+  if (_reviewRating === 0) { errEl.textContent = 'Поставьте оценку от 1 до 5.'; errEl.style.display = 'block'; return; }
+  if (!text) { errEl.textContent = 'Напишите комментарий.'; errEl.style.display = 'block'; return; }
+
+  const tutor = DEMO_TUTORS_CATALOG.find(t => t.id === _activeTutorId);
+  if (!tutor) return;
+
+  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  const parentName = parent ? (parent.name[0] + '. ') : 'Родитель ';
+
+  const review = {
+    id: 'r' + Date.now(),
+    parentName,
+    rating: _reviewRating,
+    text,
+    date: new Date().toISOString().split('T')[0],
+    subject: tutor.subjects,
+    criteria: Object.keys(_reviewCriteria).length ? { ..._reviewCriteria } : null,
+    status: 'published', // TODO: set 'pending' if moderation is required
+  };
+
+  tutor.reviews.unshift(review);
+  // TODO: persist to backend; for now save to localStorage
+  const stored = JSON.parse(localStorage.getItem('fibi_tutor_reviews') || '{}');
+  if (!stored[_activeTutorId]) stored[_activeTutorId] = [];
+  stored[_activeTutorId].unshift(review);
+  localStorage.setItem('fibi_tutor_reviews', JSON.stringify(stored));
+
+  closeReviewModal();
+  openTutorCard(_activeTutorId); // refresh card
+}
+
+// ─── Init tutor catalog when parent-tutors screen opens ───
+const _origShowScreen = window.showScreen;
+if (typeof showScreen === 'function') {
+  const __orig = showScreen;
+  window.showScreen = function(id) {
+    __orig(id);
+    if (id === 'parent-tutors') setTimeout(renderTutorCatalog, 50);
+  };
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const filterEl = document.getElementById('tutor-catalog-filter');
+  if (filterEl) filterEl.addEventListener('change', renderTutorCatalog);
+});
 
 window.addEventListener('load', function() {
   loadUser();

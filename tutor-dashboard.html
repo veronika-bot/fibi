@@ -54,6 +54,31 @@ input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;bor
 input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 .student-row{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;border:2px solid #f3f4f6;background:white;transition:all .2s;cursor:pointer}
 .student-row:hover{border-color:#0D3B66;background:#f0f6ff}
+/* Profile status badges */
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.3px}
+.status-draft{background:#f3f4f6;color:#6b7280}
+.status-testing_required{background:#fef9c3;color:#92400e;border:1.5px solid #fbbf24}
+.status-test_in_progress{background:#dbeafe;color:#1e40af;border:1.5px solid #93c5fd}
+.status-review_pending{background:#ede9fe;color:#5b21b6;border:1.5px solid #c4b5fd}
+.status-approved{background:#dcfce7;color:#166534;border:1.5px solid #86efac}
+.status-rejected{background:#fee2e2;color:#991b1b;border:1.5px solid #fca5a5}
+/* Testing form steps */
+.test-step{display:none}.test-step.active{display:block}
+.step-indicator{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap}
+.step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid #e5e7eb;color:#9ca3af;cursor:pointer;transition:all .2s;flex-shrink:0}
+.step-dot.active{background:#0D3B66;color:white;border-color:#0D3B66}
+.step-dot.done{background:#f0fdf4;color:#16a34a;border-color:#86efac}
+.test-textarea{width:100%;border:2px solid #e5e7eb;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;resize:vertical;min-height:100px}
+.test-textarea:focus{border-color:#0D3B66}
+.test-input{width:100%;border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s}
+.test-input:focus{border-color:#0D3B66}
+/* Star rating */
+.stars-row{display:flex;gap:4px}
+.star{font-size:20px;cursor:pointer;transition:transform .15s;color:#d1d5db}
+.star.active{color:#f59e0b}
+.star:hover{transform:scale(1.2)}
+/* Reviews */
+.review-card{background:#f9fafb;border-radius:14px;padding:16px;border:1px solid #e5e7eb}
 .mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:39}
 .mob-overlay.open{display:block}
 .mob-topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:white;z-index:38;align-items:center;justify-content:space-between;padding:0 16px;box-shadow:0 1px 8px rgba(0,0,0,.08)}
@@ -138,6 +163,11 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <div class="nav-item" onclick="goScreen('t-subscription')" id="nav-t-subscription">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Подписка
+    </div>
+    <div class="nav-item" onclick="goScreen('t-testing')" id="nav-t-testing" style="position:relative">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      Публикация анкеты
+      <span id="nav-testing-badge" style="display:none;margin-left:auto;background:#f59e0b;color:white;border-radius:10px;padding:2px 6px;font-size:10px;font-weight:700">!</span>
     </div>
     <div class="nav-item" onclick="goScreen('t-profile')" id="nav-t-profile">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -511,13 +541,18 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 
   <!-- ==================== PROFILE ==================== -->
   <div class="screen" id="t-profile">
-    <div class="grid grid-cols-3 gap-6">
-      <div class="col-span-1">
+
+    <!-- Profile status banner -->
+    <div id="tp-status-banner" class="mb-5" style="display:none"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="lg:col-span-1">
         <div class="card text-center">
-          <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-black text-yale mx-auto mb-3" id="tp-avatar"></div>
+          <div class="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center text-2xl font-black text-yale mx-auto mb-3 overflow-hidden" id="tp-avatar"></div>
           <h3 class="font-black text-gray-900 text-xl" id="tp-name"></h3>
           <p class="text-sm text-gray-500 mt-1" id="tp-email"></p>
           <div id="tp-founder" class="founder-badge inline-block mt-2" style="display:none">👑 Основатель ФИБИ</div>
+          <div class="mt-2" id="tp-status-badge"></div>
           <div class="mt-4 space-y-2 text-left">
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Подписка</span>
@@ -531,11 +566,16 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
               <span class="text-gray-500">Проверено ч.2</span>
               <span class="font-medium" id="tp-checked">0</span>
             </div>
+            <div class="flex justify-between text-sm" id="tp-rating-row">
+              <span class="text-gray-500">Рейтинг</span>
+              <span class="font-medium" id="tp-rating-val">—</span>
+            </div>
           </div>
-          <button class="btn-o w-full mt-4 text-sm">Редактировать</button>
+          <button class="btn-o w-full mt-4 text-sm" onclick="editProfile()">Редактировать</button>
+          <button class="btn-p w-full mt-2 text-sm" onclick="goScreen('t-testing')" id="tp-go-testing-btn" style="display:none">Пройти тестирование →</button>
         </div>
       </div>
-      <div class="col-span-2 space-y-4">
+      <div class="lg:col-span-2 space-y-4">
         <div class="card">
           <h3 class="font-bold text-gray-900 mb-3">Купленные курсы</h3>
           <div id="tp-courses" class="space-y-2"></div>
@@ -549,6 +589,151 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
               <input type="checkbox" id="demo-check" onchange="toggleDemo()" class="accent-yale w-4 h-4" />
             </div>
           </div>
+        </div>
+        <!-- Ratings & Reviews section -->
+        <div class="card" id="tp-reviews-card">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-900">Моя репутация</h3>
+            <div id="tp-avg-stars" class="flex items-center gap-2"></div>
+          </div>
+          <div id="tp-reviews-list" class="space-y-3">
+            <p class="text-sm text-gray-400 text-center py-4">Отзывов пока нет. Они появятся после завершения занятий.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TESTING / PUBLICATION ==================== -->
+  <div class="screen" id="t-testing">
+    <div class="card mb-5" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);color:white;padding:20px 24px">
+      <div class="flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h2 class="font-black text-xl mb-1">Публикация анкеты репетитора</h2>
+          <p class="text-blue-200 text-sm">Заполните все разделы и пройдите тестирование, чтобы ваша анкета появилась в каталоге для родителей.</p>
+        </div>
+        <div id="testing-status-badge-top"></div>
+      </div>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="sdot-1" onclick="showTestStep(1)">1</div>
+      <div style="flex:1;height:2px;background:#e5e7eb;align-self:center;max-width:32px"></div>
+      <div class="step-dot" id="sdot-2" onclick="showTestStep(2)">2</div>
+      <div style="flex:1;height:2px;background:#e5e7eb;align-self:center;max-width:32px"></div>
+      <div class="step-dot" id="sdot-3" onclick="showTestStep(3)">3</div>
+      <div style="flex:1;height:2px;background:#e5e7eb;align-self:center;max-width:32px"></div>
+      <div class="step-dot" id="sdot-4" onclick="showTestStep(4)">4</div>
+      <div style="flex:1;height:2px;background:#e5e7eb;align-self:center;max-width:32px"></div>
+      <div class="step-dot" id="sdot-5" onclick="showTestStep(5)">5</div>
+    </div>
+
+    <!-- PART 1: Personal info -->
+    <div class="test-step active" id="test-step-1">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Часть 1 — Личная информация</h3>
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Имя <span style="color:#ef4444">*</span></label><input id="t1-name" class="test-input" placeholder="Ваше полное имя"></div>
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Город / регион <span style="color:#ef4444">*</span></label><input id="t1-city" class="test-input" placeholder="Москва"></div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Email <span style="color:#ef4444">*</span></label><input id="t1-email" type="email" class="test-input" placeholder="your@email.ru"></div>
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Телефон</label><input id="t1-phone" type="tel" class="test-input" placeholder="+7 (900) 000-00-00"></div>
+          </div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Формат работы <span style="color:#ef4444">*</span></label>
+            <div class="flex gap-3 flex-wrap mt-1">
+              <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="radio" name="t1-format" value="online" class="accent-yale"> Онлайн</label>
+              <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="radio" name="t1-format" value="offline" class="accent-yale"> Офлайн</label>
+              <label class="flex items-center gap-2 cursor-pointer text-sm"><input type="radio" name="t1-format" value="both" class="accent-yale" checked> Оба варианта</label>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Предметы преподавания <span style="color:#ef4444">*</span></label><input id="t1-subjects" class="test-input" placeholder="Математика, Физика"></div>
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Классы / уровни</label><input id="t1-grades" class="test-input" placeholder="5–11 классы, ОГЭ, ЕГЭ"></div>
+          </div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Стоимость занятия (₽/час)</label><input id="t1-price" type="number" class="test-input" placeholder="2000" style="max-width:200px"></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">О себе <span style="color:#ef4444">*</span></label><textarea id="t1-about" class="test-textarea" placeholder="Расскажите о себе, своём подходе к обучению..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Образование <span style="color:#ef4444">*</span></label><textarea id="t1-education" class="test-textarea" style="min-height:80px" placeholder="Учебное заведение, специальность, год окончания..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Дипломы, сертификаты</label><textarea id="t1-docs" class="test-textarea" style="min-height:80px" placeholder="Перечислите дипломы, сертификаты, курсы повышения квалификации..."></textarea></div>
+        </div>
+        <div class="flex justify-end mt-5"><button class="btn-p" onclick="saveTestPart1()">Сохранить и далее →</button></div>
+      </div>
+    </div>
+
+    <!-- PART 2: Work experience -->
+    <div class="test-step" id="test-step-2">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Часть 2 — Опыт работы</h3>
+        <div class="space-y-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Педагогический стаж (лет) <span style="color:#ef4444">*</span></label><input id="t2-exp" type="number" min="0" class="test-input" placeholder="5"></div>
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Опыт подготовки к экзаменам (лет)</label><input id="t2-exam-exp" type="number" min="0" class="test-input" placeholder="3"></div>
+          </div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">С какими классами работали?</label><input id="t2-grade-exp" class="test-input" placeholder="5–11 классы, дополнительно: вузовская программа"></div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Опыт индивидуальных занятий</label><textarea id="t2-individual" class="test-textarea" style="min-height:80px" placeholder="Расскажите об опыте индивидуальной работы..."></textarea></div>
+            <div><label class="text-xs font-bold text-gray-500 mb-1 block">Опыт групповых занятий</label><textarea id="t2-groups" class="test-textarea" style="min-height:80px" placeholder="Расскажите об опыте групповой работы..."></textarea></div>
+          </div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Средний результат учеников (если есть)</label><input id="t2-avg-result" class="test-input" placeholder="85% учеников сдают ОГЭ на 4 и 5"></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Кейсы успешной подготовки</label><textarea id="t2-cases" class="test-textarea" placeholder="Опишите 1–2 истории успеха ваших учеников..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Методика преподавания <span style="color:#ef4444">*</span></label><textarea id="t2-method" class="test-textarea" placeholder="Как вы строите обучение? Какие методы и приёмы используете?"></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Как строите первое занятие? <span style="color:#ef4444">*</span></label><textarea id="t2-first-lesson" class="test-textarea" placeholder="Опишите структуру первого знакомства с учеником..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Как отслеживаете прогресс?</label><textarea id="t2-progress" class="test-textarea" placeholder="Расскажите о своей системе контроля прогресса..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Как даёте домашние задания?</label><textarea id="t2-hw" class="test-textarea" placeholder="Ваш подход к домашним заданиям..."></textarea></div>
+          <div><label class="text-xs font-bold text-gray-500 mb-1 block">Взаимодействие с родителями</label><textarea id="t2-parents" class="test-textarea" placeholder="Как вы общаетесь с родителями учеников?"></textarea></div>
+        </div>
+        <div class="flex justify-between mt-5">
+          <button class="btn-o" onclick="showTestStep(1)">← Назад</button>
+          <button class="btn-p" onclick="saveTestPart2()">Сохранить и далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART 3: Professional questions -->
+    <div class="test-step" id="test-step-3">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-1">Часть 3 — Профессиональные вопросы</h3>
+        <p class="text-sm text-gray-500 mb-5">Отвечайте развёрнуто — администрация платформы оценивает ваш педагогический подход.</p>
+        <div class="space-y-5" id="prof-questions-container"></div>
+        <div class="flex justify-between mt-5">
+          <button class="btn-o" onclick="showTestStep(2)">← Назад</button>
+          <button class="btn-p" onclick="saveTestPart3()">Сохранить и далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART 4: Subject tasks -->
+    <div class="test-step" id="test-step-4">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-1">Часть 4 — Предметные задания</h3>
+        <p class="text-sm text-gray-500 mb-3">Предметные задания по вашим дисциплинам. Выберите предмет или задания подбираются автоматически по вашим предметам.</p>
+        <div class="flex flex-wrap gap-2 mb-5" id="subject-selector"></div>
+        <div class="space-y-5" id="subject-tasks-container"></div>
+        <div class="flex justify-between mt-5">
+          <button class="btn-o" onclick="showTestStep(3)">← Назад</button>
+          <button class="btn-p" onclick="saveTestPart4()">Сохранить и далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PART 5: Review & submit -->
+    <div class="test-step" id="test-step-5">
+      <div class="card">
+        <h3 class="font-bold text-gray-900 mb-4">Часть 5 — Проверка и отправка</h3>
+        <div id="review-summary" class="space-y-3 mb-5"></div>
+        <div class="rounded-2xl p-4 mb-5" style="background:#fef9c3;border:1px solid #f59e0b">
+          <p class="text-sm font-semibold text-amber-800 mb-1">Что будет дальше?</p>
+          <p class="text-xs text-amber-700">После отправки ваша анкета получит статус «На проверке». Администрация рассмотрит её в течение 1–3 рабочих дней и уведомит вас о результате. Только после одобрения анкета станет видна родителям.</p>
+        </div>
+        <div class="flex items-start gap-2 mb-5">
+          <input type="checkbox" id="agree-terms" class="accent-yale mt-0.5 w-4 h-4 flex-shrink-0">
+          <label for="agree-terms" class="text-sm text-gray-700 cursor-pointer">Я подтверждаю, что все предоставленные сведения достоверны, и соглашаюсь с правилами платформы ФИБИ.</label>
+        </div>
+        <div class="flex justify-between">
+          <button class="btn-o" onclick="showTestStep(4)">← Назад</button>
+          <button class="btn-p" onclick="submitTesting()" style="background:#059669">Отправить на проверку ✓</button>
         </div>
       </div>
     </div>
@@ -673,6 +858,8 @@ function init() {
   if (!T.user.courses) T.user.courses = [];
   if (!T.user.subscription) T.user.subscription = null;
   if (!T.user.checkedCount) T.user.checkedCount = 0;
+  if (!T.user.profileStatus) T.user.profileStatus = 'testing_required';
+  if (!T.user.testingData) T.user.testingData = {};
   T.checkedCount = T.user.checkedCount;
 
   renderSidebar();
@@ -705,9 +892,12 @@ function goScreen(id) {
   const titles = {
     't-overview':'Обзор','t-students':'Мои ученики','t-homework':'ДЗ и проверка',
     't-courses':'Учебные материалы','t-chart':'Рейтинг репетиторов',
-    't-chat':'Чат','t-subscription':'Подписка','t-profile':'Профиль'
+    't-chat':'Чат','t-subscription':'Подписка','t-profile':'Профиль',
+    't-testing':'Публикация анкеты'
   };
-  document.getElementById('page-title').textContent = titles[id]||'';
+  const ptEl = document.getElementById('page-title');
+  if (ptEl) ptEl.textContent = titles[id]||'';
+  if (id === 't-testing') renderTestingScreen();
 }
 
 // ===== DEMO =====
@@ -1243,6 +1433,58 @@ function saveTutorProfile() {
   renderTProfile();
 }
 
+// ===== PROFILE STATUS =====
+const STATUS_META = {
+  draft:            { label:'Черновик',          cls:'status-draft',            icon:'📝', desc:'Заполните профиль и пройдите тестирование.' },
+  testing_required: { label:'Требуется тестирование', cls:'status-testing_required', icon:'📋', desc:'Пройдите тестирование, чтобы опубликовать анкету.' },
+  test_in_progress: { label:'Тестирование начато', cls:'status-test_in_progress', icon:'⏳', desc:'Продолжите заполнение и отправьте на проверку.' },
+  review_pending:   { label:'На проверке',        cls:'status-review_pending',   icon:'🔍', desc:'Ваша анкета рассматривается. Обычно 1–3 рабочих дня.' },
+  approved:         { label:'Анкета опубликована', cls:'status-approved',         icon:'✅', desc:'Ваша анкета видна родителям в каталоге репетиторов.' },
+  rejected:         { label:'Отклонено',           cls:'status-rejected',         icon:'❌', desc:'Анкета отклонена. Прочитайте причину и исправьте данные.' },
+};
+
+function renderProfileStatus() {
+  const u = T.user;
+  const status = u.profileStatus || 'testing_required';
+  const meta = STATUS_META[status] || STATUS_META['testing_required'];
+
+  // Badge in profile card
+  const badgeEl = document.getElementById('tp-status-badge');
+  if (badgeEl) badgeEl.innerHTML = `<span class="status-badge ${meta.cls}">${meta.icon} ${meta.label}</span>`;
+
+  // Banner above profile
+  const banner = document.getElementById('tp-status-banner');
+  if (banner) {
+    const colorMap = {
+      draft:'#f3f4f6', testing_required:'#fef9c3', test_in_progress:'#dbeafe',
+      review_pending:'#ede9fe', approved:'#dcfce7', rejected:'#fee2e2'
+    };
+    const borderMap = {
+      draft:'#e5e7eb', testing_required:'#fbbf24', test_in_progress:'#93c5fd',
+      review_pending:'#c4b5fd', approved:'#86efac', rejected:'#fca5a5'
+    };
+    banner.style.display = '';
+    banner.innerHTML = `<div style="background:${colorMap[status]};border:1.5px solid ${borderMap[status]};border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div class="flex items-center gap-3">
+        <span style="font-size:20px">${meta.icon}</span>
+        <div>
+          <p style="font-weight:700;font-size:14px;color:#1f2937;margin:0">${meta.label}</p>
+          <p style="font-size:12px;color:#6b7280;margin:0">${meta.desc}${status==='rejected'&&u.testingData?.rejectionReason?' Причина: '+u.testingData.rejectionReason:''}</p>
+        </div>
+      </div>
+      ${(status==='testing_required'||status==='test_in_progress'||status==='rejected')?'<button class="btn-p text-sm py-2 px-4" onclick="goScreen(\'t-testing\')">Перейти к тестированию →</button>':''}
+    </div>`;
+  }
+
+  // Show/hide "go to testing" button
+  const btn = document.getElementById('tp-go-testing-btn');
+  if (btn) btn.style.display = ['testing_required','test_in_progress','rejected'].includes(status) ? '' : 'none';
+
+  // Nav badge
+  const navBadge = document.getElementById('nav-testing-badge');
+  if (navBadge) navBadge.style.display = ['testing_required','test_in_progress'].includes(status) ? '' : 'none';
+}
+
 function renderTProfile() {
   const u = T.user;
   const initials = ((u.name||'T')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
@@ -1275,6 +1517,315 @@ function renderTProfile() {
     const list = T.demoMode ? ['oge','ege-base','ege-prof'] : courses;
     tc.innerHTML = list.map(c=>`<div class="flex items-center gap-2 py-1.5"><span>${courseNames[c]||c}</span><span class="tag bg-green-100 text-green-700 ml-auto">Куплен</span></div>`).join('');
   }
+
+  renderProfileStatus();
+  renderTutorReviews();
+}
+
+// ===== RATINGS & REVIEWS =====
+const DEMO_REVIEWS = [
+  { id:'r1', parentName:'Мария П.', rating:5, text:'Отличный репетитор! Ребёнок сдал ОГЭ на 5. Объясняет понятно, терпеливо, с хорошим настроением.', date:'2024-05-10', subject:'Математика', criteria:{clarity:5,punctuality:5,result:5,comfort:5} },
+  { id:'r2', parentName:'Алексей В.', rating:4, text:'Хороший специалист, всегда готовится к занятиям. Улучшились оценки в школе.', date:'2024-04-22', subject:'Математика', criteria:{clarity:4,punctuality:5,result:4,comfort:5} },
+  { id:'r3', parentName:'Наталья С.', rating:5, text:'Профессиональный подход. Дочь стала лучше разбираться в теме и не боится контрольных.', date:'2024-03-15', subject:'Математика', criteria:{clarity:5,punctuality:4,result:5,comfort:5} },
+];
+
+function renderTutorReviews() {
+  const u = T.user;
+  const reviews = u.reviews || (T.demoMode ? DEMO_REVIEWS : []);
+  const el = document.getElementById('tp-reviews-list');
+  const avgEl = document.getElementById('tp-avg-stars');
+  const ratingRow = document.getElementById('tp-rating-row');
+  const ratingVal = document.getElementById('tp-rating-val');
+  if (!el) return;
+
+  if (!reviews.length) {
+    el.innerHTML = '<p class="text-sm text-gray-400 text-center py-4">Отзывов пока нет. Они появятся после завершения занятий.</p>';
+    if (avgEl) avgEl.innerHTML = '';
+    return;
+  }
+
+  const avg = reviews.reduce((s,r)=>s+r.rating,0)/reviews.length;
+  const avgStr = avg.toFixed(1);
+  if (avgEl) avgEl.innerHTML = `<div class="flex items-center gap-1.5"><span class="font-black text-lg" style="color:#f59e0b">${avgStr}</span><span style="color:#f59e0b">${'★'.repeat(Math.round(avg))}${'☆'.repeat(5-Math.round(avg))}</span><span class="text-xs text-gray-500">${reviews.length} отз.</span></div>`;
+  if (ratingRow) ratingRow.style.display = 'flex';
+  if (ratingVal) ratingVal.innerHTML = `<span style="color:#f59e0b">★</span> ${avgStr} <span class="text-gray-400">(${reviews.length})</span>`;
+
+  el.innerHTML = reviews.map(r => {
+    const stars = '★'.repeat(r.rating) + '☆'.repeat(5-r.rating);
+    const date = new Date(r.date).toLocaleDateString('ru', {day:'numeric',month:'long',year:'numeric'});
+    const criteriaHTML = r.criteria ? `<div class="flex flex-wrap gap-2 mt-2">
+      <span class="text-xs text-gray-500">Понятность: ${r.criteria.clarity}/5</span>
+      <span class="text-xs text-gray-500">Пунктуальность: ${r.criteria.punctuality}/5</span>
+      <span class="text-xs text-gray-500">Результат: ${r.criteria.result}/5</span>
+      <span class="text-xs text-gray-500">Комфорт: ${r.criteria.comfort}/5</span>
+    </div>` : '';
+    return `<div class="review-card">
+      <div class="flex items-start justify-between gap-2 mb-2">
+        <div class="flex items-center gap-2">
+          <div style="width:32px;height:32px;border-radius:50%;background:#0D3B66;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${r.parentName[0]}</div>
+          <div><p class="font-semibold text-sm text-gray-900">${r.parentName}</p><p class="text-xs text-gray-400">${date} · ${r.subject||'Занятие'}</p></div>
+        </div>
+        <span style="color:#f59e0b;font-size:14px;white-space:nowrap">${stars}</span>
+      </div>
+      <p class="text-sm text-gray-700">${r.text}</p>
+      ${criteriaHTML}
+    </div>`;
+  }).join('');
+}
+
+// ===== TESTING LOGIC =====
+const PROF_QUESTIONS = [
+  'Что вы сделаете, если ученик регулярно не выполняет домашнее задание?',
+  'Как вы объясните родителю, что ученику нужно больше времени для результата?',
+  'Как вы определяете стартовый уровень ученика?',
+  'Что вы делаете, если ученик боится экзамена?',
+  'Как вы адаптируете занятие под слабого ученика?',
+  'Как вы работаете с сильным учеником, которому нужны сложные задания?',
+  'Как вы фиксируете прогресс ученика?',
+  'Что для вас является хорошим результатом работы с учеником?',
+];
+
+const SUBJECT_TASKS = {
+  'Математика': [
+    'Решите уравнение: 3x − 7 = 14.',
+    'Упростите выражение: 2(a + 3) − 4a.',
+    'Решите квадратное уравнение: x² − 5x + 6 = 0.',
+    'Найдите значение выражения: 3/4 + 5/6.',
+    'Объясните ученику, как решать задачу на проценты.',
+    'Составьте краткое объяснение темы «линейная функция» для ученика 8 класса.',
+    'Решите задачу: поезд прошёл 240 км за 3 часа. Найдите среднюю скорость.',
+    'Объясните, как подготовить ученика к заданию с параметром или сложной текстовой задачей.',
+  ],
+  'Русский язык': [
+    'Объясните разницу между причастием и деепричастием.',
+    'Расставьте знаки препинания в предложении и объясните правило: «Вечерело небо потемнело и первые звёзды появились на горизонте».',
+    'Найдите грамматическую основу предложения: «В лесу пели птицы, шумел ветер в кронах деревьев».',
+    'Объясните ученику, как писать сочинение-рассуждение.',
+    'Приведите пример работы над ошибками после диктанта.',
+    'Составьте краткий план занятия по теме «Н и НН в суффиксах».',
+    'Объясните, как подготовить ученика к изложению.',
+    'Разберите типичную ошибку ученика и предложите способ её исправления.',
+  ],
+  'Английский язык': [
+    'Объясните разницу между Present Perfect и Past Simple.',
+    'Составьте пример задания на аудирование для уровня B1.',
+    'Исправьте ошибки в предложениях: «She have been to London yesterday. I am waiting for you since 2 hours.»',
+    'Объясните ученику правило употребления артиклей на конкретном примере.',
+    'Составьте план занятия для ученика уровня A2.',
+    'Переведите короткий текст и объясните выбор времён.',
+    'Опишите, как развивать разговорную речь у ученика с уровнем A1–A2.',
+    'Предложите домашнее задание для закрепления новой лексики.',
+  ],
+};
+const DEFAULT_TASKS = [
+  'Составьте план первого занятия по вашему предмету для нового ученика.',
+  'Как вы объясняете сложную тему, если ученик не понимает с первого раза?',
+  'Приведите пример успешного домашнего задания по вашему предмету.',
+  'Как вы диагностируете пробелы в знаниях ученика?',
+  'Составьте краткое объяснение одной из ключевых тем вашего предмета.',
+  'Как вы готовите ученика к контрольной работе или экзамену?',
+  'Как вы мотивируете ученика, который не хочет заниматься?',
+  'Опишите свой подход к работе с ошибками ученика.',
+];
+
+let _selectedSubject = null;
+
+function renderTestingScreen() {
+  const u = T.user;
+  const status = u.profileStatus || 'testing_required';
+  const meta = STATUS_META[status] || STATUS_META['testing_required'];
+
+  // Top badge
+  const topBadge = document.getElementById('testing-status-badge-top');
+  if (topBadge) topBadge.innerHTML = `<span class="status-badge ${meta.cls}">${meta.icon} ${meta.label}</span>`;
+
+  // If submitted or approved - show readonly state
+  if (status === 'review_pending' || status === 'approved') {
+    renderTestingReadonly();
+    return;
+  }
+
+  // Pre-fill from saved testingData
+  const td = u.testingData || {};
+  const p1 = td.part1 || {};
+  if (p1.name) document.getElementById('t1-name').value = p1.name;
+  if (p1.city) document.getElementById('t1-city').value = p1.city;
+  if (p1.email) document.getElementById('t1-email').value = p1.email;
+  if (p1.phone) document.getElementById('t1-phone').value = p1.phone;
+  if (p1.format) { const r = document.querySelector(`input[name="t1-format"][value="${p1.format}"]`); if(r) r.checked=true; }
+  if (p1.subjects) document.getElementById('t1-subjects').value = p1.subjects;
+  if (p1.grades) document.getElementById('t1-grades').value = p1.grades;
+  if (p1.price) document.getElementById('t1-price').value = p1.price;
+  if (p1.about) document.getElementById('t1-about').value = p1.about;
+  if (p1.education) document.getElementById('t1-education').value = p1.education;
+  if (p1.docs) document.getElementById('t1-docs').value = p1.docs;
+
+  const p2 = td.part2 || {};
+  ['exp','exam-exp','grade-exp','individual','groups','avg-result','cases','method','first-lesson','progress','hw','parents'].forEach(k => {
+    const el = document.getElementById('t2-'+k);
+    if (el && p2[k]) el.value = p2[k];
+  });
+
+  // Render professional questions
+  const p3 = td.part3 || {};
+  const cont3 = document.getElementById('prof-questions-container');
+  if (cont3) cont3.innerHTML = PROF_QUESTIONS.map((q,i) => `
+    <div>
+      <label class="text-xs font-bold text-gray-600 mb-2 block"><span style="background:#0D3B66;color:white;border-radius:6px;padding:1px 7px;font-size:11px;margin-right:6px">${i+1}</span>${q}</label>
+      <textarea id="p3-q${i}" class="test-textarea" placeholder="Ваш развёрнутый ответ...">${p3[i]||''}</textarea>
+    </div>`).join('');
+
+  // Render subject selector
+  const subjects = (p1.subjects || '').split(',').map(s=>s.trim()).filter(Boolean);
+  const allSubjects = [...new Set([...subjects, ...Object.keys(SUBJECT_TASKS)])];
+  _selectedSubject = _selectedSubject || subjects[0] || Object.keys(SUBJECT_TASKS)[0];
+  renderSubjectTasks(td.part4);
+  const selEl = document.getElementById('subject-selector');
+  if (selEl) selEl.innerHTML = allSubjects.map(s => `<button class="topic-pill ${_selectedSubject===s?'active':''}" onclick="selectSubject('${s}',this)">${s}</button>`).join('');
+}
+
+function selectSubject(subj, btn) {
+  _selectedSubject = subj;
+  document.querySelectorAll('#subject-selector .topic-pill').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  renderSubjectTasks();
+}
+
+function renderSubjectTasks(savedAnswers) {
+  const cont = document.getElementById('subject-tasks-container');
+  if (!cont) return;
+  const tasks = SUBJECT_TASKS[_selectedSubject] || DEFAULT_TASKS;
+  const p4 = savedAnswers || T.user.testingData?.part4 || {};
+  const savedSubj = p4.subject;
+  const answers = (savedSubj === _selectedSubject) ? (p4.answers||[]) : [];
+  cont.innerHTML = tasks.map((q,i) => `
+    <div>
+      <label class="text-xs font-bold text-gray-600 mb-2 block"><span style="background:#0D3B66;color:white;border-radius:6px;padding:1px 7px;font-size:11px;margin-right:6px">${i+1}</span>${q}</label>
+      <textarea id="p4-q${i}" class="test-textarea" placeholder="Ваш ответ...">${answers[i]||''}</textarea>
+    </div>`).join('');
+}
+
+function renderTestingReadonly() {
+  const u = T.user;
+  const status = u.profileStatus;
+  // Show a read-only summary of the submitted answers
+  const steps = document.querySelectorAll('.test-step');
+  steps.forEach(s=>{s.classList.remove('active');});
+  // Show a notice instead
+  const firstStep = document.getElementById('test-step-1');
+  if (firstStep) {
+    firstStep.classList.add('active');
+    firstStep.innerHTML = `<div class="card text-center py-10">
+      <div style="font-size:48px;margin-bottom:12px">${STATUS_META[status]?.icon||'📋'}</div>
+      <h3 class="font-black text-xl text-gray-900 mb-2">${STATUS_META[status]?.label||''}</h3>
+      <p class="text-gray-500 text-sm max-w-md mx-auto mb-6">${STATUS_META[status]?.desc||''}</p>
+      ${status==='approved'?'<p class="text-green-700 font-semibold text-sm">Ваша анкета опубликована и видна родителям.</p>':''}
+    </div>`;
+  }
+}
+
+function showTestStep(n) {
+  document.querySelectorAll('.test-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('test-step-'+n)?.classList.add('active');
+  [1,2,3,4,5].forEach(i => {
+    const dot = document.getElementById('sdot-'+i);
+    if (!dot) return;
+    dot.classList.remove('active','done');
+    if (i < n) dot.classList.add('done');
+    else if (i === n) dot.classList.add('active');
+  });
+}
+
+function saveTestPart1() {
+  const u = T.user;
+  if (!u.testingData) u.testingData = {};
+  u.testingData.part1 = {
+    name: document.getElementById('t1-name').value.trim(),
+    city: document.getElementById('t1-city').value.trim(),
+    email: document.getElementById('t1-email').value.trim(),
+    phone: document.getElementById('t1-phone').value.trim(),
+    format: document.querySelector('input[name="t1-format"]:checked')?.value || 'both',
+    subjects: document.getElementById('t1-subjects').value.trim(),
+    grades: document.getElementById('t1-grades').value.trim(),
+    price: document.getElementById('t1-price').value.trim(),
+    about: document.getElementById('t1-about').value.trim(),
+    education: document.getElementById('t1-education').value.trim(),
+    docs: document.getElementById('t1-docs').value.trim(),
+  };
+  if (u.profileStatus === 'testing_required') u.profileStatus = 'test_in_progress';
+  saveUser(); renderProfileStatus(); showTestStep(2);
+}
+
+function saveTestPart2() {
+  const u = T.user;
+  if (!u.testingData) u.testingData = {};
+  u.testingData.part2 = {
+    exp: document.getElementById('t2-exp').value,
+    'exam-exp': document.getElementById('t2-exam-exp').value,
+    'grade-exp': document.getElementById('t2-grade-exp').value,
+    individual: document.getElementById('t2-individual').value.trim(),
+    groups: document.getElementById('t2-groups').value.trim(),
+    'avg-result': document.getElementById('t2-avg-result').value.trim(),
+    cases: document.getElementById('t2-cases').value.trim(),
+    method: document.getElementById('t2-method').value.trim(),
+    'first-lesson': document.getElementById('t2-first-lesson').value.trim(),
+    progress: document.getElementById('t2-progress').value.trim(),
+    hw: document.getElementById('t2-hw').value.trim(),
+    parents: document.getElementById('t2-parents').value.trim(),
+  };
+  saveUser(); showTestStep(3);
+}
+
+function saveTestPart3() {
+  const u = T.user;
+  if (!u.testingData) u.testingData = {};
+  const answers = {};
+  PROF_QUESTIONS.forEach((_,i) => { answers[i] = document.getElementById('p3-q'+i)?.value.trim()||''; });
+  u.testingData.part3 = answers;
+  saveUser(); showTestStep(4);
+}
+
+function saveTestPart4() {
+  const u = T.user;
+  if (!u.testingData) u.testingData = {};
+  const tasks = SUBJECT_TASKS[_selectedSubject] || DEFAULT_TASKS;
+  const answers = tasks.map((_,i) => document.getElementById('p4-q'+i)?.value.trim()||'');
+  u.testingData.part4 = { subject: _selectedSubject, answers };
+  saveUser(); showTestStep(5);
+  renderReviewSummary();
+}
+
+function renderReviewSummary() {
+  const td = T.user.testingData || {};
+  const p1 = td.part1 || {};
+  const p2 = td.part2 || {};
+  const el = document.getElementById('review-summary');
+  if (!el) return;
+  const check = (v) => v ? `<span style="color:#059669">✓ Заполнено</span>` : `<span style="color:#dc2626">✗ Не заполнено</span>`;
+  el.innerHTML = `
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between"><span>Часть 1: Личная информация</span>${check(p1.name && p1.email)}</div>
+      <div class="flex justify-between"><span>Часть 2: Опыт работы</span>${check(p2.exp && p2.method)}</div>
+      <div class="flex justify-between"><span>Часть 3: Профессиональные вопросы</span>${check(td.part3 && td.part3[0])}</div>
+      <div class="flex justify-between"><span>Часть 4: Предметные задания (${td.part4?.subject||'—'})</span>${check(td.part4?.answers?.some(a=>a))}</div>
+    </div>`;
+}
+
+function submitTesting() {
+  if (!document.getElementById('agree-terms')?.checked) {
+    alert('Пожалуйста, подтвердите согласие с правилами.');
+    return;
+  }
+  const u = T.user;
+  u.profileStatus = 'review_pending';
+  if (!u.testingData) u.testingData = {};
+  u.testingData.submittedAt = new Date().toISOString();
+  // TODO: отправить данные на backend для проверки администратором
+  saveUser();
+  renderProfileStatus();
+  renderTestingReadonly();
+  alert('Анкета отправлена на проверку! Мы сообщим вам о результате в течение 1–3 рабочих дней.');
+  goScreen('t-profile');
 }
 
 // ===== UTILS =====

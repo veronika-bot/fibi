@@ -482,6 +482,10 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
       streak: 0, solved: 0, accuracy: 0, xp: 0,
       childrenIds: [], parentIds: [],
       emailVerified: false, // TODO: set to true after real email verification
+      // Tutor-specific fields
+      profileStatus: selectedRole === 'tutor' ? 'testing_required' : undefined,
+      testingData: selectedRole === 'tutor' ? {} : undefined,
+      reviews: selectedRole === 'tutor' ? [] : undefined,
     };
     existing.push(user);
     localStorage.setItem('fibi_users', JSON.stringify(existing));
