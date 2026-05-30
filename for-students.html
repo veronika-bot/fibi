@@ -89,7 +89,7 @@ html{scroll-behavior:smooth}
 
 <!-- HERO -->
 <section class="fs-hero relative flex items-center overflow-hidden" style="min-height:100svh;padding-top:80px;background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
-  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;filter:blur(1px)"></div>
+  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;pointer-events:none"></div>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full py-16">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
       <div class="relative z-10">
@@ -113,7 +113,7 @@ html{scroll-behavior:smooth}
       </div>
 
       <!-- Right: checklist mockup -->
-      <div class="flex justify-center lg:justify-end">
+      <div class="flex justify-center lg:justify-end" style="position:relative;z-index:10">
         <div class="w-full max-w-sm" style="background:white;border-radius:28px;box-shadow:0 20px 60px rgba(13,59,102,.14);border:1px solid rgba(13,59,102,.07);overflow:hidden">
           <div style="padding:24px 24px 0">
             <div class="flex items-center gap-3 mb-5">
