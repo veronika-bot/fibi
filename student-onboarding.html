@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фиби — Добро пожаловать!</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>tailwind.config={theme:{extend:{colors:{yale:'#0D3B66','yale-d':'#0a2f50',lemon:'#FAF0CA'}}}}</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(-30px)}to{opacity:1;transform:translateX(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100px) rotate(720deg);opacity:0}}
+@keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+.float{animation:float 5s ease-in-out infinite}
+.fade-up{animation:fadeUp .5s ease forwards}
+.slide-right{animation:slideRight .4s ease forwards}
+.slide-left{animation:slideLeft .4s ease forwards}
+.scale-in{animation:scaleIn .4s cubic-bezier(.34,1.56,.64,1) forwards}
+.pop{animation:pop .3s ease}
+
+.step{display:none;opacity:0}
+.step.active{display:flex;opacity:1;animation:fadeUp .45s ease forwards}
+
+.pill{border:2px solid #e5e7eb;border-radius:12px;padding:10px 18px;font-size:14px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .2s;background:white;user-select:none;display:inline-flex;align-items:center;gap:6px}
+.pill:hover{border-color:#0D3B66;color:#0D3B66}
+.pill.selected{border-color:#0D3B66;background:#0D3B66;color:white}
+
+.exam-card{border:2px solid #e5e7eb;border-radius:20px;padding:24px;cursor:pointer;transition:all .25s;background:white;text-align:center}
+.exam-card:hover{border-color:#0D3B66;transform:translateY(-4px);box-shadow:0 12px 32px rgba(13,59,102,.12)}
+.exam-card.selected{border-color:#0D3B66;background:#0D3B66;color:white;transform:translateY(-4px);box-shadow:0 12px 32px rgba(13,59,102,.3)}
+.exam-card.selected p,.exam-card.selected span{color:rgba(255,255,255,.75)!important}
+
+.goal-btn{width:48px;height:48px;border-radius:12px;border:2px solid #e5e7eb;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;background:white;color:#374151}
+.goal-btn:hover{border-color:#0D3B66;color:#0D3B66}
+.goal-btn.active{border-color:#0D3B66;background:#0D3B66;color:white}
+
+.hobby-chip{border:1.5px solid #e5e7eb;border-radius:100px;padding:6px 14px;font-size:13px;font-weight:600;color:#6b7280;cursor:pointer;transition:all .2s;background:white}
+.hobby-chip:hover{border-color:#0D3B66;color:#0D3B66}
+.hobby-chip.selected{border-color:#0D3B66;background:rgba(13,59,102,.08);color:#0D3B66}
+
+.progress-step{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transition:all .3s;border:2px solid #e5e7eb;color:#9ca3af;background:white}
+.progress-step.done{background:#0D3B66;border-color:#0D3B66;color:white}
+.progress-step.current{border-color:#0D3B66;color:#0D3B66;background:white;box-shadow:0 0 0 4px rgba(13,59,102,.15)}
+
+.field input,.field select{border:1.5px solid #e5e7eb;border-radius:12px;padding:12px 16px;font-size:14px;color:#111827;background:white;transition:all .2s;outline:none;width:100%;font-family:'Plus Jakarta Sans',sans-serif}
+.field input:focus,.field select:focus{border-color:#0D3B66;box-shadow:0 0 0 3px rgba(13,59,102,.08)}
+
+.btn-p{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#0D3B66;color:white;border-radius:14px;padding:14px 28px;font-weight:700;font-size:15px;transition:all .25s;box-shadow:0 4px 16px rgba(13,59,102,.28);border:none;cursor:pointer;width:100%}
+.btn-p:hover{background:#0a2f50;transform:translateY(-1px);box-shadow:0 8px 24px rgba(13,59,102,.38)}
+.btn-o{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:#9ca3af;border-radius:14px;padding:12px 28px;font-weight:600;font-size:14px;transition:all .2s;border:none;cursor:pointer;width:100%}
+.btn-o:hover{color:#0D3B66}
+
+.confetti-piece{position:fixed;width:10px;height:10px;border-radius:2px;animation:confetti 1s ease forwards;pointer-events:none}
+</style>
+</head>
+<body style="background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 50%,#ffffff 100%);min-height:100vh">
+
+<div class="min-h-screen flex items-center justify-center px-4 py-8">
+<div class="w-full max-w-lg">
+
+  <!-- Logo -->
+  <div class="flex items-center justify-center gap-2.5 mb-8">
+    <a href="index.html"><img src="Иконки.png" alt="Фиби" class="w-10 h-10" style="border-radius:12px;object-fit:cover;background:#f4f6fb"></a>
+    <span class="font-bold text-xl" style="color:#0D3B66">ФИБИ</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="flex items-center justify-center gap-2 mb-8" id="step-indicators">
+    <div class="progress-step done" id="pi-1">1</div>
+    <div class="w-8 h-0.5 rounded-full" id="line-1" style="background:#e5e7eb"></div>
+    <div class="progress-step current" id="pi-2">2</div>
+    <div class="w-8 h-0.5 rounded-full" id="line-2" style="background:#e5e7eb"></div>
+    <div class="progress-step" id="pi-3">3</div>
+    <div class="w-8 h-0.5 rounded-full" id="line-3" style="background:#e5e7eb"></div>
+    <div class="progress-step" id="pi-4">4</div>
+    <div class="w-8 h-0.5 rounded-full" id="line-4" style="background:#e5e7eb"></div>
+    <div class="progress-step" id="pi-5">5</div>
+    <div class="w-8 h-0.5 rounded-full" id="line-5" style="background:#e5e7eb"></div>
+    <div class="progress-step" id="pi-6">6</div>
+  </div>
+
+  <!-- Card wrapper -->
+  <div class="bg-white rounded-3xl shadow-xl p-8" style="border:1px solid rgba(13,59,102,.07)">
+
+    <!-- STEP 1: Welcome (done on register, skip to step 2 on load) -->
+
+    <!-- STEP 2: Location + School -->
+    <div id="step-2" class="step active flex-col gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#FAF0CA">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+        </div>
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Откуда ты?</h2>
+        <p class="text-gray-500 text-sm">Это помогает нам лучше тебя понять</p>
+      </div>
+      <div class="space-y-4">
+        <div class="field" style="position:relative">
+          <label class="text-sm font-semibold text-gray-700 mb-1.5 block">Город</label>
+          <div style="position:relative">
+            <input id="city-input" type="text" placeholder="Начни вводить город..." autocomplete="off"
+              oninput="citySuggest(this.value)"
+              onfocus="citySuggest(this.value)"
+              onblur="setTimeout(()=>hideCitySuggestions(),160)"
+              style="padding-right:38px">
+            <svg style="position:absolute;right:13px;top:50%;transform:translateY(-50%);pointer-events:none;opacity:.4;transition:transform .2s" id="city-chevron"
+              width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 9l6 6 6-6"/>
+            </svg>
+          </div>
+          <div id="city-suggestions" style="display:none;position:absolute;top:calc(100% - 4px);left:0;right:0;background:white;border:1.5px solid #0D3B66;border-radius:14px;margin-top:4px;z-index:100;box-shadow:0 8px 32px rgba(13,59,102,.13);max-height:220px;overflow-y:auto"></div>
+        </div>
+        <div class="field" style="position:relative">
+          <label class="text-sm font-semibold text-gray-700 mb-1.5 block">Учебное заведение <span class="text-gray-400 font-normal">(необязательно)</span></label>
+          <input id="school-input" type="text" placeholder="Школа №42, лицей..." autocomplete="off" oninput="schoolSuggest(this.value)" onblur="setTimeout(()=>hideSuggestions(),150)">
+          <div id="school-suggestions" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1.5px solid #0D3B66;border-radius:12px;margin-top:4px;z-index:50;box-shadow:0 8px 24px rgba(0,0,0,0.1);max-height:200px;overflow-y:auto"></div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <button class="btn-p" onclick="nextStep(3)">Продолжить</button>
+        <button class="btn-o" onclick="nextStep(3)">Пропустить</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Age + Gender -->
+    <div id="step-3" class="step flex-col gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#FAF0CA">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+        </div>
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Расскажи о себе</h2>
+        <p class="text-gray-500 text-sm">Только ты и мы — никому не покажем</p>
+      </div>
+      <div class="space-y-5">
+        <div class="field">
+          <label class="text-sm font-semibold text-gray-700 mb-1.5 block">Возраст</label>
+          <select id="age-input">
+            <option value="">Выбери возраст</option>
+            <option value="13">13 лет</option>
+            <option value="14">14 лет</option>
+            <option value="15">15 лет</option>
+            <option value="16">16 лет</option>
+            <option value="17">17 лет</option>
+            <option value="18">18 лет</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-sm font-semibold text-gray-700 mb-3 block">Пол</label>
+          <div class="flex gap-3" id="gender-group">
+            <div class="pill flex-1 justify-center" data-val="female" onclick="selectPill(this,'gender-group')">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="5"/><path d="M12 13v8M9 18h6"/></svg>
+              Женский
+            </div>
+            <div class="pill flex-1 justify-center" data-val="male" onclick="selectPill(this,'gender-group')">
+              <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="10" cy="14" r="5"/><path d="M19 5l-5 5M19 5h-5M19 5v5"/></svg>
+              Мужской
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <button class="btn-p" onclick="nextStep(4)">Продолжить</button>
+        <button class="btn-o" onclick="nextStep(4)">Пропустить</button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Hobbies + Extra subjects -->
+    <div id="step-4" class="step flex-col gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#FAF0CA">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+        </div>
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Твои интересы</h2>
+        <p class="text-gray-500 text-sm">Помогает сделать платформу ближе к тебе</p>
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-700 mb-3 block">Хобби и увлечения</label>
+        <div class="flex flex-wrap gap-2" id="hobbies-group">
+          <div class="hobby-chip" onclick="toggleHobby(this)">Музыка</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Спорт</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Рисование</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Программирование</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Чтение</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Кино</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Игры</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Танцы</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Фотография</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Путешествия</div>
+        </div>
+      </div>
+      <div>
+        <label class="text-sm font-semibold text-gray-700 mb-3 block">Дополнительные предметы <span class="text-gray-400 font-normal">(необязательно)</span></label>
+        <div class="flex flex-wrap gap-2" id="subjects-group">
+          <div class="hobby-chip" onclick="toggleHobby(this)">Физика</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Химия</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Информатика</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Английский</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">История</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Биология</div>
+          <div class="hobby-chip" onclick="toggleHobby(this)">Обществознание</div>
+        </div>
+      </div>
+      <div class="space-y-2">
+        <button class="btn-p" onclick="nextStep(5)">Продолжить</button>
+        <button class="btn-o" onclick="nextStep(5)">Пропустить</button>
+      </div>
+    </div>
+
+    <!-- STEP 5: Exam selection -->
+    <div id="step-5" class="step flex-col gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#FAF0CA">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
+        </div>
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Какой экзамен?</h2>
+        <p class="text-gray-500 text-sm">Под него адаптируется весь твой план</p>
+      </div>
+      <div class="space-y-3" id="exam-group">
+        <div class="exam-card" data-val="ogu" onclick="selectExam(this)">
+          <div class="mb-3 flex justify-center"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/><path d="M8 7h8M8 11h6"/></svg></div>
+          <div class="font-bold text-gray-900 text-lg mb-1">ОГЭ</div>
+          <p class="text-sm text-gray-500">9 класс · Основной государственный экзамен</p>
+          <div class="mt-3 flex flex-wrap gap-1 justify-center">
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">Алгебра</span>
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">Геометрия</span>
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">19 заданий</span>
+          </div>
+        </div>
+        <div class="exam-card" data-val="ege_base" onclick="selectExam(this)">
+          <div class="mb-3 flex justify-center"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/><path d="M3 20h18"/></svg></div>
+          <div class="font-bold text-gray-900 text-lg mb-1">ЕГЭ База</div>
+          <p class="text-sm text-gray-500">11 класс · Базовый уровень</p>
+          <div class="mt-3 flex flex-wrap gap-1 justify-center">
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">20 заданий</span>
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">до 5 баллов</span>
+          </div>
+        </div>
+        <div class="exam-card" data-val="ege_prof" onclick="selectExam(this)">
+          <div class="mb-3 flex justify-center"><svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <div class="font-bold text-gray-900 text-lg mb-1">ЕГЭ Профиль</div>
+          <p class="text-sm text-gray-500">11 класс · Профильный уровень</p>
+          <div class="mt-3 flex flex-wrap gap-1 justify-center">
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">19 заданий</span>
+            <span class="text-xs px-2 py-0.5 rounded-full" style="background:#FAF0CA;color:#0D3B66">до 100 баллов</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-p" id="exam-next-btn" onclick="nextStep(6)" disabled style="opacity:.5;cursor:not-allowed">Продолжить</button>
+    </div>
+
+    <!-- STEP 6: Daily goal -->
+    <div id="step-6" class="step flex-col gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:#FAF0CA">
+          <svg class="w-8 h-8" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+        </div>
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Сколько задач в день?</h2>
+        <p class="text-sm text-gray-500">Это твоя ежедневная норма. Можно изменить в любой момент.</p>
+      </div>
+
+      <!-- Goal selector -->
+      <div class="rounded-2xl p-6 text-center" style="background:#f8fafc">
+        <div class="text-6xl font-extrabold mb-2" id="goal-display" style="color:#0D3B66">5</div>
+        <div class="text-gray-500 text-sm mb-5">задач в день</div>
+        <div class="flex flex-wrap gap-2 justify-center" id="goal-group">
+          <button class="goal-btn" onclick="setGoal(1)">1</button>
+          <button class="goal-btn" onclick="setGoal(2)">2</button>
+          <button class="goal-btn" onclick="setGoal(3)">3</button>
+          <button class="goal-btn active" onclick="setGoal(5)">5</button>
+          <button class="goal-btn" onclick="setGoal(7)">7</button>
+          <button class="goal-btn" onclick="setGoal(10)">10</button>
+          <button class="goal-btn" onclick="setGoal(15)">15</button>
+        </div>
+      </div>
+
+      <div class="rounded-xl p-4 flex items-start gap-3" style="background:#FAF0CA">
+        <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        <p class="text-sm" style="color:#0D3B66"><strong>Совет:</strong> 5–7 задач — оптимальный ритм для регулярной подготовки без выгорания.</p>
+      </div>
+
+      <button class="btn-p" onclick="finishOnboarding()">Начать учиться!</button>
+    </div>
+
+    <!-- STEP 7: Success -->
+    <div id="step-7" class="step flex-col gap-6 text-center">
+      <div>
+        <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 scale-in" style="background:#dcfce7">
+          <svg class="w-10 h-10" style="color:#16a34a" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+        </div>
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-2" id="success-name">Готово!</h2>
+        <p class="text-gray-500">Твой профиль создан. Добро пожаловать в ФИБИ!</p>
+      </div>
+
+      <!-- Summary -->
+      <div class="rounded-2xl p-5 text-left space-y-3" style="background:#f8fafc">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+            <svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
+          </div>
+          <div><div class="text-xs text-gray-500">Экзамен</div><div class="font-semibold text-gray-800" id="summary-exam">ОГЭ</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+            <svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <div><div class="text-xs text-gray-500">Ежедневная цель</div><div class="font-semibold text-gray-800" id="summary-goal">5 задач в день</div></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:#FAF0CA">
+            <svg class="w-4 h-4" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+          <div><div class="text-xs text-gray-500">Бесплатный блок</div><div class="font-semibold text-gray-800">Поиск репетитора открыт</div></div>
+        </div>
+      </div>
+
+      <div class="w-full rounded-full overflow-hidden" style="height:4px;background:#e5e7eb">
+        <div id="final-progress" style="height:100%;background:#0D3B66;border-radius:2px;width:0;transition:width 1.5s ease"></div>
+      </div>
+      <p class="text-sm text-gray-400">Переходим в личный кабинет...</p>
+    </div>
+
+  </div>
+  <!-- /card -->
+
+</div>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+const OB = {
+  currentStep: 2,
+  city: '', school: '',
+  age: '', gender: '',
+  hobbies: [], subjects: [],
+  exam: '',
+  dailyGoal: 5
+};
+
+// Load user from localStorage
+const currentUser = JSON.parse(localStorage.getItem('fibi_current_user') || '{}');
+
+// ─── Step navigation ─────────────────────────────────────
+function nextStep(n) {
+  collectStep(OB.currentStep);
+
+  // Hide current
+  const cur = document.getElementById('step-' + OB.currentStep);
+  if (cur) {
+    cur.style.opacity = '0';
+    cur.style.transform = 'translateX(-20px)';
+    cur.style.transition = 'all .25s';
+    setTimeout(() => {
+      cur.classList.remove('active');
+      cur.style.transform = '';
+      cur.style.opacity = '';
+      cur.style.transition = '';
+    }, 250);
+  }
+
+  OB.currentStep = n;
+  updateIndicators();
+
+  // Show new
+  setTimeout(() => {
+    const next = document.getElementById('step-' + n);
+    if (next) {
+      next.classList.add('active');
+    }
+  }, 270);
+}
+
+function collectStep(n) {
+  if (n === 2) {
+    OB.city = document.getElementById('city-input').value.trim();
+    OB.school = document.getElementById('school-input').value.trim();
+  } else if (n === 3) {
+    OB.age = document.getElementById('age-input').value;
+    const gSel = document.querySelector('#gender-group .pill.selected');
+    OB.gender = gSel ? gSel.dataset.val : '';
+  }
+}
+
+function updateIndicators() {
+  for (let i = 2; i <= 7; i++) {
+    const el = document.getElementById('pi-' + (i - 1));
+    if (!el) continue;
+    const realStep = i - 1; // visual steps 1-6 map to steps 2-7
+    const activeStep = OB.currentStep - 1; // 1-based visual
+    if (realStep < activeStep) { el.className = 'progress-step done'; el.innerHTML = '✓'; }
+    else if (realStep === activeStep) el.className = 'progress-step current';
+    else { el.className = 'progress-step'; el.innerHTML = realStep; }
+    // Line
+    const line = document.getElementById('line-' + realStep);
+    if (line) line.style.background = realStep < activeStep ? '#0D3B66' : '#e5e7eb';
+  }
+}
+
+// ─── Pill selection ───────────────────────────────────────
+function selectPill(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ─── Exam selection ───────────────────────────────────────
+function selectExam(el) {
+  document.querySelectorAll('#exam-group .exam-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 300);
+  OB.exam = el.dataset.val;
+  const btn = document.getElementById('exam-next-btn');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+}
+
+// ─── Hobbies ──────────────────────────────────────────────
+function toggleHobby(el) {
+  el.classList.toggle('selected');
+}
+
+// ─── Daily goal ───────────────────────────────────────────
+function setGoal(n) {
+  OB.dailyGoal = n;
+  document.getElementById('goal-display').textContent = n;
+  document.getElementById('goal-display').classList.add('pop');
+  setTimeout(() => document.getElementById('goal-display').classList.remove('pop'), 300);
+  document.querySelectorAll('#goal-group .goal-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.textContent) === n);
+  });
+}
+
+// ─── Finish ───────────────────────────────────────────────
+function finishOnboarding() {
+  // Collect hobbies
+  OB.hobbies = [...document.querySelectorAll('#hobbies-group .hobby-chip.selected')].map(h => h.textContent);
+  OB.subjects = [...document.querySelectorAll('#subjects-group .hobby-chip.selected')].map(h => h.textContent);
+
+  // Save to user
+  const user = JSON.parse(localStorage.getItem('fibi_current_user') || '{}');
+  Object.assign(user, {
+    city: OB.city,
+    school: OB.school,
+    age: OB.age,
+    gender: OB.gender,
+    hobbies: OB.hobbies,
+    extraSubjects: OB.subjects,
+    exam: OB.exam || 'ogu',
+    dailyGoal: OB.dailyGoal,
+    onboardingDone: true,
+    streak: 0, xp: 0, solved: 0,
+    hasStudyAccess: false,
+    hasBankAccess: false,
+    activeTutor: null,
+    pendingHW: false
+  });
+  localStorage.setItem('fibi_current_user', JSON.stringify(user));
+
+  // Update users list
+  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
+  const idx = users.findIndex(u => u.id === user.id);
+  if (idx >= 0) users[idx] = user;
+  localStorage.setItem('fibi_users', JSON.stringify(users));
+
+  // Show success screen
+  nextStep(7);
+  const examLabels = { ogu: 'ОГЭ', ege_base: 'ЕГЭ База', ege_prof: 'ЕГЭ Профиль' };
+  document.getElementById('success-name').textContent = `Привет, ${user.name || 'друг'}!`;
+  document.getElementById('summary-exam').textContent = examLabels[OB.exam] || 'ОГЭ';
+  document.getElementById('summary-goal').textContent = OB.dailyGoal + ' задач в день';
+
+  launchConfetti();
+  setTimeout(() => { document.getElementById('final-progress').style.width = '100%'; }, 100);
+  setTimeout(() => { window.location.href = 'student-dashboard.html'; }, 2200);
+}
+
+// ─── Confetti ─────────────────────────────────────────────
+function launchConfetti() {
+  const colors = ['#0D3B66','#FAF0CA','#10b981','#f59e0b','#8b5cf6','#ef4444'];
+  for (let i = 0; i < 30; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*30+10}vh;background:${colors[Math.floor(Math.random()*colors.length)]};transform:rotate(${Math.random()*360}deg);animation-duration:${.8+Math.random()*.7}s;animation-delay:${Math.random()*.3}s`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1500);
+    }, i * 30);
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  if (!currentUser.id) {
+    window.location.href = 'register.html';
+    return;
+  }
+  if (currentUser.onboardingDone) {
+    window.location.href = 'student-dashboard.html';
+    return;
+  }
+  // Pre-fill
+  document.getElementById('success-name').textContent = `Привет, ${currentUser.name || 'друг'}!`;
+  updateIndicators();
+});
+
+// ─── School autocomplete ──────────────────────────────────
+const SCHOOL_TEMPLATES = [
+  'Школа №', 'Гимназия №', 'Лицей №', 'Лицей имени ', 'Гимназия имени ',
+  'Школа имени ', 'Кадетская школа №', 'МБОУ СОШ №', 'ГБОУ Школа №',
+];
+const KNOWN_SCHOOLS = [
+  'Школа №1', 'Школа №2', 'Школа №3', 'Школа №5', 'Школа №10',
+  'Гимназия №1', 'Гимназия №2', 'Гимназия №3', 'Гимназия №4',
+  'Лицей №1', 'Лицей №2', 'Лицей информационных технологий',
+  'Лицей имени Пушкина', 'Гимназия имени Ломоносова',
+  'Кадетская школа №1', 'Школа с углублённым изучением математики',
+  'МБОУ СОШ №5', 'МБОУ СОШ №10', 'МБОУ СОШ №15',
+  'Физико-математический лицей', 'Инженерная школа',
+  'Школа искусств', 'Школа олимпийского резерва',
+];
+
+function schoolSuggest(val) {
+  const box = document.getElementById('school-suggestions');
+  if (!val || val.length < 2) { box.style.display = 'none'; return; }
+  const q = val.toLowerCase();
+
+  // Generate dynamic suggestions based on typed number
+  let dynamic = [];
+  const numMatch = val.match(/(\d+)$/);
+  if (numMatch) {
+    const num = numMatch[1];
+    SCHOOL_TEMPLATES.forEach(tpl => {
+      if (tpl.endsWith('№')) dynamic.push(tpl + num);
+    });
+  }
+
+  const matched = [...new Set([...dynamic, ...KNOWN_SCHOOLS.filter(s => s.toLowerCase().includes(q))])].slice(0, 6);
+
+  if (!matched.length) { box.style.display = 'none'; return; }
+  box.innerHTML = matched.map(s => `
+    <div onclick="pickSchool('${s.replace(/'/g,"\\'")}') " style="padding:10px 14px;cursor:pointer;font-size:14px;border-bottom:1px solid #f3f4f6;transition:background .15s"
+      onmouseover="this.style.background='#f0f6ff'" onmouseout="this.style.background='white'">
+      ${s}
+    </div>
+  `).join('');
+  box.style.display = 'block';
+}
+
+function pickSchool(name) {
+  document.getElementById('school-input').value = name;
+  hideSuggestions();
+}
+
+function hideSuggestions() {
+  const box = document.getElementById('school-suggestions');
+  if (box) box.style.display = 'none';
+}
+
+// ── City dropdown ─────────────────────────────────────────
+const RUSSIAN_CITIES = [
+  'Москва','Санкт-Петербург','Новосибирск','Екатеринбург','Казань',
+  'Нижний Новгород','Челябинск','Самара','Омск','Ростов-на-Дону',
+  'Уфа','Красноярск','Пермь','Воронеж','Волгоград',
+  'Краснодар','Саратов','Тюмень','Тольятти','Ижевск',
+  'Барнаул','Иркутск','Ульяновск','Хабаровск','Ярославль',
+  'Владивосток','Махачкала','Томск','Оренбург','Кемерово',
+  'Новокузнецк','Рязань','Астрахань','Набережные Челны','Пенза',
+  'Липецк','Тула','Киров','Чебоксары','Калининград',
+  'Брянск','Курск','Иваново','Магнитогорск','Улан-Удэ',
+  'Тверь','Ставрополь','Белгород','Нижний Тагил','Архангельск',
+  'Владимир','Сочи','Симферополь','Мурманск','Сургут',
+  'Чита','Орёл','Смоленск','Волжский','Череповец',
+  'Вологда','Саранск','Якутск','Краснодар','Нальчик',
+  'Грозный','Владикавказ','Майкоп','Элиста','Йошкар-Ола',
+  'Петрозаводск','Сыктывкар','Ханты-Мансийск','Биробиджан','Нарьян-Мар',
+];
+
+function citySuggest(val) {
+  const box = document.getElementById('city-suggestions');
+  const chevron = document.getElementById('city-chevron');
+  const q = (val || '').toLowerCase().trim();
+
+  const matched = q.length === 0
+    ? RUSSIAN_CITIES.slice(0, 10)
+    : RUSSIAN_CITIES.filter(c => c.toLowerCase().includes(q)).slice(0, 10);
+
+  if (!matched.length) { hideCitySuggestions(); return; }
+
+  box.innerHTML = matched.map(c => {
+    const highlighted = q ? c.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'),
+      '<span style="color:#0D3B66;font-weight:700">$1</span>') : c;
+    return `<div onclick="pickCity('${c.replace(/'/g,"\\'")}') "
+      style="padding:10px 16px;cursor:pointer;font-size:14px;border-bottom:1px solid #f3f4f6;transition:background .12s;display:flex;align-items:center;gap:8px"
+      onmouseover="this.style.background='#f0f6ff'" onmouseout="this.style.background='white'">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      ${highlighted}
+    </div>`;
+  }).join('');
+
+  box.style.display = 'block';
+  if (chevron) chevron.style.transform = 'translateY(-50%) rotate(180deg)';
+}
+
+function pickCity(name) {
+  document.getElementById('city-input').value = name;
+  hideCitySuggestions();
+}
+
+function hideCitySuggestions() {
+  const box = document.getElementById('city-suggestions');
+  const chevron = document.getElementById('city-chevron');
+  if (box) box.style.display = 'none';
+  if (chevron) chevron.style.transform = 'translateY(-50%) rotate(0deg)';
+}
+</script>
+</body>
+</html>

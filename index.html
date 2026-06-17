@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Фиби — Умная подготовка к ОГЭ и ЕГЭ по математике</title>
+<meta name="description" content="Образовательная платформа для подготовки к ОГЭ и ЕГЭ по математике. Курсы, репетиторы, банк заданий. 92% учеников сдают на 4 и 5.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: { yale: '#0D3B66', 'yale-d': '#0a2f50', lemon: '#FAF0CA', 'lemon-d': '#f0e28a' },
+      fontFamily: { jakarta: ['"Plus Jakarta Sans"','sans-serif'] }
+    }
+  }
+}
+</script>
+<style>
+*{font-family:'Plus Jakarta Sans',sans-serif}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes floatB{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse-ring{0%{transform:scale(1);opacity:.6}70%{transform:scale(1.4);opacity:0}100%{transform:scale(1.4);opacity:0}}
+@keyframes scrollDot{0%{transform:translateY(0);opacity:1}80%{transform:translateY(8px);opacity:0}100%{transform:translateY(0);opacity:0}}
+.mascot-float{animation:float 6s ease-in-out infinite}
+.glass{background:rgba(255,255,255,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9)}
+.card{background:white;border-radius:20px;box-shadow:0 2px 20px rgba(13,59,102,.07);border:1px solid rgba(13,59,102,.06);transition:transform .3s,box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(13,59,102,.13)}
+.btn-p{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#0D3B66;color:white;border-radius:14px;padding:13px 26px;font-weight:700;font-size:15px;transition:all .25s;box-shadow:0 4px 16px rgba(13,59,102,.3);text-decoration:none}
+.btn-p:hover{background:#0a2f50;transform:translateY(-2px);box-shadow:0 8px 28px rgba(13,59,102,.4)}
+.btn-o{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:transparent;color:#0D3B66;border:2px solid #0D3B66;border-radius:14px;padding:11px 26px;font-weight:700;font-size:15px;transition:all .25s;text-decoration:none}
+.btn-o:hover{background:#FAF0CA;transform:translateY(-2px)}
+.tag{display:inline-flex;align-items:center;gap:6px;background:rgba(13,59,102,.09);color:#0D3B66;border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.tg{background:linear-gradient(135deg,#0D3B66,#1a5294);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-s{background:rgba(255,255,255,.94)!important;box-shadow:0 4px 24px rgba(13,59,102,.08)}
+.math-bg{position:absolute;font-weight:700;color:rgba(13,59,102,.16);pointer-events:none;user-select:none}
+@keyframes xpPop{0%{opacity:0;transform:translateY(0) scale(.8)}30%{opacity:1;transform:translateY(-20px) scale(1.1)}80%{opacity:1;transform:translateY(-40px) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(.9)}}
+.xp-pop{animation:xpPop 1.5s ease forwards}
+@keyframes correctShake{0%,100%{transform:scale(1)}20%{transform:scale(1.08)}50%{transform:scale(1.05)}}
+.correct-anim{animation:correctShake .4s ease}
+.game-answer{border:2px solid rgba(13,59,102,.15);border-radius:14px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.1);color:white;width:100%;text-align:left}
+.game-answer:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);transform:translateX(4px)}
+.game-answer.correct{background:rgba(16,185,129,.25);border-color:#10b981;color:#86efac}
+.game-answer.wrong{background:rgba(239,68,68,.2);border-color:#ef4444;color:#fca5a5}
+.topic-target{background:#0D3B66;color:white;border-radius:16px;padding:16px 24px;font-weight:700;font-size:16px;text-align:center;box-shadow:0 8px 24px rgba(13,59,102,.3)}
+.topic-done{background:white;border:2px solid #10b981;color:#065f46;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;transition:transform .2s}
+.topic-done:hover{transform:translateY(-2px)}
+.topic-prog{background:white;border:2px solid #0D3B66;color:#0D3B66;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;transition:transform .2s}
+.topic-prog:hover{transform:translateY(-2px)}
+.topic-lock{background:#f9fafb;border:2px dashed #e5e7eb;color:#9ca3af;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px}
+.ptab{padding:9px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;color:#6b7280;border:none;background:transparent}
+.ptab.active{background:#0D3B66;color:white}
+.pscreen{display:none}
+.pscreen.active{display:block}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.faq-body.open{max-height:500px}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:#fafafa}
+::-webkit-scrollbar-thumb{background:#0D3B66;border-radius:3px}
+html{scroll-behavior:smooth}
+.pricing-star{background:#0D3B66;color:white}
+.pricing-star .text-gray-500{color:rgba(255,255,255,.7)!important}
+.pricing-star .text-gray-400{color:rgba(255,255,255,.6)!important}
+.pricing-star .border-gray-100{border-color:rgba(255,255,255,.15)!important}
+.pricing-star .btn-o{background:white!important;color:#0D3B66!important;border-color:transparent!important}
+.avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;border:2px solid white;flex-shrink:0}
+.progress-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;border-radius:3px;background:#0D3B66;transition:width 1s ease}
+/* Mobile */
+@media(max-width:768px){.hero-mascot{width:220px!important}}
+@media(max-width:480px){
+  .hero-section-main{min-height:100svh!important;padding-top:80px!important;padding-bottom:40px!important}
+  .bento-grid{grid-template-columns:1fr!important}
+  .grid.grid-cols-2:not(.answers-grid){grid-template-columns:1fr!important}
+  .hide-xs{display:none!important}
+  section.py-24{padding-top:48px!important;padding-bottom:48px!important}
+  section.py-20{padding-top:40px!important;padding-bottom:40px!important}
+}
+</style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+<!-- ===== NAV ===== -->
+<nav id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style="background:rgba(255,255,255,0)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center justify-between h-24">
+      <a href="#" class="flex items-center gap-3">
+        <img src="Иконки.png" alt="ФИБИ" class="w-12 h-12 flex-shrink-0" style="border-radius:16px;object-fit:cover;background:#f4f6fb">
+        <span class="text-3xl font-extrabold" style="color:#0D3B66">ФИБИ</span>
+      </a>
+      <div class="hidden md:flex items-center gap-1">
+        <a href="for-students.html" style="padding:8px 18px;font-size:16px;font-weight:600;color:#6b7280;border-radius:100px;text-decoration:none;transition:all .2s" onmouseover="this.style.color='#0D3B66'" onmouseout="this.style.color='#6b7280'">Ученикам</a>
+        <a href="for-tutors.html" style="padding:8px 18px;font-size:16px;font-weight:600;color:#6b7280;border-radius:100px;text-decoration:none;transition:all .2s" onmouseover="this.style.color='#0D3B66'" onmouseout="this.style.color='#6b7280'">Репетиторам</a>
+        <a href="#pricing" style="padding:8px 18px;font-size:16px;font-weight:600;color:#6b7280;border-radius:100px;text-decoration:none;transition:all .2s" onmouseover="this.style.color='#0D3B66'" onmouseout="this.style.color='#6b7280'">Условия</a>
+      </div>
+      <div class="hidden md:flex items-center gap-3">
+        <a href="register.html" class="btn-o" style="padding:11px 24px;font-size:15px">Войти</a>
+        <a href="register.html" class="btn-p" style="padding:12px 24px;font-size:15px">Начать бесплатно</a>
+      </div>
+      <button onclick="toggleMobile()" class="md:hidden p-2 rounded-lg text-gray-500">
+        <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+  </div>
+  <div id="mobile-nav" class="mobile-menu-hidden bg-white border-t border-gray-100 px-4 py-4" style="display:none">
+    <div class="flex flex-col gap-4">
+      <a href="for-students.html" onclick="toggleMobile()" class="text-sm font-medium text-gray-700">Ученикам</a>
+      <a href="for-tutors.html" onclick="toggleMobile()" class="text-sm font-medium text-gray-700">Репетиторам</a>
+      <a href="#pricing" onclick="toggleMobile()" class="text-sm font-medium text-gray-700">Условия</a>
+      <div class="flex gap-3 pt-2 border-t border-gray-100">
+        <a href="register.html" class="btn-o flex-1 text-sm" style="padding:10px 0">Войти</a>
+        <a href="register.html" class="btn-p flex-1 text-sm" style="padding:10px 0">Начать</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero-section-main relative flex items-center pt-20 overflow-hidden" style="min-height:100svh;background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
+  <!-- bg math -->
+  <div class="math-bg" style="top:8%;left:5%;font-size:22px;transform:rotate(-12deg)">√x² + y²</div>
+  <div class="math-bg" style="top:15%;right:8%;font-size:18px;transform:rotate(8deg)">ax² + bx + c = 0</div>
+  <div class="math-bg" style="top:55%;left:3%;font-size:16px;transform:rotate(4deg)">sin²α + cos²α = 1</div>
+  <div class="math-bg" style="top:70%;right:5%;font-size:20px;transform:rotate(-6deg)">π ≈ 3.14159</div>
+  <div class="math-bg" style="top:35%;left:45%;font-size:15px;transform:rotate(15deg)">y = kx + b</div>
+  <div class="math-bg" style="bottom:15%;left:35%;font-size:17px;transform:rotate(-8deg)">a² + b² = c²</div>
+  <!-- blobs -->
+  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;filter:blur(1px)"></div>
+  <div class="absolute rounded-full" style="width:300px;height:300px;background:radial-gradient(circle,rgba(13,59,102,.05),transparent);bottom:10%;left:5%;filter:blur(2px)"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full py-16">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+      <!-- Left -->
+      <div class="relative z-10 order-2 lg:order-1">
+        <div class="flex flex-wrap gap-2 mb-6">
+          <div class="tag">Подготовка к ОГЭ и ЕГЭ по математике</div>
+          <a href="#ai-demo" class="inline-flex items-center gap-2 rounded-full px-4 py-2 font-bold text-sm transition-all hover:scale-105" style="background:#0D3B66;color:white;text-decoration:none;box-shadow:0 4px 14px rgba(13,59,102,.35)">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+            ИИ-помощник
+          </a>
+        </div>
+        <h1 class="font-extrabold leading-[1.08] mb-8 text-gray-900" style="font-size:clamp(48px,6.5vw,80px)">
+          Готовься<br>к экзамену —<br><span class="tg">по своему плану</span>
+        </h1>
+        <p class="text-xl text-gray-600 mb-4 max-w-lg leading-relaxed">
+          Персональный план подготовки, банк заданий, карта знаний и умный ИИ-помощник — всё в одном месте.
+        </p>
+        <p class="text-sm text-gray-400 mb-10 max-w-lg"><strong class="text-gray-600">92% учеников сдают на «4» и «5».</strong> ОГЭ · ЕГЭ База · ЕГЭ Профиль</p>
+        <div class="flex flex-wrap gap-3 mb-10">
+          <a href="for-students.html" class="btn-p">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            Я ученик
+          </a>
+          <a href="#roles" class="btn-o">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+            Я родитель
+          </a>
+          <a href="for-tutors.html" class="btn-o" style="border-color:#D4A520;color:#D4A520">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+            Я репетитор
+          </a>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex -space-x-2">
+            <div class="avatar" style="background:#0D3B66">АК</div>
+            <div class="avatar" style="background:#3b82f6">МП</div>
+            <div class="avatar" style="background:#8b5cf6">СЛ</div>
+            <div class="avatar" style="background:#06b6d4">НВ</div>
+          </div>
+          <div>
+            <div class="flex items-center gap-1"><span style="color:#f59e0b;font-size:15px">★★★★★</span><span class="font-bold text-gray-800 ml-1">4.9</span></div>
+            <p class="text-xs text-gray-500">от <strong>10 000+</strong> учеников</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: octopus mascot + static info badges -->
+      <div class="relative flex justify-center items-center order-1 lg:order-2" style="min-height:520px">
+        <div class="absolute rounded-full" style="width:420px;height:420px;background:#FAF0CA;opacity:.7"></div>
+        <img src="осьминог2.png" alt="ФИБИ — умный помощник в подготовке к экзамену" class="relative z-10 drop-shadow-2xl hero-mascot" style="width:540px;max-width:90%;border-radius:30px">
+
+        <!-- Static info badges (no animation) -->
+        <div class="absolute glass rounded-2xl shadow-xl p-3.5 z-20" style="top:6%;left:0%">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div><div class="text-base font-bold text-gray-800">92%</div><div class="text-xs text-gray-500">сдают на 4 и 5</div></div>
+          </div>
+        </div>
+
+        <div class="absolute glass rounded-2xl shadow-xl p-3.5 z-20" style="top:30%;right:-2%">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+            </div>
+            <div><div class="text-base font-bold text-gray-800">ИИ-помощник</div><div class="text-xs text-gray-500">24/7 рядом</div></div>
+          </div>
+        </div>
+
+        <div class="absolute glass rounded-2xl shadow-xl p-3.5 z-20" style="bottom:22%;left:-2%">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            </div>
+            <div><div class="text-base font-bold text-gray-800">1000+</div><div class="text-xs text-gray-500">заданий для подготовки</div></div>
+          </div>
+        </div>
+
+        <div class="absolute glass rounded-2xl shadow-xl p-3.5 z-20" style="bottom:22%;right:-1%">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+            </div>
+            <div><div class="text-base font-bold text-gray-800">50+</div><div class="text-xs text-gray-500">проверенных репетиторов</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style="opacity:.8">
+    <span class="text-sm font-semibold" style="color:#0D3B66">Прокрути вниз</span>
+    <div class="w-7 h-11 rounded-full flex justify-center pt-2" style="border:2.5px solid #0D3B66">
+      <div class="w-1.5 h-3 rounded-full" style="background:#0D3B66;animation:scrollDot 1.8s ease infinite"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS BAR ===== -->
+<section style="background:#0D3B66" class="py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div><div class="text-3xl font-bold text-white mb-1">10 000+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">учеников на платформе</div></div>
+      <div><div class="text-3xl font-bold text-white mb-1">92%</div><div class="text-sm" style="color:rgba(255,255,255,.6)">сдают на «4» и «5»</div></div>
+      <div><div class="text-3xl font-bold text-white mb-1">50+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">проверенных репетиторов</div></div>
+      <div><div class="text-3xl font-bold text-white mb-1">1000+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">заданий для подготовки</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOR WHOM ===== -->
+<section id="roles" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14 reveal">
+      <div class="tag mb-4">Для кого</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Платформа для всех<br>участников подготовки</h2>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">Для каждой роли — свой понятный сценарий</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
+      <!-- Родитель -->
+      <div class="card p-6 reveal" style="border-top:4px solid #10b981">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(16,185,129,0.09)">
+          <svg class="w-6 h-6" fill="none" stroke="#10b981" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(16,185,129,0.1);color:#059669">Спокойствие</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Родитель</h3>
+        <p class="text-sm text-gray-500 leading-relaxed mb-4">Видит понятную траекторию подготовки: что пройдено, что в работе, что предстоит. Контролирует результат без давления на ребёнка.</p>
+        <ul class="space-y-2 text-xs text-gray-500">
+          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Прогресс и статистика занятий</li>
+          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Понятная динамика подготовки</li>
+          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Связь с репетитором</li>
+          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Без лишних разговоров «ты учился?»</li>
+        </ul>
+        <a href="#pricing" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#059669">Условия доступа <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+      </div>
+
+      <!-- Ученик -->
+      <div class="card p-6 reveal md:-translate-y-3" style="background:#0D3B66;border-top:4px solid #FAF0CA;box-shadow:0 24px 55px rgba(13,59,102,.28)">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(255,255,255,0.14)">
+          <svg class="w-6 h-6" fill="none" stroke="#FAF0CA" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:#FAF0CA;color:#0D3B66">9–11 класс</div>
+        <h3 class="text-lg font-bold mb-2" style="color:white">Ученик</h3>
+        <p class="text-sm leading-relaxed mb-4" style="color:rgba(255,255,255,.72)">Понимает, что и в каком порядке учить. Решает задания из банка, получает подсказки ИИ и видит, как растёт уверенность перед экзаменом.</p>
+        <ul class="space-y-2 text-xs" style="color:rgba(255,255,255,.78)">
+          <li class="flex items-center gap-2"><span style="color:#FAF0CA">→</span> Персональный план по темам</li>
+          <li class="flex items-center gap-2"><span style="color:#FAF0CA">→</span> Банк заданий с подсказками</li>
+          <li class="flex items-center gap-2"><span style="color:#FAF0CA">→</span> ИИ-помощник 24/7</li>
+          <li class="flex items-center gap-2"><span style="color:#FAF0CA">→</span> Прогресс в реальном времени</li>
+        </ul>
+        <a href="for-students.html" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#FAF0CA">Всё об инструментах <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+      </div>
+
+      <!-- Репетитор -->
+      <div class="card p-6 reveal" style="border-top:4px solid #D4A520">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(212,165,32,0.1)">
+          <svg class="w-6 h-6" fill="none" stroke="#D4A520" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+        </div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(212,165,32,0.12);color:#a07a10">Профессионал</div>
+        <h3 class="text-lg font-bold text-gray-900 mb-2">Репетитор</h3>
+        <p class="text-sm text-gray-500 leading-relaxed mb-4">Видит уровень ученика, историю занятий и задания в одной системе. Ведёт подготовку по понятному плану и фокусируется на объяснении, а не на рутине.</p>
+        <ul class="space-y-2 text-xs text-gray-500">
+          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Картина прогресса ученика</li>
+          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> План и задания в одном месте</li>
+          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Подсказки по слабым темам</li>
+          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Проверка без лишней рутины</li>
+        </ul>
+        <a href="for-tutors.html" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#D4A520">Рабочее место репетитора <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES GRID ===== -->
+<section id="platform" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-14 reveal">
+      <div class="tag mb-4">Инструменты</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Понятный и удобный<br>план подготовки</h2>
+      <p class="text-lg text-gray-500 mx-auto md:whitespace-nowrap">План, задания, подсказки, ИИ-помощник и прогресс собраны в одном личном кабинете.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4">
+
+      <!-- Card 1: AI (large dark) -->
+      <div class="rounded-3xl p-7 flex flex-col gap-5 sm:col-span-2 lg:col-span-7 reveal" style="background:#0D3B66;min-height:280px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(255,255,255,.12);color:white">ИИ-помощник</div>
+          <h3 class="text-2xl font-bold text-white mb-1">ИИ-помощник рядом</h3>
+          <p class="text-sm" style="color:rgba(255,255,255,.6)">Задаёт наводящие вопросы, объясняет ошибки и показывает следующий шаг — не даёт ответ сразу</p>
+        </div>
+        <div class="rounded-2xl p-4 flex-1 flex flex-col gap-3" style="background:rgba(255,255,255,.08)">
+          <div class="flex gap-3">
+            <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:rgba(255,255,255,.15);color:white">АК</div>
+            <div class="rounded-2xl rounded-tl-sm px-3 py-2 text-sm" style="background:rgba(255,255,255,.12);color:rgba(255,255,255,.85)">Не понимаю, как решить задачу 8...</div>
+          </div>
+          <div class="flex gap-3 justify-end">
+            <div class="rounded-2xl rounded-tr-sm px-3 py-2 text-sm max-w-xs" style="background:#FAF0CA;color:#0D3B66">
+              <div class="text-xs font-bold mb-0.5" style="color:#0a2f50">Фиби помощник</div>
+              Давай разберём вместе. Какие данные есть в условии — что нам уже известно?
+            </div>
+            <div class="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold" style="background:#FAF0CA;color:#0D3B66">ФБ</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Personal plan (lemon) -->
+      <div class="rounded-3xl p-7 flex flex-col gap-4 lg:col-span-5 reveal" style="background:#FAF0CA;min-height:280px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.1);color:#0D3B66">Персональный план</div>
+          <h3 class="text-xl font-bold mb-1" style="color:#0D3B66">План на учебный год</h3>
+          <p class="text-sm text-gray-600">Отмечаешь темы — платформа строит маршрут</p>
+        </div>
+        <div class="space-y-2 flex-1">
+          <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white">
+            <div class="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center" style="background:#10b981"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+            <span class="text-xs font-medium text-gray-700 flex-1">Дроби и проценты</span>
+            <span class="text-xs font-bold" style="color:#10b981">Готово</span>
+          </div>
+          <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white" style="border:2px solid #0D3B66">
+            <div class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:rgba(59,130,246,.15)"><div class="w-2 h-2 rounded-full" style="background:#3b82f6"></div></div>
+            <span class="text-xs font-bold flex-1" style="color:#0D3B66">Уравнения</span>
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full" style="background:#0D3B66;color:white">→ Сейчас</span>
+          </div>
+          <div class="flex items-center gap-2.5 p-2.5 rounded-xl" style="background:rgba(255,255,255,.5)">
+            <div class="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0"></div>
+            <span class="text-xs text-gray-400 flex-1">Геометрия</span>
+            <span class="text-xs text-gray-400">🔒</span>
+          </div>
+          <div class="flex items-center gap-2.5 p-2.5 rounded-xl" style="background:rgba(255,255,255,.5)">
+            <div class="w-5 h-5 rounded border-2 border-gray-300 flex-shrink-0"></div>
+            <span class="text-xs text-gray-400 flex-1">Функции и графики</span>
+            <span class="text-xs text-gray-400">🔒</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3: Task bank -->
+      <div class="card rounded-3xl p-6 flex flex-col gap-4 lg:col-span-4 reveal" style="min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.08);color:#0D3B66">Банк заданий</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">Задания по номерам</h3>
+          <p class="text-xs text-gray-500">Фильтрация по номеру задания в экзамене</p>
+        </div>
+        <div class="grid grid-cols-5 gap-1.5 flex-1 content-start">
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#0D3B66;color:white">№1</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#0D3B66;color:white">№2</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#0D3B66;color:white">№3</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#FAF0CA;color:#0D3B66">№7</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#FAF0CA;color:#0D3B66">№8</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold" style="background:#FAF0CA;color:#0D3B66">№9</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold bg-gray-100 text-gray-400">№15</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold bg-gray-100 text-gray-400">№19</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold bg-gray-100 text-gray-400">№20</div>
+          <div class="rounded-lg py-2 text-center text-xs font-bold bg-gray-100 text-gray-400">...</div>
+        </div>
+      </div>
+
+      <!-- Card 4: Demo variants -->
+      <div class="rounded-3xl p-6 flex flex-col gap-4 lg:col-span-4 reveal" style="background:#fafafa;min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.08);color:#0D3B66">Демоварианты</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">Демоварианты экзамена</h3>
+          <p class="text-xs text-gray-500">Полные варианты для тренировки в условиях экзамена</p>
+        </div>
+        <div class="space-y-2 flex-1">
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#0D3B66;color:white">1</div>
+            <span class="text-sm text-gray-700 flex-1">Вариант 2024</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#d1fae5;color:#065f46">Решён</span>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white" style="border:1.5px solid #0D3B66">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#FAF0CA;color:#0D3B66">2</div>
+            <span class="text-sm font-medium flex-1" style="color:#0D3B66">Вариант 2023</span>
+            <span class="text-xs font-bold" style="color:#0D3B66">→ Начать</span>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white">
+            <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0 bg-gray-100 text-gray-400">3</div>
+            <span class="text-sm text-gray-400 flex-1">Вариант 2022</span>
+            <span class="text-xs text-gray-400">Скоро</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5: Knowledge map (dark) -->
+      <div class="rounded-3xl p-6 flex flex-col gap-4 sm:col-span-2 lg:col-span-4 reveal" style="background:#0D3B66;min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(255,255,255,.12);color:white">Карта знаний</div>
+          <h3 class="text-lg font-bold text-white mb-1">Видно, чего не хватает</h3>
+          <p class="text-xs" style="color:rgba(255,255,255,.6)">Темы связаны между собой — пробел в основе виден сразу</p>
+        </div>
+        <div class="flex-1 flex flex-col items-center justify-center gap-2">
+          <div class="px-3 py-1.5 rounded-xl text-xs font-bold text-white" style="background:rgba(255,255,255,.15)">Квадратные уравнения</div>
+          <div class="w-px h-4" style="background:rgba(255,255,255,.3)"></div>
+          <div class="flex gap-3">
+            <div class="px-2.5 py-1 rounded-lg text-xs font-medium" style="background:rgba(16,185,129,.3);color:#86efac">Линейные ур.</div>
+            <div class="px-2.5 py-1 rounded-lg text-xs font-medium" style="background:rgba(250,240,202,.2);color:#FAF0CA">Дискриминант</div>
+          </div>
+          <div class="w-px h-4" style="background:rgba(255,255,255,.3)"></div>
+          <div class="flex gap-2">
+            <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(16,185,129,.2);color:#86efac">Числа</div>
+            <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)">Степени</div>
+            <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)">Корни</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6: Hints (lemon, medium) -->
+      <div class="rounded-3xl p-7 flex flex-col gap-5 sm:col-span-2 lg:col-span-5 reveal" style="background:#FAF0CA;min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.1);color:#0D3B66">Подсказки</div>
+          <h3 class="text-xl font-bold mb-1" style="color:#0D3B66">Подсказки без спойлеров</h3>
+          <p class="text-sm text-gray-600">Ответ не виден сразу — сначала наводящие вопросы, потом ход решения</p>
+        </div>
+        <div class="flex gap-2 items-stretch">
+          <div class="flex-1 rounded-xl p-3 text-center bg-white">
+            <div class="text-xs font-bold mb-1" style="color:#0D3B66">Подсказка 1</div>
+            <div class="text-xs text-gray-500">Что дано в задаче?</div>
+          </div>
+          <div class="flex items-center text-gray-400 font-bold text-lg">→</div>
+          <div class="flex-1 rounded-xl p-3 text-center bg-white">
+            <div class="text-xs font-bold mb-1" style="color:#0D3B66">Подсказка 2</div>
+            <div class="text-xs text-gray-500">Какое правило?</div>
+          </div>
+          <div class="flex items-center text-gray-400 font-bold text-lg">→</div>
+          <div class="flex-1 rounded-xl p-3 text-center" style="background:#0D3B66">
+            <div class="text-xs font-bold text-white mb-1">Решение</div>
+            <div class="text-xs" style="color:rgba(255,255,255,.7)">Пошаговое</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 7: Progress -->
+      <div class="card rounded-3xl p-6 flex flex-col gap-4 lg:col-span-4 reveal" style="min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.08);color:#0D3B66">Прогресс</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-1">Прогресс по темам</h3>
+          <p class="text-xs text-gray-500">Виден рост каждый день</p>
+        </div>
+        <div class="space-y-3 flex-1">
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Линейные уравнения</span><span class="font-bold" style="color:#10b981">92%</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:92%;background:#10b981"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Дроби</span><span class="font-bold" style="color:#f59e0b">65%</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:65%;background:#f59e0b"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Геометрия</span><span class="font-bold" style="color:#ef4444">28%</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:28%;background:#ef4444"></div></div>
+          </div>
+          <div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Функции</span><span class="font-bold text-gray-400">—</span></div>
+            <div class="h-2 rounded-full bg-gray-100"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 8: Tutor (dark) -->
+      <div class="rounded-3xl p-6 flex flex-col gap-4 lg:col-span-3 reveal" style="background:#0D3B66;min-height:210px">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(255,255,255,.12);color:white">Репетитор</div>
+          <h3 class="text-lg font-bold text-white mb-1">Репетитор через платформу</h3>
+          <p class="text-xs" style="color:rgba(255,255,255,.6)">Специалист видит прогресс и помогает пройти сложные темы без хаоса.</p>
+        </div>
+        <div class="rounded-2xl p-3.5 flex-1 flex flex-col justify-between" style="background:rgba(255,255,255,.1)">
+          <div class="flex items-center gap-2.5 mb-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white">АП</div>
+            <div>
+              <div class="text-xs font-bold text-white">Анна Петрова</div>
+              <div class="flex items-center gap-1"><span style="color:#FAF0CA;font-size:11px">★★★★★</span><span class="text-xs" style="color:rgba(255,255,255,.6)">5.0</span></div>
+            </div>
+          </div>
+          <div class="text-xs font-bold text-center py-2 rounded-xl" style="background:#FAF0CA;color:#0D3B66">Записаться →</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-14 reveal">
+      <a href="for-students.html" class="btn-p" style="font-size:16px;padding:14px 32px">Начать подготовку →</a>
+      <p class="text-sm text-gray-400 mt-3">Бесплатный старт · Удобная оплата</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== INTERACTIVE AI DEMO ===== -->
+<section id="ai-demo" class="py-24" style="background:#0D3B66">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12 reveal">
+      
+      <h2 class="font-extrabold text-white mb-3" style="font-size:clamp(28px,3.5vw,44px)">Попробуй прямо сейчас</h2>
+      <p style="color:rgba(255,255,255,.65);font-size:18px">Выбери правильный ответ — помощник объяснит каждый шаг</p>
+    </div>
+
+    <!-- Game card -->
+    <div class="rounded-3xl p-8 reveal" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12)" id="game-card">
+      <!-- XP counter -->
+      <div class="flex items-center justify-between mb-7">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(250,240,202,.15)">
+            <svg class="w-5 h-5" fill="none" stroke="#FAF0CA" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wider" style="color:rgba(255,255,255,.5)">Серия</div>
+            <div class="text-lg font-extrabold" id="streak-count" style="color:#FAF0CA">14 дней</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="px-4 py-2 rounded-xl text-sm font-bold" style="background:rgba(250,240,202,.12);color:#FAF0CA">
+            <span id="xp-display">+0 XP</span>
+          </div>
+          <div class="px-3 py-2 rounded-xl text-sm font-bold" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)">
+            <span id="q-counter">Вопрос 1/4</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="h-1.5 rounded-full mb-8" style="background:rgba(255,255,255,.1)">
+        <div id="q-progress" class="h-1.5 rounded-full transition-all duration-500" style="width:25%;background:linear-gradient(90deg,#FAF0CA,#f0e28a)"></div>
+      </div>
+
+      <!-- Question area -->
+      <div id="question-area" class="mb-7">
+        <div class="text-xs font-bold uppercase tracking-wider mb-3" id="q-tag" style="color:rgba(255,255,255,.45)">Задание 1 · Проценты</div>
+        <div class="text-xl font-bold text-white mb-2 leading-relaxed" id="q-text">Цена велосипеда снизилась на 20% и стала <strong style="color:#FAF0CA">12 000 рублей</strong>. Сколько стоил велосипед до скидки?</div>
+      </div>
+
+      <!-- Answer options -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-7" id="answers-area">
+        <button onclick="checkAnswer(this, false)" class="game-answer">9 600 рублей</button>
+        <button onclick="checkAnswer(this, true)" class="game-answer">15 000 рублей</button>
+        <button onclick="checkAnswer(this, false)" class="game-answer">14 400 рублей</button>
+        <button onclick="checkAnswer(this, false)" class="game-answer">10 000 рублей</button>
+      </div>
+
+      <!-- AI hint area (hidden initially) -->
+      <div id="ai-hint" class="rounded-2xl p-5 hidden" style="background:rgba(250,240,202,.1);border:1px solid rgba(250,240,202,.2)">
+        <div class="flex gap-3 items-start">
+          <div class="w-9 h-9 rounded-xl flex-shrink-0 flex items-center justify-center font-bold text-sm" style="background:#FAF0CA;color:#0D3B66">ФБ</div>
+          <div class="flex-1">
+            <div class="text-xs font-bold mb-2" style="color:#FAF0CA">Фиби объясняет:</div>
+            <div class="text-sm leading-relaxed" id="hint-text" style="color:rgba(255,255,255,.85)"></div>
+          </div>
+        </div>
+        <div class="flex justify-between items-center mt-5">
+          <div class="flex items-center gap-2">
+            <div id="correct-badge" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold" style="background:rgba(16,185,129,.25);color:#86efac">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              +20 XP заработано!
+            </div>
+            <div id="wrong-badge" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold" style="background:rgba(239,68,68,.2);color:#fca5a5">
+              Попробуй следующую →
+            </div>
+          </div>
+          <button onclick="nextQuestion()" class="btn-p" style="background:#FAF0CA;color:#0D3B66;padding:10px 22px;font-size:14px">Дальше →</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-center mt-6 text-sm" style="color:rgba(255,255,255,.45)">Зарегистрируйся — и решай задания с прогрессом, сериями и наградами</p>
+  </div>
+</section>
+
+<!-- ===== GAMIFICATION TEASER ===== -->
+<section class="py-16 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 reveal">
+    <div class="rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8" style="background:#FAF0CA">
+      <div class="flex-1">
+        <div class="tag mb-3" style="background:rgba(13,59,102,.1)">Мотивация · Внутри кабинета</div>
+        <h2 class="font-extrabold mb-2" style="color:#0D3B66;font-size:clamp(22px,2.5vw,32px)">Расти вместе с Фиби</h2>
+        <p class="text-gray-600 max-w-md leading-relaxed">Серии занятий, медали за результат и место в топе учеников — всё ждёт тебя в личном кабинете.</p>
+      </div>
+      <div class="flex flex-wrap gap-3 justify-center">
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          <span class="text-base font-bold" style="color:#0D3B66">Серии занятий</span>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+          <span class="text-base font-bold" style="color:#0D3B66">Медали</span>
+        </div>
+        <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
+          <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172"/></svg>
+          <span class="text-base font-bold" style="color:#0D3B66">Подарок ТОП-3</span>
+        </div>
+      </div>
+      <a href="register.html" class="btn-p whitespace-nowrap">Войти в кабинет →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CABINET DEMO GIF ===== -->
+<section class="py-20" style="background:#fafafa">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
+
+      <!-- Text -->
+      <div>
+        <div class="tag mb-5">Личный кабинет</div>
+        <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(28px,3.5vw,44px)">Всё управление<br>в одном месте</h2>
+        <p class="text-lg text-gray-500 mb-6 leading-relaxed max-w-lg">Профиль, задания, прогресс и связь с репетитором — в одном окне. Платформа адаптируется под твой уровень и показывает, что делать дальше.</p>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-center gap-3 text-gray-700">
+            <span class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style="background:#0D3B66">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            </span>
+            <span class="text-sm font-medium">Открывай профиль и редактируй данные в один клик</span>
+          </li>
+          <li class="flex items-center gap-3 text-gray-700">
+            <span class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style="background:#0D3B66">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            </span>
+            <span class="text-sm font-medium">Решай задания из банка и сразу получай разбор</span>
+          </li>
+          <li class="flex items-center gap-3 text-gray-700">
+            <span class="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0" style="background:#0D3B66">
+              <svg class="w-3.5 h-3.5 text-white" fill="none" stroke="white" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            </span>
+            <span class="text-sm font-medium">Следи за прогрессом и серией занятий в реальном времени</span>
+          </li>
+        </ul>
+        <a href="register.html" class="btn-p">Открыть кабинет →</a>
+      </div>
+
+      <!-- GIF demo -->
+      <div class="flex justify-center lg:justify-end">
+        <div style="position:relative;z-index:1;border-radius:24px;overflow:hidden;box-shadow:0 20px 60px rgba(13,59,102,.18);border:3px solid rgba(13,59,102,.08);max-width:480px;width:100%">
+          <!-- Заглушка: замени на реальный GIF-файл /assets/cabinet-demo.gif -->
+          <img
+            src="assets/cabinet-demo.gif"
+            alt="Демонстрация взаимодействия с профилем и решения задач на платформе"
+            style="width:100%;display:block;aspect-ratio:4/3;object-fit:cover;background:linear-gradient(135deg,#f0f4ff,#e8f0fe)"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+          >
+          <!-- Placeholder (показывается пока нет GIF) -->
+          <div style="display:none;aspect-ratio:4/3;background:linear-gradient(135deg,#f0f4ff 0%,#dce8ff 100%);align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:40px">
+            <div style="width:64px;height:64px;border-radius:18px;background:#0D3B66;display:flex;align-items:center;justify-content:center">
+              <svg width="32" height="32" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z"/></svg>
+            </div>
+            <p style="font-size:14px;font-weight:700;color:#0D3B66;text-align:center;margin:0">Демонстрация кабинета</p>
+            <p style="font-size:12px;color:#6b7280;text-align:center;margin:0;max-width:240px">Замените файл <code style="background:white;padding:2px 6px;border-radius:6px;font-size:11px">/assets/cabinet-demo.gif</code> реальной записью экрана</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== REWARDS TEASER ===== -->
+<section class="py-20 hidden" style="background:#fafafa">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center reveal">
+
+      <!-- Left: text -->
+      <div>
+        <div class="tag mb-5">Мотивация</div>
+        <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(28px,3.5vw,44px)">Расти вместе<br>с Фиби</h2>
+        <p class="text-gray-500 leading-relaxed mb-5">В личном кабинете ученика есть система прогресса, серий и наград, которая помогает возвращаться к подготовке и видеть движение к цели — каждый день.</p>
+        <p class="text-sm text-gray-400 leading-relaxed mb-6">Занимаешься каждый день — серия растёт. Закрыл тему — получаешь награду. Видно, сколько уже сделано и что осталось.</p>
+        <div class="flex items-center gap-3 p-4 rounded-2xl" style="background:rgba(13,59,102,0.06)">
+          <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
+          <p class="text-sm font-medium" style="color:#0D3B66">Лучшие ученики каждого учебного года получают специальный подарок от основателей ФИБИ.</p>
+        </div>
+      </div>
+
+      <!-- Right: streak widget -->
+      <div class="rounded-2xl p-6" style="background:#FAF0CA">
+        <div class="text-center mb-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)"><svg class="w-7 h-7" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+          <div class="text-4xl font-bold mb-1" style="color:#0D3B66">14 дней</div>
+          <div class="text-gray-600 font-medium mb-4">серия занятий</div>
+        </div>
+        <div class="grid grid-cols-7 gap-1 mb-3">
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Пн</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Вт</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Ср</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Чт</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Пт</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Сб</div><div class="w-8 h-8 rounded-full mx-auto flex items-center justify-center text-xs font-bold border-2" style="border-color:#0D3B66;color:#0D3B66;background:white">→</div></div>
+          <div class="text-center"><div class="text-xs text-gray-400 mb-1">Вс</div><div class="w-8 h-8 rounded-full mx-auto" style="background:#e5e7eb"></div></div>
+        </div>
+        <p class="text-xs text-center text-gray-500">Занимаешься каждый день — молодец! Серия не прервётся.</p>
+        <!-- Simple level progress -->
+        <div class="mt-5 flex items-center justify-between gap-1">
+          <span class="text-xs font-semibold" style="color:#0D3B66">Новичок</span>
+          <div class="flex-1 mx-2 h-1.5 rounded-full" style="background:#e5e7eb"><div class="h-1.5 rounded-full" style="width:35%;background:#0D3B66"></div></div>
+          <span class="text-xs font-semibold text-gray-400">Гений</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Levels, medals and full mechanics are shown only inside the student cabinet -->
+    <div class="hidden">
+      <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-5 text-center">Звания — путь от новичка до гения</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div class="card p-4 text-center">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 2v2m0 16v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M2 12h2m16 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          </div>
+          <div class="font-bold text-gray-800 text-sm mb-1">Новичок</div>
+          <div class="text-xs text-gray-400">0–10 задач</div>
+          <div class="mt-2 text-xs font-semibold" style="color:#0D3B66">Старт</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+          </div>
+          <div class="font-bold text-gray-800 text-sm mb-1">Ученик</div>
+          <div class="text-xs text-gray-400">11–50 задач</div>
+          <div class="mt-2 text-xs font-semibold" style="color:#0D3B66">+10 XP</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+          </div>
+          <div class="font-bold text-gray-800 text-sm mb-1">Практик</div>
+          <div class="text-xs text-gray-400">51–150 задач</div>
+          <div class="mt-2 text-xs font-semibold" style="color:#0D3B66">+25 XP</div>
+        </div>
+        <div class="card p-4 text-center">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+          </div>
+          <div class="font-bold text-gray-800 text-sm mb-1">Знаток</div>
+          <div class="text-xs text-gray-400">151–350 задач</div>
+          <div class="mt-2 text-xs font-semibold" style="color:#0D3B66">+50 XP</div>
+        </div>
+        <div class="card p-4 text-center" style="border:2px solid rgba(13,59,102,0.2)">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)">
+            <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+          </div>
+          <div class="font-bold text-gray-800 text-sm mb-1">Мастер</div>
+          <div class="text-xs text-gray-400">351–700 задач</div>
+          <div class="mt-2 text-xs font-semibold" style="color:#0D3B66">+100 XP</div>
+        </div>
+        <div class="rounded-2xl p-4 text-center" style="background:#0D3B66">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center mx-auto mb-3" style="background:rgba(255,255,255,0.15)">
+            <svg class="w-5 h-5" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg>
+          </div>
+          <div class="font-bold text-white text-sm mb-1">Гений</div>
+          <div class="text-xs" style="color:rgba(255,255,255,.6)">700+ задач</div>
+          <div class="mt-2 text-xs font-bold" style="color:#FAF0CA">+200 XP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Medals grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10 reveal">
+      <div class="card p-6">
+        <h3 class="font-bold text-gray-800 mb-4">Медали за действия</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Снайпер</div><div class="text-xs text-gray-500">5 задач подряд без ошибок</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+15 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Неугасимый</div><div class="text-xs text-gray-500">Серия 7 дней подряд</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+20 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Тематический</div><div class="text-xs text-gray-500">Пройдена целая тема на 100%</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+30 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Полуночник</div><div class="text-xs text-gray-500">Решил задачу после 23:00</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+5 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Перфекционист</div><div class="text-xs text-gray-500">100% правильных ответов за неделю</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+50 XP</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6">
+        <h3 class="font-bold text-gray-800 mb-4">Медали за результат</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 8.25L12 12l-3.75-3.75"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Геометр</div><div class="text-xs text-gray-500">Решил 20 задач по геометрии</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+25 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.745 3A23.933 23.933 0 003 11.25c0 7.456 4.243 14.084 10.5 17.188M4.745 3.002A23.924 23.924 0 003 11.25m1.745-8.248A23.934 23.934 0 0121 11.25c0 7.456-4.243 14.084-10.5 17.188M21 11.25c0-2.969-.56-5.81-1.576-8.424"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Алгебраист</div><div class="text-xs text-gray-500">Решил 20 задач по алгебре</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+25 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Первый экзамен</div><div class="text-xs text-gray-500">Прошёл пробный вариант ОГЭ/ЕГЭ</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+40 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 01-.825-.242m9.345-8.334a2.126 2.126 0 00-.476-.095 48.64 48.64 0 00-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0011.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Не один</div><div class="text-xs text-gray-500">Написал репетитору первый раз</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+10 XP</div>
+          </div>
+          <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
+              <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
+            </div>
+            <div><div class="font-semibold text-gray-800 text-sm">Оставил отзыв</div><div class="text-xs text-gray-500">Поделился впечатлением о репетиторе</div></div>
+            <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+10 XP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Annual prize -->
+    <div class="rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 reveal" style="background:#0D3B66">
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0" style="background:rgba(250,240,202,.15)"><svg class="w-8 h-8" fill="none" stroke="#FAF0CA" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/></svg></div>
+      <div class="flex-1 text-center md:text-left">
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 mb-3 text-sm font-semibold" style="background:rgba(250,240,202,.15);color:#FAF0CA">Главная награда года</div>
+        <h3 class="text-2xl font-bold text-white mb-2">Подарок от ФИБИ</h3>
+        <p class="text-sm leading-relaxed" style="color:rgba(255,255,255,.7)">Ученики, набравшие наибольшее количество XP за учебный год, получают специальный подарок от основателей ФИБИ. Итоги подводятся в июне — к сезону экзаменов.</p>
+      </div>
+      <div class="flex-shrink-0 text-center">
+        <div class="text-4xl font-bold" style="color:#FAF0CA">ТОП-3</div>
+        <div class="text-sm mt-1" style="color:rgba(255,255,255,.6)">каждый учебный год</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FEATURES ===== -->
+<section id="features" class="py-24 bg-white hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="tag mb-4">Возможности</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Всё для успешной<br>подготовки</h2>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">Платформа объединяет современные технологии и опыт лучших педагогов</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-5">
+      <div class="card p-6 reveal">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#FAF0CA">
+          <svg class="w-6 h-6" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Понятные объяснения</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">ИИ объясняет каждое решение пошагово, простым языком без лишних формулировок.</p>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#FAF0CA">
+          <svg class="w-6 h-6" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Эффективная подготовка</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">Персональный план на основе пробелов. Spaced repetition для запоминания.</p>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#FAF0CA">
+          <svg class="w-6 h-6" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Уверенность в результате</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">Отслеживай прогресс в реальном времени и видь рост каждый день.</p>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:#FAF0CA">
+          <svg class="w-6 h-6" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/></svg>
+        </div>
+        <h3 class="text-base font-bold text-gray-900 mb-2">Поддержка на каждом этапе</h3>
+        <p class="text-sm text-gray-500 leading-relaxed">Чат с ИИ, репетитором и комьюнити. Ответы 24/7 без ожидания.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <!-- AI card -->
+      <div class="md:col-span-2 rounded-2xl p-8 reveal" style="background:#0D3B66">
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-5 text-sm font-semibold text-white" style="background:rgba(255,255,255,.12)">Умный ИИ-помощник</div>
+        <h3 class="text-2xl font-bold text-white mb-3">Подсказки, объяснения<br>и разбор ошибок</h3>
+        <p class="mb-6 leading-relaxed" style="color:rgba(255,255,255,.7)">Если застрял — помощник задаст наводящий вопрос, объяснит правило и покажет следующий шаг. Он не просто даёт ответ, а помогает разобраться. Карта знаний помогает находить пробел в основе.</p>
+        <div class="rounded-2xl p-4" style="background:rgba(255,255,255,.1)">
+          <div class="text-sm font-semibold text-white mb-2">Задача — Проценты</div>
+          <div class="text-sm mb-3" style="color:rgba(255,255,255,.8)">Цена телефона снизилась на 15% и стала 8 500 рублей. Сколько стоил телефон до скидки?</div>
+          <div class="flex gap-2 flex-wrap mb-3">
+            <div class="rounded-xl px-3 py-2 text-sm text-white flex-1" style="background:rgba(255,255,255,.15);min-width:140px">10 000 рублей</div>
+            <div class="rounded-xl px-4 py-2 text-sm font-bold" style="background:#10b981;color:white">✓ Верно!</div>
+          </div>
+          <div class="rounded-xl px-3 py-2.5 text-sm" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.8)">
+            <span class="font-semibold text-white">Помощник:</span> Хочешь узнать, как ты к этому пришёл? Разберём решение по шагам →
+          </div>
+        </div>
+      </div>
+
+      <!-- Streak card -->
+      <div class="rounded-2xl p-6 reveal flex flex-col" style="background:#FAF0CA">
+        <div class="text-center flex-1">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-3" style="background:rgba(13,59,102,0.09)"><svg class="w-7 h-7" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg></div>
+          <div class="text-4xl font-bold mb-1" style="color:#0D3B66">14 дней</div>
+          <div class="text-gray-600 font-medium mb-5">серия занятий</div>
+          <div class="grid grid-cols-7 gap-1 mb-3">
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Пн</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Вт</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Ср</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Чт</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Пт</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold text-white" style="background:#0D3B66">✓</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Сб</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs font-bold border-2" style="border-color:#0D3B66;color:#0D3B66;background:white">→</div></div>
+            <div class="text-center"><div class="text-xs text-gray-400 mb-1">Вс</div><div class="w-7 h-7 rounded-full mx-auto flex items-center justify-center text-xs" style="background:#e5e7eb"></div></div>
+          </div>
+          <div class="text-xs text-gray-500">Занимаешься каждый день — молодец!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="py-24 hidden" style="background:#fafafa">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="tag mb-4">Как это работает</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Три шага до<br>отличного результата</h2>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">Не важно, ОГЭ, ЕГЭ или другой экзамен — платформа выстраивает подготовку под тебя</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <div class="card p-8 reveal text-center">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:#0D3B66">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+        </div>
+        <div class="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white mb-3" style="background:rgba(13,59,102,.3)">1</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Отметь темы на чек-листе</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Выбери экзамен и отметь, в каких темах уверен, а какие вызывают вопросы. Платформа сразу видит, с чего начать.</p>
+        <div class="mt-6 p-4 rounded-xl text-left" style="background:#FAF0CA">
+          <div class="text-xs font-semibold mb-3" style="color:#0D3B66">Чек-лист тем:</div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style="background:#10b981"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+            <span class="text-xs text-gray-700">Дроби и проценты — уверен</span>
+          </div>
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-4 h-4 rounded border-2 flex-shrink-0" style="border-color:#f59e0b;background:rgba(245,158,11,.1)"></div>
+            <span class="text-xs text-gray-700">Уравнения — нужно разобраться</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-4 h-4 rounded border-2 flex-shrink-0" style="border-color:#ef4444;background:rgba(239,68,68,.1)"></div>
+            <span class="text-xs text-gray-700">Геометрия — совсем не знаю</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-8 reveal text-center" style="border-color:#0D3B66;border-width:2px">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:#0D3B66">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+        </div>
+        <div class="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white mb-3" style="background:rgba(13,59,102,.3)">2</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Получи персональный план</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Платформа собирает план на учебный год: сначала подтянуть слабые темы, потом закрепить всё. Ни одна тема экзамена не пропадёт.</p>
+        <div class="mt-6 space-y-2">
+          <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background:#FAF0CA">
+            <svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            <span class="text-sm font-medium text-gray-700">Дроби — закрыто</span>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background:#dbeafe">
+            <svg class="w-4 h-4 flex-shrink-0" style="color:#3b82f6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3"/></svg>
+            <span class="text-sm font-medium text-gray-700">Уравнения — в работе</span>
+          </div>
+          <div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50">
+            <svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <span class="text-sm font-medium text-gray-400">Геометрия — откроется следующей</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-8 reveal text-center">
+        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-6" style="background:#0D3B66">
+          <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+        </div>
+        <div class="inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold text-white mb-3" style="background:rgba(13,59,102,.3)">3</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-3">Занимайся и наблюдай за прогрессом</h3>
+        <p class="text-gray-500 text-sm leading-relaxed">Решай задания из банка, получай подсказки ИИ и смотри, какие темы уже освоены, а к каким стоит вернуться.</p>
+        <div class="mt-6 flex justify-center">
+          <div class="relative w-28 h-28">
+            <svg class="w-28 h-28" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" stroke-width="8"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#0D3B66" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="50" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.5s ease"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <div class="text-2xl font-bold" style="color:#0D3B66">80%</div>
+              <div class="text-xs text-gray-500">готов</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== ROADMAP ===== -->
+<section id="roadmap" class="py-24 bg-white hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-16 reveal">
+      <div class="tag mb-4">Карта знаний</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Карта знаний —<br>дополнительный инструмент</h2>
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto">Карта знаний помогает понять, почему задание не получается: проблема может быть не в текущей теме, а в базовом навыке, который нужен для решения. ИИ-помощник использует карту, чтобы давать точные подсказки.</p>
+    </div>
+
+    <div class="max-w-4xl mx-auto reveal">
+      <!-- Target topic -->
+      <div class="flex justify-center mb-2">
+        <div class="topic-target max-w-xs w-full">Квадратные уравнения</div>
+      </div>
+      <!-- vertical line -->
+      <div class="flex justify-center"><div style="width:2px;height:32px;background:linear-gradient(to bottom,#0D3B66,rgba(13,59,102,.3))"></div></div>
+
+      <!-- Label -->
+      <div class="flex justify-center mb-2">
+        <div class="text-xs font-bold uppercase tracking-wider px-4 py-2 rounded-full" style="color:#0D3B66;background:rgba(13,59,102,.08)">Для этой темы желательно знать:</div>
+      </div>
+
+      <!-- Horizontal line -->
+      <div class="relative flex justify-center mb-2">
+        <div style="position:absolute;top:0;left:20%;right:20%;height:2px;background:rgba(13,59,102,.2)"></div>
+      </div>
+
+      <!-- Level 2 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Линейные уравнения</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Дискриминант</span></div></div>
+        <div class="flex justify-center"><div class="topic-prog w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3"/></svg><span>Формулы сокр. умн.</span></div></div>
+      </div>
+
+      <!-- vertical lines level 2 → 3 -->
+      <div class="grid grid-cols-3 gap-4 mb-2">
+        <div class="flex justify-center"><div style="width:2px;height:24px;background:linear-gradient(to bottom,#10b981,rgba(16,185,129,.2))"></div></div>
+        <div class="flex justify-center opacity-0"><div style="width:2px;height:24px"></div></div>
+        <div class="flex justify-center"><div style="width:2px;height:24px;background:linear-gradient(to bottom,#0D3B66,rgba(13,59,102,.2))"></div></div>
+      </div>
+
+      <!-- Level 3 -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Числа и действия</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Буквенные выражения</span></div></div>
+        <div class="flex justify-center"><div class="topic-lock w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Степени и корни</span></div></div>
+      </div>
+
+      <!-- Legend -->
+      <div class="flex flex-wrap justify-center gap-4 mt-10">
+        <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full" style="background:#10b981"></div>Изучено</div>
+        <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full" style="background:#0D3B66"></div>В процессе</div>
+        <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full bg-gray-200"></div>Заблокировано</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TUTORS ===== -->
+<section id="tutors" class="py-24 bg-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12 reveal">
+      <div class="tag mb-4">Репетиторы ФИБИ</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Занимайся с репетитором<br>через платформу</h2>
+      <p class="text-lg text-gray-500 max-w-2xl mx-auto">Репетиторы проходят проверку и классификацию. Ученик выбирает специалиста по предмету, опыту и формату занятий.</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <!-- Founders pinned -->
+      <div class="card p-6 reveal" style="border:2px solid #0D3B66;position:relative">
+        <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#0D3B66">Топ репетитор</div>
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+          <div>
+            <h3 class="font-bold text-gray-900">Анна Петрова</h3>
+            <p class="text-sm text-gray-500">Математика · 5 лет</p>
+            <div class="flex items-center gap-1 mt-1"><span style="color:#f59e0b;font-size:13px">★★★★★</span><span class="text-sm font-bold text-gray-700">5.0</span></div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ЕГЭ</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Авторские курсы</span>
+        </div>
+        <p class="text-sm text-gray-500 mb-4 leading-relaxed">98% учеников сдают ОГЭ на «4» и «5». Понятные объяснения, индивидуальный подход.</p>
+        <button class="btn-p w-full text-sm" style="padding:10px">Записаться</button>
+      </div>
+
+      <!-- Tutor 2 -->
+      <div class="card p-6 reveal" style="position:relative">
+        <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#D4A520">Группы и индивидуально</div>
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">ЕС</div>
+          <div>
+            <h3 class="font-bold text-gray-900">Елена Смирнова</h3>
+            <p class="text-sm text-gray-500">Математика · 12 лет</p>
+            <div class="flex items-center gap-1 mt-1"><span style="color:#f59e0b;font-size:13px">★★★★★</span><span class="text-sm font-bold text-gray-700">5.0</span><span class="text-xs text-gray-400">(89)</span></div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ЕГЭ База</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Группы</span>
+        </div>
+        <p class="text-sm text-gray-500 mb-4 leading-relaxed">Помогает выстроить системную подготовку и спокойно пройти сложные темы.</p>
+        <button class="btn-p w-full text-sm" style="padding:10px">Записаться</button>
+      </div>
+
+      <!-- Tutor 3 -->
+      <div class="card p-6 reveal" style="position:relative">
+        <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold" style="background:#f0f4ff;color:#0D3B66">Сложные темы</div>
+        <div class="flex items-start gap-4 mb-4">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">АП</div>
+          <div>
+            <h3 class="font-bold text-gray-900">Андрей Петров</h3>
+            <p class="text-sm text-gray-500">Математика · Аспирант МГУ</p>
+            <div class="flex items-center gap-1 mt-1"><span style="color:#f59e0b;font-size:13px">★★★★☆</span><span class="text-sm font-bold text-gray-700">4.87</span><span class="text-xs text-gray-400">(63)</span></div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ОГЭ</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ЕГЭ Профиль</span>
+          <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Часть 2</span>
+        </div>
+        <p class="text-sm text-gray-500 mb-4 leading-relaxed">Разбирает сложные темы понятным языком и помогает довести решение до уверенности.</p>
+        <button class="btn-p w-full text-sm" style="padding:10px">Записаться</button>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 reveal">
+      <a href="register.html" class="btn-p">Найти репетитора →</a>
+      <a href="register.html" class="btn-o">Стать репетитором на платформе</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TESTIMONIALS ===== -->
+<section class="py-24" style="background:#fafafa">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12 reveal">
+      <div class="tag mb-4">Отзывы</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Что говорят<br>ученики</h2>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="card p-6 reveal">
+        <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
+        <p class="text-gray-600 mb-6 leading-relaxed text-sm">Боялась математики, думала не сдам. С Фиби за 3 месяца подтянула все темы — сдала на 4! Особенно помогли пошаговые объяснения задач.</p>
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+          <div class="avatar" style="background:#0D3B66">АК</div>
+          <div><div class="font-semibold text-gray-800 text-sm">Алина Королёва</div><div class="text-xs text-gray-500">9 класс, Москва · ОГЭ 2024</div></div>
+          <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
+        </div>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
+        <p class="text-gray-600 mb-6 leading-relaxed text-sm">Серия дней помогает не забрасывать. Решаю хотя бы 5 задач в день — и уже чувствую, как становлюсь увереннее. Репетитор Михаил — огонь!</p>
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+          <div class="avatar" style="background:#8b5cf6">ДМ</div>
+          <div><div class="font-semibold text-gray-800 text-sm">Дима Морозов</div><div class="text-xs text-gray-500">9 класс, СПб · ОГЭ 2024</div></div>
+          <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
+        </div>
+      </div>
+      <div class="card p-6 reveal">
+        <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
+        <p class="text-gray-600 mb-6 leading-relaxed text-sm">Карта знаний — это гениально. Видно, что учить сначала, а что потом. Не трачу время на темы, которые уже знаю. Сдала на 5!</p>
+        <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
+          <div class="avatar" style="background:#10b981">НВ</div>
+          <div><div class="font-semibold text-gray-800 text-sm">Настя Волкова</div><div class="text-xs text-gray-500">9 класс, Казань · ОГЭ 2024</div></div>
+          <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section id="pricing" class="py-24 bg-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-10 reveal">
+      <div class="tag mb-4">Условия</div>
+      <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Прозрачные условия</h2>
+      <p class="text-gray-500">Начни бесплатно — и выбирай формат по мере необходимости</p>
+    </div>
+
+    <!-- Student pricing (only students on main landing) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+
+      <!-- Free -->
+      <div class="card p-7">
+        <div class="mb-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Бесплатно</div>
+          <div class="text-4xl font-bold text-gray-900 mb-1">0 ₽</div>
+          <div class="text-sm text-gray-400">навсегда</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm">
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Стартовый доступ к платформе</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Часть заданий из банка</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Базовый прогресс и серии</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Пробные подсказки ИИ</li>
+          <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">—</span> Полный банк заданий</li>
+          <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">—</span> Персональный план на год</li>
+        </ul>
+        <a href="register.html" class="btn-o w-full text-center" style="padding:12px">Начать бесплатно</a>
+      </div>
+
+      <!-- Self-study -->
+      <div class="rounded-2xl p-7" style="background:#0D3B66;box-shadow:0 12px 40px rgba(13,59,102,.3)">
+        <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold mb-4" style="background:rgba(255,255,255,.15);color:white">Популярный</div>
+        <div class="mb-6">
+          <div class="text-xs font-bold uppercase tracking-wider mb-2" style="color:rgba(255,255,255,.6)">Самостоятельная подготовка</div>
+          <div class="text-4xl font-bold text-white mb-1">679 ₽</div>
+          <div class="text-sm" style="color:rgba(255,255,255,.5)">в месяц</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm">
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Полный банк заданий</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Персональный план на год</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> ИИ-помощник без ограничений</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Полная карта знаний</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Демоварианты и решения</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Материалы для самоподготовки</li>
+        </ul>
+        <a href="register.html" class="w-full text-center btn-o" style="padding:12px;background:white;color:#0D3B66;border-color:transparent">Выбрать тариф</a>
+      </div>
+
+      <!-- With tutor -->
+      <div class="card p-7">
+        <div class="mb-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">С репетитором</div>
+          <div class="text-2xl font-bold text-gray-900 mb-1">по стоимости занятия</div>
+          <div class="text-sm text-gray-400">оплата через платформу</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm">
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Всё из «Самостоятельной»</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Занятия с проверенным репетитором</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Оплата безопасно — через ФИБИ</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Проверка заданий 2-й части</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Индивидуальный план занятий</li>
+        </ul>
+        <a href="#tutors" class="btn-p w-full text-center" style="padding:12px">Найти репетитора</a>
+      </div>
+
+    </div>
+
+    <!-- Tutor note -->
+    <div class="text-center mt-10 reveal">
+      <p class="text-sm text-gray-400">Вы репетитор? <a href="register.html" class="font-semibold" style="color:#0D3B66">Узнать об условиях работы на платформе →</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="py-20" style="background:#fafafa">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6">
+    <div class="text-center mb-12 reveal">
+      <div class="tag mb-4">FAQ</div>
+      <h2 class="font-extrabold text-gray-900" style="font-size:clamp(28px,3.5vw,44px)">Частые вопросы</h2>
+    </div>
+    <div class="space-y-3 reveal">
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Можно ли готовиться без репетитора?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Да, платформа создана в том числе для самостоятельной подготовки. Ты получаешь персональный план, банк заданий и ИИ-помощника — всего этого достаточно, чтобы заниматься без репетитора. Репетитор — дополнительная опция, а не обязательное условие.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Что делает ИИ-помощник? Он просто даёт ответы?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Нет. ИИ-помощник не просто называет ответ — он задаёт наводящие вопросы, объясняет правило, показывает следующий шаг и разбирает ошибку. Цель — чтобы ты понял, как решать, а не просто списал правильный ответ.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Как платформа понимает, какие темы мне нужны?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">При старте ты отмечаешь темы в чек-листе: в каких уверен, а в каких нет. Платформа строит план на основе твоего выбора и данных из банка заданий. По мере занятий план обновляется — платформа видит, где ошибки встречаются чаще.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Что такое карта знаний?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Карта знаний показывает, какие темы связаны между собой и на каких базируется текущая тема. Если задание не получается, проблема может быть в более простой теме, которую нужно закрыть сначала. ИИ-помощник использует карту, чтобы давать точные подсказки.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Можно ли готовиться не только к ОГЭ?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Да. На платформе поддерживаются ОГЭ по математике, ЕГЭ базового и профильного уровня. При регистрации ты выбираешь свой экзамен, и весь план и банк заданий подстраиваются под него.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Что доступно бесплатно?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Бесплатно доступны стартовый доступ к платформе, часть заданий из банка, базовый прогресс и серии, а также пробные подсказки ИИ. Для полного доступа к банку заданий, персональному плану и ИИ-помощнику без ограничений — тариф «Самостоятельная подготовка».</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Как родитель может понимать прогресс?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">В личном кабинете родителя виден прогресс ребёнка: какие темы пройдены, сколько задач решено, как давно было последнее занятие. Это убирает нужду каждый раз спрашивать «ты занимался?» — всё видно самому.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Как проверяются репетиторы?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Каждый репетитор проходит автоматическое тестирование при входе на платформу. По результатам определяется уровень и класс специалиста. Место в рекомендациях зависит от навыков, качества работы и оценок учеников — а не только от активности.</p></div>
+      </div>
+
+      <div class="card faq-item overflow-hidden" style="border-radius:16px">
+        <button onclick="toggleFaq(this)" class="w-full text-left p-5 flex items-center justify-between font-semibold text-gray-800 text-sm">
+          Можно ли заниматься с репетитором через платформу?
+          <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Да. Ученик выбирает репетитора в каталоге, договаривается о занятии и оплачивает через ФИБИ. Платформа переводит деньги репетитору после состоявшегося урока. Это безопаснее, чем платить напрямую: обе стороны защищены.</p></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="py-24" style="background:#0D3B66">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+    <h2 class="font-extrabold text-white mb-4" style="font-size:clamp(32px,4vw,56px)">Начни подготовку<br>к экзамену</h2>
+    <p class="text-lg mb-10 max-w-xl mx-auto" style="color:rgba(255,255,255,.7)">Пройди бесплатную диагностику и узнай свой уровень прямо сейчас</p>
+    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+      <a href="register.html" class="btn-p" style="background:white;color:#0D3B66;box-shadow:0 4px 20px rgba(255,255,255,.3)">
+        Начать бесплатно
+      </a>
+      <a href="#tutors" class="btn-o" style="border-color:rgba(255,255,255,.4);color:white">
+        Найти репетитора
+      </a>
+    </div>
+    <div class="flex flex-wrap justify-center gap-6 mt-12">
+      <div class="flex items-center gap-2 text-sm" style="color:rgba(255,255,255,.6)"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Бесплатный старт</div>
+      <div class="flex items-center gap-2 text-sm" style="color:rgba(255,255,255,.6)"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Удобная оплата</div>
+      <div class="flex items-center gap-2 text-sm" style="color:rgba(255,255,255,.6)"><svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg> Отмена в любой момент</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="py-16 bg-white border-t border-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+      <div class="col-span-2">
+        <a href="#" class="flex items-center gap-2.5 mb-4">
+          <img src="Иконки.png" alt="Фиби" class="w-9 h-9 flex-shrink-0" style="border-radius:30px">
+          <span class="text-xl font-bold" style="color:#0D3B66">Фиби</span>
+        </a>
+        <p class="text-sm text-gray-500 mb-4 leading-relaxed max-w-xs">Умная платформа для подготовки к ОГЭ по математике. Учись в своём темпе, с поддержкой ИИ и лучших репетиторов.</p>
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm text-white transition-opacity hover:opacity-80" style="background:#0D3B66">VK</a>
+          <a href="#" class="w-8 h-8 rounded-lg flex items-center justify-center text-sm text-white transition-opacity hover:opacity-80" style="background:#0D3B66">TG</a>
+        </div>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-900 mb-4 text-sm">Платформа</h4>
+        <ul class="space-y-2 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-yale transition-colors">Задания</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Репетиторы</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Группы</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Прогресс</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-900 mb-4 text-sm">Компания</h4>
+        <ul class="space-y-2 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-yale transition-colors">О нас</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Блог</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Карьера</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Контакты</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-900 mb-4 text-sm">Поддержка</h4>
+        <ul class="space-y-2 text-sm text-gray-500">
+          <li><a href="#" class="hover:text-yale transition-colors">Помощь</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Для учителей</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Конфиденциальность</a></li>
+          <li><a href="#" class="hover:text-yale transition-colors">Условия</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-gray-100 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-sm text-gray-400">© 2026 Фиби. Все права защищены.</p>
+      <p class="text-sm text-gray-400">Сделано с ❤️ для учеников России</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll effect
+window.addEventListener('scroll', () => {
+  const nav = document.getElementById('nav');
+  if (window.scrollY > 20) nav.classList.add('nav-s');
+  else nav.classList.remove('nav-s');
+});
+
+// Mobile menu
+function toggleMobile() {
+  const mn = document.getElementById('mobile-nav');
+  mn.style.display = mn.style.display === 'none' ? 'block' : 'none';
+}
+
+// Reveal on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 80);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Platform tabs
+function switchTab(id, btn) {
+  document.querySelectorAll('.pscreen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function switchPricing(tab) {
+  const student = document.getElementById('pricing-student');
+  const tutor   = document.getElementById('pricing-tutor');
+  const btnS    = document.getElementById('pt-student');
+  const btnT    = document.getElementById('pt-tutor');
+  if (tab === 'student') {
+    student.classList.remove('hidden'); tutor.classList.add('hidden');
+    btnS.classList.add('active');   btnT.classList.remove('active');
+  } else {
+    tutor.classList.remove('hidden'); student.classList.add('hidden');
+    btnT.classList.add('active');   btnS.classList.remove('active');
+  }
+}
+
+// FAQ accordion
+function toggleFaq(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.faq-arrow');
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.faq-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.faq-arrow').forEach(a => a.style.transform = '');
+  if (!isOpen) {
+    body.classList.add('open');
+    arrow.style.transform = 'rotate(180deg)';
+  }
+}
+
+// ===== INTERACTIVE AI DEMO =====
+const questions = [
+  {
+    tag: 'Задание 1 · Проценты',
+    text: 'Цена велосипеда снизилась на 20% и стала <strong style="color:#FAF0CA">12 000 рублей</strong>. Сколько стоил велосипед до скидки?',
+    answers: ['9 600 рублей', '15 000 рублей', '14 400 рублей', '10 000 рублей'],
+    correct: 1,
+    xp: 20,
+    hint: 'Если цена стала 80% от исходной (100% − 20%), то 12 000 = 0.8 × X. Значит X = 12 000 ÷ 0.8 = <strong>15 000 рублей</strong>. Всегда ищи, чему равен 1%!'
+  },
+  {
+    tag: 'Задание 3 · Уравнения',
+    text: 'Реши уравнение: <strong style="color:#FAF0CA">2x + 14 = 28</strong>',
+    answers: ['x = 6', 'x = 7', 'x = 21', 'x = 14'],
+    correct: 1,
+    xp: 15,
+    hint: '2x = 28 − 14 = 14, значит x = 14 ÷ 2 = <strong>7</strong>. Переноси слагаемые на одну сторону, меняя знак.'
+  },
+  {
+    tag: 'Задание 2 · Дроби',
+    text: 'Вычисли: <strong style="color:#FAF0CA">3/4 + 1/8</strong>',
+    answers: ['4/12', '7/8', '4/8', '1/2'],
+    correct: 1,
+    xp: 10,
+    hint: 'Приводим к общему знаменателю 8: 3/4 = 6/8. Тогда 6/8 + 1/8 = <strong>7/8</strong>. Ищи наименьшее общее кратное знаменателей!'
+  },
+  {
+    tag: 'Задание 8 · Задачи на движение',
+    text: 'Поезд прошёл 360 км за 4 часа. С какой скоростью он ехал?',
+    answers: ['80 км/ч', '90 км/ч', '100 км/ч', '75 км/ч'],
+    correct: 1,
+    xp: 15,
+    hint: 'Скорость = Расстояние ÷ Время = 360 ÷ 4 = <strong>90 км/ч</strong>. Запомни формулу: v = S / t.'
+  }
+];
+
+let currentQ = 0;
+let totalXP = 0;
+let answered = false;
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  answered = false;
+  document.getElementById('q-text').innerHTML = q.text;
+  document.getElementById('q-tag').textContent = q.tag;
+  document.getElementById('q-counter').textContent = `Вопрос ${currentQ+1}/${questions.length}`;
+  document.getElementById('q-progress').style.width = `${((currentQ+1)/questions.length)*100}%`;
+  document.getElementById('ai-hint').classList.add('hidden');
+  document.getElementById('correct-badge').classList.add('hidden');
+  document.getElementById('correct-badge').style.display = '';
+  document.getElementById('wrong-badge').classList.add('hidden');
+  document.getElementById('wrong-badge').style.display = '';
+
+  const area = document.getElementById('answers-area');
+  area.innerHTML = '';
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'game-answer';
+    btn.textContent = ans;
+    btn.onclick = () => checkAnswer(btn, i === q.correct);
+    area.appendChild(btn);
+  });
+}
+
+function checkAnswer(btn, isCorrect) {
+  if (answered) return;
+  answered = true;
+  const q = questions[currentQ];
+
+  // Disable all
+  document.querySelectorAll('.game-answer').forEach(b => { b.style.pointerEvents = 'none'; });
+  // Highlight correct
+  const allBtns = document.querySelectorAll('.game-answer');
+  allBtns[q.correct].classList.add('correct');
+  if (!isCorrect) btn.classList.add('wrong');
+
+  // Show hint
+  document.getElementById('ai-hint').classList.remove('hidden');
+  document.getElementById('hint-text').innerHTML = q.hint;
+
+  if (isCorrect) {
+    totalXP += q.xp;
+    document.getElementById('xp-display').textContent = `+${totalXP} XP`;
+    const cb = document.getElementById('correct-badge');
+    cb.classList.remove('hidden');
+    cb.style.display = 'inline-flex';
+    cb.textContent = '';
+    cb.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg> +${q.xp} XP заработано!`;
+    // XP pop animation
+    spawnXP(q.xp);
+  } else {
+    const wb = document.getElementById('wrong-badge');
+    wb.classList.remove('hidden');
+    wb.style.display = 'inline-flex';
+  }
+}
+
+function spawnXP(xp) {
+  const el = document.createElement('div');
+  el.textContent = `+${xp} XP`;
+  el.style.cssText = 'position:fixed;font-size:22px;font-weight:900;color:#FAF0CA;pointer-events:none;z-index:9999;text-shadow:0 2px 12px rgba(0,0,0,.3)';
+  el.style.left = (Math.random() * 60 + 20) + '%';
+  el.style.top = '55%';
+  el.classList.add('xp-pop');
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1600);
+}
+
+function nextQuestion() {
+  currentQ = (currentQ + 1) % questions.length;
+  renderQuestion();
+}
+
+// init
+renderQuestion();
+</script>
+</body>
+</html>
