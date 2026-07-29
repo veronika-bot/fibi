@@ -586,14 +586,14 @@ html{scroll-behavior:smooth}
   <h1 class="text-2xl font-extrabold text-gray-900 mb-6">Оплата и баланс</h1>
 
   <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
-    <!-- Balance -->
+    <!-- Exact tariff payment -->
     <div class="rounded-3xl p-6 text-white" style="background:#0D3B66">
-      <div class="text-xs font-bold uppercase tracking-widest mb-3" style="color:rgba(255,255,255,.55)">Баланс</div>
-      <div class="text-4xl font-extrabold mb-1">1 321 ₽</div>
-      <div class="text-sm mb-5" style="color:rgba(255,255,255,.55)">Готово для оплаты</div>
+      <div class="text-xs font-bold uppercase tracking-widest mb-3" style="color:rgba(255,255,255,.55)">К оплате</div>
+      <div class="text-4xl font-extrabold mb-1">679 ₽</div>
+      <div class="text-sm mb-5" style="color:rgba(255,255,255,.55)">Точная стоимость тарифа</div>
       <button onclick="openTopUp()" class="w-full flex items-center justify-center gap-2 rounded-2xl py-3 font-bold text-sm" style="background:#FAF0CA;color:#0D3B66">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
-        Пополнить
+        Перейти к оплате
       </button>
     </div>
 
@@ -615,18 +615,16 @@ html{scroll-behavior:smooth}
     </div>
   </div>
 
-  <!-- Top-up panel -->
+  <!-- Exact tariff payment panel -->
   <div id="topup-panel" class="hidden card p-6 mb-6 border-2" style="border-color:#0D3B66">
-    <h2 class="font-bold text-gray-800 mb-4">Пополнить баланс</h2>
-    <div class="flex flex-wrap gap-2 mb-4">
-      <button onclick="setAmt(500)"  class="btn-lemon">500 ₽</button>
-      <button onclick="setAmt(1000)" class="btn-lemon">1 000 ₽</button>
-      <button onclick="setAmt(2500)" class="btn-lemon">2 500 ₽</button>
-      <button onclick="setAmt(5000)" class="btn-lemon">5 000 ₽</button>
-    </div>
+    <h2 class="font-bold text-gray-800 mb-1">Оплата выбранного тарифа</h2>
+    <p class="text-sm text-gray-500 mb-4">Нельзя внести сумму больше стоимости тарифа.</p>
     <div class="flex gap-3 mb-4">
-      <input id="topup-amt" type="number" class="input flex-1" placeholder="Другая сумма (₽)" min="100">
-      <button onclick="doTopUp()" class="btn-p whitespace-nowrap" style="padding:12px 20px">Оплатить</button>
+      <div class="input flex-1 flex items-center justify-between" style="background:#f8fafc">
+        <span class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
+        <span class="font-black" style="color:#0D3B66">679 ₽</span>
+      </div>
+      <button id="parent-exact-pay-btn" onclick="payParentSubscription()" class="btn-p whitespace-nowrap" style="padding:12px 20px">Оплатить 679 ₽</button>
     </div>
     <div class="flex items-center gap-2 text-xs text-gray-400">
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
@@ -815,15 +813,13 @@ function sendMsg() {
 
 // ─── Payment ─────────────────────────────────────────────────────────────────
 function openTopUp() {
+  if (getSharedSubscription()?.active) { renderParentSubscription(); alert('Подписка уже активна. Повторная оплата недоступна.'); return }
   const p = document.getElementById('topup-panel')
   p.classList.toggle('hidden')
   if (!p.classList.contains('hidden')) p.scrollIntoView({ behavior:'smooth', block:'start' })
 }
-function setAmt(v) { document.getElementById('topup-amt').value = v }
 function doTopUp() {
-  const a = parseInt(document.getElementById('topup-amt').value)
-  if (!a || a < 100) { alert('Минимальная сумма — 100 ₽'); return }
-  alert(`Переход к оплате ${a} ₽ через YooKassa…`)
+  payParentSubscription()
 }
 
 function getSharedSubscription() {
@@ -832,11 +828,15 @@ function getSharedSubscription() {
 function renderParentSubscription() {
   const btn = document.getElementById('parent-sub-pay-btn'); if (!btn) return
   const sub = getSharedSubscription(); const active = !!(sub && sub.active)
-  btn.disabled = active
-  btn.style.opacity = active ? '.55' : '1'
-  btn.style.cursor = active ? 'not-allowed' : 'pointer'
+  ;[btn, document.getElementById('parent-exact-pay-btn')].filter(Boolean).forEach(b => {
+    b.disabled = active
+    b.style.opacity = active ? '.55' : '1'
+    b.style.cursor = active ? 'not-allowed' : 'pointer'
+    b.title = active ? `Оплачено ${sub.paidBy === 'student' ? 'учеником' : 'родителем'}. Повторная оплата недоступна.` : ''
+  })
   btn.textContent = active ? 'Подписка уже оплачена' : 'Оплатить подписку'
-  btn.title = active ? `Оплачено ${sub.paidBy === 'student' ? 'учеником' : 'родителем'}. Повторная оплата недоступна.` : ''
+  const exactBtn = document.getElementById('parent-exact-pay-btn')
+  if (exactBtn) exactBtn.textContent = active ? 'Уже оплачено' : 'Оплатить 679 ₽'
 }
 function payParentSubscription() {
   if (getSharedSubscription()?.active) { renderParentSubscription(); return }
