@@ -606,7 +606,7 @@ html{scroll-behavior:smooth}
           <div class="text-sm text-gray-600 mt-0.5">679 ₽ / месяц</div>
           <div class="text-xs text-gray-500 mt-1">До <span class="font-semibold">28 июня 2026</span> · <span class="font-semibold" style="color:#0D3B66">31 день</span></div>
         </div>
-        <button class="btn-p text-sm" style="padding:10px 18px">Продлить</button>
+        <button id="parent-sub-pay-btn" onclick="payParentSubscription()" class="btn-p text-sm" style="padding:10px 18px">Оплатить подписку</button>
       </div>
       <div class="grid grid-cols-2 gap-2">
         <button class="btn-o text-sm">Изменить тариф</button>
@@ -676,6 +676,7 @@ function switchTab(n) {
   document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'))
   document.getElementById('tab-' + n).classList.add('active')
   document.querySelector(`[data-tab="${n}"]`)?.classList.add('active')
+  if (n === 'payment') renderParentSubscription()
 }
 
 // ─── Auth ────────────────────────────────────────────────────────────────────
@@ -726,6 +727,7 @@ function onDashboardLoad() {
   checkSubAlert()
   renderTopics()
   renderActivity()
+  renderParentSubscription()
 }
 
 // ─── Subscription alert ──────────────────────────────────────────────────────
@@ -822,6 +824,25 @@ function doTopUp() {
   const a = parseInt(document.getElementById('topup-amt').value)
   if (!a || a < 100) { alert('Минимальная сумма — 100 ₽'); return }
   alert(`Переход к оплате ${a} ₽ через YooKassa…`)
+}
+
+function getSharedSubscription() {
+  try { return JSON.parse(localStorage.getItem('fibi_subscription') || 'null') } catch { return null }
+}
+function renderParentSubscription() {
+  const btn = document.getElementById('parent-sub-pay-btn'); if (!btn) return
+  const sub = getSharedSubscription(); const active = !!(sub && sub.active)
+  btn.disabled = active
+  btn.style.opacity = active ? '.55' : '1'
+  btn.style.cursor = active ? 'not-allowed' : 'pointer'
+  btn.textContent = active ? 'Подписка уже оплачена' : 'Оплатить подписку'
+  btn.title = active ? `Оплачено ${sub.paidBy === 'student' ? 'учеником' : 'родителем'}. Повторная оплата недоступна.` : ''
+}
+function payParentSubscription() {
+  if (getSharedSubscription()?.active) { renderParentSubscription(); return }
+  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy:'parent', plan:'Самостоятельная подготовка', price:679, startedAt:new Date().toISOString()}))
+  renderParentSubscription()
+  alert('Подписка успешно оплачена и активирована для ученика.')
 }
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
