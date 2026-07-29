@@ -589,7 +589,7 @@ html{scroll-behavior:smooth}
     <!-- Exact tariff payment -->
     <div class="rounded-3xl p-6 text-white" style="background:#0D3B66">
       <div class="text-xs font-bold uppercase tracking-widest mb-3" style="color:rgba(255,255,255,.55)">К оплате</div>
-      <div class="text-4xl font-extrabold mb-1">679 ₽</div>
+      <div id="parent-payment-amount" class="text-4xl font-extrabold mb-1">679 ₽</div>
       <div class="text-sm mb-5" style="color:rgba(255,255,255,.55)">Точная стоимость тарифа</div>
       <button onclick="openTopUp()" class="w-full flex items-center justify-center gap-2 rounded-2xl py-3 font-bold text-sm" style="background:#FAF0CA;color:#0D3B66">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6"/></svg>
@@ -602,15 +602,16 @@ html{scroll-behavior:smooth}
       <div class="font-bold text-gray-800 mb-4">Активная подписка</div>
       <div class="flex items-center justify-between p-4 rounded-2xl mb-4" style="background:#FAF0CA">
         <div>
-          <div class="font-bold" style="color:#0D3B66">Самостоятельная подготовка</div>
-          <div class="text-sm text-gray-600 mt-0.5">679 ₽ / месяц</div>
-          <div class="text-xs text-gray-500 mt-1">До <span class="font-semibold">28 июня 2026</span> · <span class="font-semibold" style="color:#0D3B66">31 день</span></div>
+          <div id="parent-active-plan" class="font-bold" style="color:#0D3B66">Самостоятельная подготовка</div>
+          <div id="parent-active-price" class="text-sm text-gray-600 mt-0.5">679 ₽ / месяц</div>
+          <div id="parent-active-until" class="text-xs text-gray-500 mt-1">Подписка ещё не оплачена</div>
         </div>
-        <button id="parent-sub-pay-btn" onclick="payParentSubscription()" class="btn-p text-sm" style="padding:10px 18px">Оплатить подписку</button>
+        <span id="parent-active-badge" class="badge" style="background:#e5e7eb;color:#6b7280">Не активна</span>
       </div>
       <div class="grid grid-cols-2 gap-2">
-        <button class="btn-o text-sm">Изменить тариф</button>
-        <button class="btn-o text-sm" style="color:#ef4444;border-color:#ef4444">Отменить</button>
+        <button id="parent-sub-pay-btn" onclick="enableAutoRenew()" class="btn-p text-sm">Продлить</button>
+        <button onclick="openTariffModal()" class="btn-o text-sm">Изменить тариф</button>
+        <button onclick="cancelSubscription()" class="btn-o text-sm col-span-2" style="color:#ef4444;border-color:#ef4444">Отменить автопродление</button>
       </div>
     </div>
   </div>
@@ -621,8 +622,8 @@ html{scroll-behavior:smooth}
     <p class="text-sm text-gray-500 mb-4">Нельзя внести сумму больше стоимости тарифа.</p>
     <div class="flex gap-3 mb-4">
       <div class="input flex-1 flex items-center justify-between" style="background:#f8fafc">
-        <span class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
-        <span class="font-black" style="color:#0D3B66">679 ₽</span>
+        <span id="parent-checkout-plan" class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
+        <span id="parent-checkout-price" class="font-black" style="color:#0D3B66">679 ₽</span>
       </div>
       <button id="parent-exact-pay-btn" onclick="payParentSubscription()" class="btn-p whitespace-nowrap" style="padding:12px 20px">Оплатить 679 ₽</button>
     </div>
@@ -657,9 +658,24 @@ html{scroll-behavior:smooth}
   </main>
 </div>
 
+<!-- Tariff modal -->
+<div id="tariff-modal" class="fixed inset-0 hidden items-center justify-center p-4" style="z-index:100;background:rgba(15,23,42,.55)" onclick="if(event.target===this)closeTariffModal()">
+  <div class="card p-6 w-full" style="max-width:560px">
+    <div class="flex items-start justify-between gap-4 mb-5">
+      <div><h2 class="text-xl font-extrabold text-gray-900">Выберите тариф</h2><p class="text-sm text-gray-500 mt-1">Сумма оплаты будет равна точной стоимости выбранного тарифа.</p></div>
+      <button onclick="closeTariffModal()" class="text-2xl text-gray-400" aria-label="Закрыть">×</button>
+    </div>
+    <div id="tariff-options" class="space-y-3"></div>
+    <div class="flex gap-3 mt-5">
+      <button onclick="applySelectedTariff()" class="btn-p flex-1">Выбрать тариф</button>
+      <button onclick="closeTariffModal()" class="btn-o flex-1">Отмена</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ─── State ──────────────────────────────────────────────────────────────────
-const S = { parentId: null, parentName: '', studentId: null, studentName: 'Иван', activeChat: 'tutor' }
+const S = { parentId: null, parentName: '', studentId: null, studentName: 'Иван', activeChat: 'tutor', selectedPlanId: 'monthly' }
 
 // ─── Screen routing ─────────────────────────────────────────────────────────
 function showScreen(n) {
@@ -825,24 +841,92 @@ function doTopUp() {
 function getSharedSubscription() {
   try { return JSON.parse(localStorage.getItem('fibi_subscription') || 'null') } catch { return null }
 }
+const PAYMENT_PLANS = [
+  { id:'monthly', name:'Самостоятельная подготовка', period:'1 месяц', price:679, label:'679 ₽ / месяц' },
+  { id:'quarter', name:'Самостоятельная подготовка', period:'3 месяца', price:1890, label:'630 ₽ / месяц' },
+  { id:'year', name:'Самостоятельная подготовка', period:'12 месяцев', price:6790, label:'Два месяца в подарок' }
+]
+function selectedPaymentPlan() {
+  return PAYMENT_PLANS.find(p => p.id === S.selectedPlanId) || PAYMENT_PLANS[0]
+}
 function renderParentSubscription() {
   const btn = document.getElementById('parent-sub-pay-btn'); if (!btn) return
   const sub = getSharedSubscription(); const active = !!(sub && sub.active)
-  ;[btn, document.getElementById('parent-exact-pay-btn')].filter(Boolean).forEach(b => {
-    b.disabled = active
-    b.style.opacity = active ? '.55' : '1'
-    b.style.cursor = active ? 'not-allowed' : 'pointer'
-    b.title = active ? `Оплачено ${sub.paidBy === 'student' ? 'учеником' : 'родителем'}. Повторная оплата недоступна.` : ''
-  })
-  btn.textContent = active ? 'Подписка уже оплачена' : 'Оплатить подписку'
+  const plan = selectedPaymentPlan()
+  document.getElementById('parent-payment-amount').textContent = plan.price.toLocaleString('ru-RU') + ' ₽'
+  document.getElementById('parent-checkout-plan').textContent = `${plan.name} · ${plan.period}`
+  document.getElementById('parent-checkout-price').textContent = plan.price.toLocaleString('ru-RU') + ' ₽'
+  const badge = document.getElementById('parent-active-badge')
+  badge.textContent = active ? 'Активна' : 'Не активна'
+  badge.style.cssText = active ? 'background:#0D3B66;color:white' : 'background:#e5e7eb;color:#6b7280'
+  document.getElementById('parent-active-plan').textContent = active ? (sub.plan || plan.name) : plan.name
+  document.getElementById('parent-active-price').textContent = active ? `${Number(sub.price).toLocaleString('ru-RU')} ₽ · ${sub.period || '1 месяц'}` : plan.label
+  document.getElementById('parent-active-until').textContent = active
+    ? `${sub.autoRenew ? 'Автопродление включено' : 'Без автопродления'} · оплачено ${sub.paidBy === 'student' ? 'учеником' : 'родителем'}`
+    : 'Подписка ещё не оплачена'
+  btn.textContent = active ? (sub.autoRenew ? 'Автопродление включено' : 'Включить автопродление') : 'Перейти к оплате'
+  btn.disabled = active && !!sub.autoRenew
+  btn.style.opacity = btn.disabled ? '.55' : '1'
+  btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer'
   const exactBtn = document.getElementById('parent-exact-pay-btn')
-  if (exactBtn) exactBtn.textContent = active ? 'Уже оплачено' : 'Оплатить 679 ₽'
+  if (exactBtn) {
+    exactBtn.disabled = active
+    exactBtn.style.opacity = active ? '.55' : '1'
+    exactBtn.style.cursor = active ? 'not-allowed' : 'pointer'
+    exactBtn.textContent = active ? 'Уже оплачено' : `Оплатить ${plan.price.toLocaleString('ru-RU')} ₽`
+  }
 }
 function payParentSubscription() {
   if (getSharedSubscription()?.active) { renderParentSubscription(); return }
-  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy:'parent', plan:'Самостоятельная подготовка', price:679, startedAt:new Date().toISOString()}))
+  const plan = selectedPaymentPlan()
+  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy:'parent', plan:plan.name, planId:plan.id, period:plan.period, price:plan.price, autoRenew:false, startedAt:new Date().toISOString()}))
   renderParentSubscription()
-  alert('Подписка успешно оплачена и активирована для ученика.')
+  document.getElementById('topup-panel').classList.add('hidden')
+  alert(`Оплачено ${plan.price.toLocaleString('ru-RU')} ₽. Подписка активирована для ученика.`)
+}
+function enableAutoRenew() {
+  const sub = getSharedSubscription()
+  if (!sub?.active) { openTopUp(); return }
+  if (sub.autoRenew) return
+  sub.autoRenew = true
+  localStorage.setItem('fibi_subscription', JSON.stringify(sub))
+  renderParentSubscription()
+  alert('Автопродление включено. Следующее списание будет только после окончания текущего периода.')
+}
+function cancelSubscription() {
+  const sub = getSharedSubscription()
+  if (!sub?.active) { alert('Активной подписки нет.'); return }
+  sub.autoRenew = false
+  localStorage.setItem('fibi_subscription', JSON.stringify(sub))
+  renderParentSubscription()
+  alert('Автопродление отключено. Доступ сохранится до конца оплаченного периода.')
+}
+function openTariffModal() {
+  const sub = getSharedSubscription()
+  if (sub?.planId) S.selectedPlanId = sub.planId
+  renderTariffOptions()
+  const modal = document.getElementById('tariff-modal')
+  modal.classList.remove('hidden'); modal.classList.add('flex')
+}
+function closeTariffModal() {
+  const modal = document.getElementById('tariff-modal')
+  modal.classList.add('hidden'); modal.classList.remove('flex')
+}
+function renderTariffOptions() {
+  document.getElementById('tariff-options').innerHTML = PAYMENT_PLANS.map(p => `
+    <label class="flex items-center gap-3 p-4 rounded-2xl cursor-pointer" style="border:2px solid ${S.selectedPlanId===p.id?'#0D3B66':'#e5e7eb'};background:${S.selectedPlanId===p.id?'#f0f6ff':'white'}">
+      <input type="radio" name="payment-plan" value="${p.id}" ${S.selectedPlanId===p.id?'checked':''} onchange="S.selectedPlanId=this.value;renderTariffOptions()" class="accent-yale w-4 h-4">
+      <span class="flex-1"><span class="font-bold text-gray-800 block">${p.period}</span><span class="text-xs text-gray-500">${p.label}</span></span>
+      <span class="font-extrabold" style="color:#0D3B66">${p.price.toLocaleString('ru-RU')} ₽</span>
+    </label>`).join('')
+}
+function applySelectedTariff() {
+  const active = getSharedSubscription()?.active
+  const plan = selectedPaymentPlan()
+  closeTariffModal()
+  renderParentSubscription()
+  if (active) alert(`Тариф «${plan.period}» выбран для следующего продления. Сейчас повторная оплата не выполняется.`)
+  else openTopUp()
 }
 
 // ─── Errors ───────────────────────────────────────────────────────────────────
