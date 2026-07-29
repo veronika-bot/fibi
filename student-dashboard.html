@@ -1106,8 +1106,13 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <div class="text-right"><span class="text-2xl font-black text-yale">679 ₽</span><span class="text-sm text-gray-500"> / месяц</span></div>
         </div>
       </div>
+      <label class="text-xs font-bold text-gray-500 block mb-1.5">Сумма к оплате по выбранному тарифу</label>
+      <div class="flex items-center justify-between p-4 mb-5 rounded-xl" style="border:2px solid #e5e7eb;background:#f8fafc">
+        <span class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
+        <span class="font-black text-yale">679 ₽</span>
+      </div>
       <button id="student-pay-btn" class="btn-p w-full" onclick="paySubscription('student')">Оплатить подписку</button>
-      <p id="student-sub-note" class="text-xs text-gray-500 text-center mt-3">Статус подписки общий для аккаунтов ученика и родителя.</p>
+      <p id="student-sub-note" class="text-xs text-gray-500 text-center mt-3">Сумма фиксирована тарифом и не может быть увеличена вручную.</p>
     </div>
   </div>
 
@@ -2345,7 +2350,7 @@ function renderStudentSubscription() {
   btn.textContent = active ? 'Подписка уже оплачена' : 'Оплатить подписку';
   note.textContent = active
     ? `Оплачено: ${sub.paidBy === 'parent' ? 'родителем' : 'учеником'}. Повторная оплата недоступна.`
-    : 'Статус подписки общий для аккаунтов ученика и родителя.';
+    : 'Сумма фиксирована тарифом. Статус подписки общий для аккаунтов ученика и родителя.';
 }
 
 function paySubscription(paidBy) {
