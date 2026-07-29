@@ -1100,23 +1100,43 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <div class="p-5 rounded-2xl mb-5" style="background:#FAF0CA">
         <div class="flex items-center justify-between gap-4 flex-wrap">
           <div>
-            <p class="font-black text-yale">Самостоятельная подготовка</p>
+            <p id="student-plan-name" class="font-black text-yale">Самостоятельная подготовка</p>
             <p class="text-sm text-gray-600 mt-1">Курсы, банк заданий и статистика</p>
           </div>
-          <div class="text-right"><span class="text-2xl font-black text-yale">679 ₽</span><span class="text-sm text-gray-500"> / месяц</span></div>
+          <div class="text-right"><span id="student-plan-price" class="text-2xl font-black text-yale">679 ₽</span><span id="student-plan-period-label" class="text-sm text-gray-500"> / месяц</span></div>
         </div>
       </div>
       <label class="text-xs font-bold text-gray-500 block mb-1.5">Сумма к оплате по выбранному тарифу</label>
       <div class="flex items-center justify-between p-4 mb-5 rounded-xl" style="border:2px solid #e5e7eb;background:#f8fafc">
-        <span class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
-        <span class="font-black text-yale">679 ₽</span>
+        <span id="student-checkout-plan" class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
+        <span id="student-checkout-price" class="font-black text-yale">679 ₽</span>
       </div>
       <button id="student-pay-btn" class="btn-p w-full" onclick="paySubscription('student')">Оплатить подписку</button>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <button id="student-renew-btn" class="btn-o text-sm" onclick="enableStudentAutoRenew()">Включить автопродление</button>
+        <button class="btn-o text-sm" onclick="openStudentTariffModal()">Изменить тариф</button>
+        <button class="btn-o text-sm col-span-2" onclick="cancelStudentSubscription()" style="color:#ef4444;border-color:#ef4444">Отменить автопродление</button>
+      </div>
       <p id="student-sub-note" class="text-xs text-gray-500 text-center mt-3">Сумма фиксирована тарифом и не может быть увеличена вручную.</p>
     </div>
   </div>
 
 </div><!-- end main-content -->
+
+<!-- Student tariff modal -->
+<div class="modal-overlay" id="student-tariff-modal" onclick="if(event.target===this)closeStudentTariffModal()">
+  <div class="modal">
+    <div class="flex items-start justify-between gap-4 mb-5">
+      <div><h3 class="font-black text-xl text-gray-900">Выберите тариф</h3><p class="text-sm text-gray-500 mt-1">Сумма оплаты будет равна точной стоимости тарифа.</p></div>
+      <button onclick="closeStudentTariffModal()" class="text-2xl text-gray-400" aria-label="Закрыть">×</button>
+    </div>
+    <div id="student-tariff-options" class="space-y-3"></div>
+    <div class="flex gap-2 mt-5">
+      <button class="btn-p flex-1" onclick="applyStudentTariff()">Выбрать тариф</button>
+      <button class="btn-o flex-1" onclick="closeStudentTariffModal()">Отмена</button>
+    </div>
+  </div>
+</div>
 
 <!-- Connect Tutor Modal -->
 <div class="modal-overlay" id="connect-tutor-modal">
@@ -1245,6 +1265,7 @@ let S = {
   chatMessages: [],
   todayXP: 0,
   todayDone: 0,
+  selectedPlanId: 'monthly',
 };
 
 // svg icons per level (neutral, yale-blue style)
@@ -2336,32 +2357,102 @@ function getSharedSubscription() {
   try { return JSON.parse(localStorage.getItem('fibi_subscription') || 'null'); } catch { return null; }
 }
 
+const STUDENT_PAYMENT_PLANS = [
+  { id:'monthly', name:'Самостоятельная подготовка', period:'1 месяц', price:679, label:'/ месяц' },
+  { id:'quarter', name:'Самостоятельная подготовка', period:'3 месяца', price:1890, label:'за 3 месяца' },
+  { id:'year', name:'Самостоятельная подготовка', period:'12 месяцев', price:6790, label:'за 12 месяцев' }
+];
+function selectedStudentPlan() {
+  return STUDENT_PAYMENT_PLANS.find(p => p.id === S.selectedPlanId) || STUDENT_PAYMENT_PLANS[0];
+}
+
 function renderStudentSubscription() {
   const sub = getSharedSubscription();
   const active = !!(sub && sub.active);
+  const plan = selectedStudentPlan();
   const badge = document.getElementById('student-sub-badge');
   const btn = document.getElementById('student-pay-btn');
+  const renewBtn = document.getElementById('student-renew-btn');
   const note = document.getElementById('student-sub-note');
+  document.getElementById('student-plan-name').textContent = active ? (sub.plan || plan.name) : plan.name;
+  document.getElementById('student-plan-price').textContent = (active ? Number(sub.price) : plan.price).toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('student-plan-period-label').textContent = active ? ` · ${sub.period || '1 месяц'}` : ` · ${plan.period}`;
+  document.getElementById('student-checkout-plan').textContent = `${plan.name} · ${plan.period}`;
+  document.getElementById('student-checkout-price').textContent = plan.price.toLocaleString('ru-RU') + ' ₽';
   badge.textContent = active ? 'Активна' : 'Не активна';
   badge.className = 'tag ' + (active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
   btn.disabled = active;
   btn.style.opacity = active ? '.55' : '1';
   btn.style.cursor = active ? 'not-allowed' : 'pointer';
-  btn.textContent = active ? 'Подписка уже оплачена' : 'Оплатить подписку';
+  btn.textContent = active ? 'Подписка уже оплачена' : `Оплатить ${plan.price.toLocaleString('ru-RU')} ₽`;
+  renewBtn.disabled = !active || !!sub?.autoRenew;
+  renewBtn.style.opacity = renewBtn.disabled ? '.55' : '1';
+  renewBtn.style.cursor = renewBtn.disabled ? 'not-allowed' : 'pointer';
+  renewBtn.textContent = sub?.autoRenew ? 'Автопродление включено' : 'Включить автопродление';
   note.textContent = active
-    ? `Оплачено: ${sub.paidBy === 'parent' ? 'родителем' : 'учеником'}. Повторная оплата недоступна.`
+    ? `Оплачено: ${sub.paidBy === 'parent' ? 'родителем' : 'учеником'}. ${sub.autoRenew ? 'Следующее списание — после окончания периода.' : 'Повторная оплата сейчас недоступна.'}`
     : 'Сумма фиксирована тарифом. Статус подписки общий для аккаунтов ученика и родителя.';
 }
 
 function paySubscription(paidBy) {
   if (getSharedSubscription()?.active) { renderStudentSubscription(); return; }
-  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy, plan:'Самостоятельная подготовка', price:679, startedAt:new Date().toISOString()}));
+  const plan = selectedStudentPlan();
+  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy, plan:plan.name, planId:plan.id, period:plan.period, price:plan.price, autoRenew:false, startedAt:new Date().toISOString()}));
   S.user.hasStudyAccess = true;
   S.user.hasBankAccess = true;
   saveUser();
   renderStudentSubscription();
   renderProfile();
-  alert('Подписка успешно оплачена и активирована.');
+  alert(`Оплачено ${plan.price.toLocaleString('ru-RU')} ₽. Подписка успешно активирована.`);
+}
+
+function enableStudentAutoRenew() {
+  const sub = getSharedSubscription();
+  if (!sub?.active || sub.autoRenew) return;
+  sub.autoRenew = true;
+  localStorage.setItem('fibi_subscription', JSON.stringify(sub));
+  renderStudentSubscription();
+  alert('Автопродление включено. Следующее списание произойдёт только после окончания текущего периода.');
+}
+function cancelStudentSubscription() {
+  const sub = getSharedSubscription();
+  if (!sub?.active) { alert('Активной подписки нет.'); return; }
+  sub.autoRenew = false;
+  localStorage.setItem('fibi_subscription', JSON.stringify(sub));
+  renderStudentSubscription();
+  alert('Автопродление отключено. Доступ сохранится до конца оплаченного периода.');
+}
+function openStudentTariffModal() {
+  const sub = getSharedSubscription();
+  if (sub?.nextPlanId || sub?.planId) S.selectedPlanId = sub.nextPlanId || sub.planId;
+  renderStudentTariffOptions();
+  document.getElementById('student-tariff-modal').classList.add('open');
+}
+function closeStudentTariffModal() {
+  document.getElementById('student-tariff-modal').classList.remove('open');
+}
+function renderStudentTariffOptions() {
+  document.getElementById('student-tariff-options').innerHTML = STUDENT_PAYMENT_PLANS.map(p => `
+    <label class="flex items-center gap-3 p-4 rounded-2xl cursor-pointer" style="border:2px solid ${S.selectedPlanId===p.id?'#0D3B66':'#e5e7eb'};background:${S.selectedPlanId===p.id?'#f0f6ff':'white'}">
+      <input type="radio" name="student-payment-plan" value="${p.id}" ${S.selectedPlanId===p.id?'checked':''} onchange="S.selectedPlanId=this.value;renderStudentTariffOptions()" class="accent-yale w-4 h-4">
+      <span class="flex-1"><span class="font-bold text-gray-800 block">${p.period}</span><span class="text-xs text-gray-500">${p.id==='monthly'?'679 ₽ / месяц':p.id==='quarter'?'630 ₽ / месяц':'Два месяца в подарок'}</span></span>
+      <span class="font-black text-yale">${p.price.toLocaleString('ru-RU')} ₽</span>
+    </label>`).join('');
+}
+function applyStudentTariff() {
+  const sub = getSharedSubscription();
+  const active = sub?.active;
+  const plan = selectedStudentPlan();
+  if (active) {
+    sub.nextPlanId = plan.id;
+    sub.nextPlan = plan.name;
+    sub.nextPeriod = plan.period;
+    sub.nextPrice = plan.price;
+    localStorage.setItem('fibi_subscription', JSON.stringify(sub));
+  }
+  closeStudentTariffModal();
+  renderStudentSubscription();
+  if (active) alert(`Тариф «${plan.period}» выбран для следующего продления. Повторного списания сейчас не будет.`);
 }
 
 let _epPhotoBase64 = null;
