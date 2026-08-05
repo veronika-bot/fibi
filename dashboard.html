@@ -1381,6 +1381,17 @@
 
 <script src="tasks.js"></script>
 <script>
+// ─── API / session (кабинет родителя) ─────────────────────
+const API_BASE = 'http://localhost:3000';
+let P_user = null; // server-side identity, populated by loadUser()
+
+async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data.user;
+}
+
 // ─── Screen navigation ─────────────────────────────────────
 function showScreen(name) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2156,74 +2167,9 @@ function getRankLabel(xp) {
   return 'Гений';
 }
 
-function getOrCreateLinkCode(userId) {
-  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
-  let code = Object.keys(codes).find(k => codes[k] === userId);
-  if (!code) {
-    code = Math.random().toString(36).slice(2, 8).toUpperCase();
-    codes[code] = userId;
-    localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
-  }
-  return code;
-}
-
-function refreshLinkCode() {
-  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  if (!u) return;
-  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
-  Object.keys(codes).forEach(k => { if (codes[k] === u.id) delete codes[k]; });
-  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
-  renderStudentLinkCard(u);
-}
-
-function copyLinkCode() {
-  const codeEl = document.getElementById('student-link-code');
-  if (!codeEl) return;
-  navigator.clipboard.writeText(codeEl.textContent).catch(() => {});
-  const btn = document.getElementById('copy-code-btn');
-  if (!btn) return;
-  const prev = btn.textContent;
-  btn.textContent = 'Скопировано!';
-  setTimeout(() => { btn.textContent = prev; }, 2000);
-}
-
-function renderStudentLinkCard(u) {
-  const card = document.getElementById('parent-link-card');
-  const content = document.getElementById('parent-link-content');
-  if (!card || !content) return;
-  card.style.display = '';
-
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const linkedParents = (u.parentIds || [])
-    .map(pid => users.find(x => x.id === pid))
-    .filter(Boolean);
-
-  const code = getOrCreateLinkCode(u.id);
-
-  let parentsHtml = '';
-  if (linkedParents.length) {
-    parentsHtml = '<div class="mb-3 space-y-1.5">' +
-      linkedParents.map(p => `
-        <div class="flex items-center gap-2 text-sm">
-          <svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-          <span class="text-gray-700 font-medium">${p.name}${p.lastName ? ' ' + p.lastName : ''}</span>
-          <span class="text-gray-400 text-xs">— доступ к прогрессу открыт</span>
-        </div>`).join('') +
-      '</div>';
-  }
-
-  content.innerHTML = parentsHtml + `
-    <p class="text-xs text-gray-500 mb-2">Поделись кодом с родителем — он введёт его в своём аккаунте:</p>
-    <div class="flex items-center gap-3 flex-wrap">
-      <div class="px-4 py-2.5 rounded-xl font-bold text-lg" style="background:rgba(13,59,102,0.07);color:#0D3B66;letter-spacing:.2em">
-        <span id="student-link-code">${code}</span>
-      </div>
-      <button id="copy-code-btn" onclick="copyLinkCode()" class="btn-o text-sm" style="padding:9px 16px">Копировать</button>
-      <button onclick="refreshLinkCode()" class="p-2 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all" title="Обновить код">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
-      </button>
-    </div>`;
-}
+// NOTE: link-code generation lives on the student's side now (student-dashboard.html,
+// backed by GET /api/student/link-code) — parents only ever consume a code via
+// linkStudentByCode() below. This file has no student-facing screen to render.
 
 function toggleAddChildForm() {
   const form = document.getElementById('add-child-form');
@@ -2237,94 +2183,52 @@ function toggleAddChildForm() {
   }
 }
 
-function submitParentCode() {
+async function linkStudentByCode(code, errEl) {
+  if (code.length !== 6) {
+    errEl.textContent = 'Введи код из 6 символов';
+    errEl.style.display = 'block';
+    return false;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/api/parent/link-student`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      errEl.textContent = data.error || 'Код не найден. Проверьте код в профиле ученика.';
+      errEl.style.display = 'block';
+      return false;
+    }
+    return true;
+  } catch {
+    errEl.textContent = 'Сервер недоступен. Проверьте подключение и попробуйте снова.';
+    errEl.style.display = 'block';
+    return false;
+  }
+}
+
+async function submitParentCode() {
   const inp = document.getElementById('parent-code-input');
   const errEl = document.getElementById('code-error');
   if (!inp || !errEl) return;
-
-  const code = inp.value.trim().toUpperCase();
   errEl.style.display = 'none';
-
-  if (code.length < 4) {
-    errEl.textContent = 'Введи код из 6 символов';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
-  const studentId = codes[code];
-  if (!studentId) {
-    errEl.textContent = 'Код не найден или уже использован';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  if (!parent) return;
-
-  const studentIdx = users.findIndex(u => u.id === studentId);
-  if (studentIdx < 0) {
-    errEl.textContent = 'Ученик не найден';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  if ((parent.childrenIds || []).includes(studentId)) {
-    errEl.textContent = 'Этот ученик уже привязан';
-    errEl.style.display = 'block';
-    return;
-  }
-
-  if (!parent.childrenIds) parent.childrenIds = [];
-  parent.childrenIds.push(studentId);
-
-  const student = users[studentIdx];
-  if (!student.parentIds) student.parentIds = [];
-  if (!student.parentIds.includes(parent.id)) student.parentIds.push(parent.id);
-  users[studentIdx] = student;
-
-  const parentIdx = users.findIndex(u => u.id === parent.id);
-  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
-
-  delete codes[code];
-  localStorage.setItem('fibi_users', JSON.stringify(users));
-  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
-  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
-
+  const ok = await linkStudentByCode(inp.value.trim().toUpperCase(), errEl);
+  if (!ok) return;
   inp.value = '';
   document.getElementById('add-child-form').style.display = 'none';
   loadParentScreen();
 }
 
-function submitParentCodeEmpty() {
+async function submitParentCodeEmpty() {
   const inp = document.getElementById('parent-code-input-empty');
   const errEl = document.getElementById('code-error-empty');
   if (!inp || !errEl) return;
-  const code = inp.value.trim().toUpperCase();
   errEl.style.display = 'none';
-  if (code.length < 4) { errEl.textContent = 'Введи код из 6 символов'; errEl.style.display = 'block'; return; }
-  const codes = JSON.parse(localStorage.getItem('fibi_link_codes') || '{}');
-  const studentId = codes[code];
-  if (!studentId) { errEl.textContent = 'Код не найден. Попроси ребёнка обновить код в настройках.'; errEl.style.display = 'block'; return; }
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  if (!parent) return;
-  const studentIdx = users.findIndex(u => u.id === studentId);
-  if (studentIdx < 0) { errEl.textContent = 'Ученик не найден'; errEl.style.display = 'block'; return; }
-  if ((parent.childrenIds || []).includes(studentId)) { errEl.textContent = 'Уже привязан'; errEl.style.display = 'block'; return; }
-  if (!parent.childrenIds) parent.childrenIds = [];
-  parent.childrenIds.push(studentId);
-  const student = users[studentIdx];
-  if (!student.parentIds) student.parentIds = [];
-  if (!student.parentIds.includes(parent.id)) student.parentIds.push(parent.id);
-  users[studentIdx] = student;
-  const parentIdx = users.findIndex(u => u.id === parent.id);
-  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
-  delete codes[code];
-  localStorage.setItem('fibi_users', JSON.stringify(users));
-  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
-  localStorage.setItem('fibi_link_codes', JSON.stringify(codes));
+  const ok = await linkStudentByCode(inp.value.trim().toUpperCase(), errEl);
+  if (!ok) return;
   inp.value = '';
   loadParentScreen();
 }
@@ -2358,37 +2262,43 @@ function hideParentDemo() {
   if (banner) banner.style.display = 'none';
 }
 
-function removeChild(childId) {
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  if (!parent) return;
-
-  parent.childrenIds = (parent.childrenIds || []).filter(id => id !== childId);
-
-  const childIdx = users.findIndex(u => u.id === childId);
-  if (childIdx >= 0) {
-    users[childIdx].parentIds = (users[childIdx].parentIds || []).filter(id => id !== parent.id);
-  }
-
-  const parentIdx = users.findIndex(u => u.id === parent.id);
-  if (parentIdx >= 0) users[parentIdx] = { ...users[parentIdx], childrenIds: parent.childrenIds };
-
-  localStorage.setItem('fibi_users', JSON.stringify(users));
-  localStorage.setItem('fibi_current_user', JSON.stringify(parent));
+async function removeChild(childId) {
+  if (!confirm('Отвязать этого ученика от вашего кабинета?')) return;
+  try {
+    await fetch(`${API_BASE}/api/parent/link-student`, {
+      method: 'DELETE',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ studentId: childId }),
+    });
+  } catch {}
   loadParentScreen();
 }
 
 let _parentSelectedChildId = null;
 let _parentRefreshTimer = null;
 
-function loadParentScreen() {
-  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  if (!parent) return;
+async function loadParentScreen() {
+  if (!P_user) return;
 
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const children = (parent.childrenIds || [])
-    .map(id => users.find(u => u.id === id))
-    .filter(Boolean);
+  let dashboard;
+  try {
+    const res = await fetch(`${API_BASE}/api/parent/dashboard`, { credentials: 'include' });
+    if (!res.ok) return;
+    dashboard = await res.json();
+  } catch { return; }
+
+  // Adapt the real API shape ({studentId, fullName, streak, totalSolved, readinessPercent, homeworkPending, subscription})
+  // to the {id, name, lastName, streak, solved, accuracy, xp, registeredAt} shape renderParentDashboard() expects.
+  // Fields with no server model yet (grade, accuracy, xp, registeredAt) are left blank rather than faked.
+  const children = (dashboard.students || []).map(s => {
+    const [firstName, ...rest] = (s.fullName || '').split(' ');
+    return {
+      id: s.studentId, name: firstName || s.fullName || '', lastName: rest.join(' '),
+      streak: s.streak || 0, solved: s.totalSolved || 0,
+      readinessPercent: s.readinessPercent, homeworkPending: s.homeworkPending,
+    };
+  });
 
   const empty = document.getElementById('parent-empty');
   const content = document.getElementById('parent-dashboard-content');
@@ -2419,7 +2329,7 @@ function loadParentScreen() {
     }
     selector.innerHTML = children.map(c => {
       const active = c.id === _parentSelectedChildId;
-      return `<button onclick="selectParentChild(${c.id})"
+      return `<button onclick="selectParentChild('${c.id}')"
         class="px-4 py-2 rounded-xl text-sm font-semibold transition-all"
         style="${active ? 'background:#0D3B66;color:white' : 'background:#f3f4f6;color:#374151'}"
       >${c.name}${c.lastName ? ' ' + c.lastName : ''}</button>`;
@@ -2432,7 +2342,7 @@ function loadParentScreen() {
   const child = children.find(c => c.id === _parentSelectedChildId) || children[0];
 
   // Update parent banner
-  const childReadiness = Math.min(100, Math.round((child.solved || 0) / 2));
+  const childReadiness = child.readinessPercent ?? Math.min(100, Math.round((child.solved || 0) / 2));
   updateParentBanner(child.name, child.streak || 0, childReadiness);
 
   // Render dashboard
@@ -2460,7 +2370,7 @@ function renderParentDashboard(child) {
   const acc = child.accuracy || 0;
   const xp = child.xp || 0;
   const rank = getRankLabel(xp);
-  const readiness = Math.min(100, Math.round(solved / 2));
+  const readiness = child.readinessPercent ?? Math.min(100, Math.round(solved / 2));
 
   // XP to next rank
   const xpThresholds = [100, 500, 1000, 2500, 5000, 9999];
@@ -2522,7 +2432,7 @@ function renderParentDashboard(child) {
           </div>
         </div>
       </div>
-      <button onclick="removeChild(${child.id})" class="text-xs px-3 py-1.5 rounded-xl transition-all" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)" title="Отвязать ученика">Отвязать</button>
+      <button onclick="removeChild('${child.id}')" class="text-xs px-3 py-1.5 rounded-xl transition-all" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.6)" title="Отвязать ученика">Отвязать</button>
     </div>
     <div class="mt-4 text-sm font-medium" style="color:rgba(255,255,255,.85)">${motivMsg}</div>
   </div>
@@ -2676,26 +2586,30 @@ function renderParentDashboard(child) {
 
 function startParentAutoRefresh() {
   if (_parentRefreshTimer) clearInterval(_parentRefreshTimer);
-  _parentRefreshTimer = setInterval(() => {
-    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-    const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-    if (!parent) return;
-    const children = (parent.childrenIds || []).map(id => users.find(u => u.id === id)).filter(Boolean);
-    if (children.length) loadParentScreen();
-  }, 15000);
+  _parentRefreshTimer = setInterval(() => { loadParentScreen(); }, 15000);
 }
 
-// ─── Load user from localStorage ──────────────────────────
-function loadUser() {
-  const raw = localStorage.getItem('fibi_current_user');
-  if (!raw) { window.location.href = 'register.html'; return; }
-  const u = JSON.parse(raw);
+// ─── Load user from the server session ────────────────────
+async function loadUser() {
+  const serverUser = await fetchMe();
+  if (!serverUser) { window.location.href = 'register.html'; return; }
+  const role = (serverUser.role || '').toLowerCase();
   // Route to dedicated dashboards
-  if (u.role === 'tutor') { window.location.href = 'tutor-dashboard.html'; return; }
-  if (u.role === 'student') {
-    if (!u.onboardingDone) { window.location.href = 'student-onboarding.html'; return; }
+  if (role === 'tutor') { window.location.href = 'tutor-dashboard.html'; return; }
+  if (role === 'student') {
+    if (!serverUser.studentProfile?.onboardingDone) { window.location.href = 'student-onboarding.html'; return; }
     window.location.href = 'student-dashboard.html'; return;
   }
+  if (role !== 'parent') { window.location.href = 'register.html'; return; }
+
+  const [firstName, ...rest] = (serverUser.fullName || '').split(' ');
+  const u = {
+    id: serverUser.id, role: 'parent',
+    name: firstName || '', lastName: rest.join(' '),
+    email: serverUser.email, phone: serverUser.phone, avatar: serverUser.avatar,
+  };
+  P_user = u;
+
   const short = u.name;
   const ini = ((u.name[0] || '') + (u.lastName ? u.lastName[0] : '')).toUpperCase() || u.name.slice(0,2).toUpperCase();
   const roleLabel = u.role === 'tutor' ? 'Репетитор' : u.role === 'parent' ? 'Родитель' : '';
@@ -2712,48 +2626,30 @@ function loadUser() {
   const bannerEl = document.querySelector('.mascot-greeting');
   if (bannerEl) bannerEl.textContent = short + ', ты молодец!';
 
-  if (u.role === 'tutor') {
-    // Hide student/parent nav items, show tutor nav
-    ['n-dashboard', 'n-tasks', 'n-tutors', 'n-chat', 'n-progress', 'n-parent'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    ['tn-students', 'tn-groups', 'tn-materials', 'tn-tasks'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'flex';
-    });
-    const sb = document.getElementById('streak-badge');
-    if (sb) sb.style.display = 'none';
-    showTutorTab('students');
-  } else if (u.role === 'parent') {
-    // Hide student-only nav items
-    ['n-dashboard', 'n-tasks', 'n-progress', 'n-tutors', 'n-chat'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
-    // Show parent-specific nav
-    ['n-parent', 'n-parent-tutors', 'n-parent-chat', 'n-parent-profile', 'n-parent-payment'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'flex';
-    });
-    const sb2 = document.getElementById('streak-badge');
-    if (sb2) sb2.style.display = 'none';
-    // Switch banner to parent version
-    const bs = document.getElementById('banner-student');
-    if (bs) bs.style.display = 'none';
-    const bp = document.getElementById('banner-parent');
-    if (bp) bp.style.display = 'flex';
-    // Update greeting
-    const greet = document.querySelector('#s-dashboard h1');
-    if (greet) greet.textContent = 'Добро пожаловать, ' + short + '!';
-    showScreen('parent');
-    loadParentScreen();
-    startParentAutoRefresh();
-    renderParentProfileInfo();
-  } else {
-    // Student: show parent link card
-    renderStudentLinkCard(u);
-  }
+  // Hide student-only nav items
+  ['n-dashboard', 'n-tasks', 'n-progress', 'n-tutors', 'n-chat'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  // Show parent-specific nav
+  ['n-parent', 'n-parent-tutors', 'n-parent-chat', 'n-parent-profile', 'n-parent-payment'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'flex';
+  });
+  const sb2 = document.getElementById('streak-badge');
+  if (sb2) sb2.style.display = 'none';
+  // Switch banner to parent version
+  const bs = document.getElementById('banner-student');
+  if (bs) bs.style.display = 'none';
+  const bp = document.getElementById('banner-parent');
+  if (bp) bp.style.display = 'flex';
+  // Update greeting
+  const greet = document.querySelector('#s-dashboard h1');
+  if (greet) greet.textContent = 'Добро пожаловать, ' + short + '!';
+  showScreen('parent');
+  loadParentScreen();
+  startParentAutoRefresh();
+  renderParentProfileInfo();
 }
 
 // ─── Support modal ────────────────────────────────────────
@@ -2779,15 +2675,19 @@ function sendParentMsg() {
 }
 
 // ─── Profile connect child by code ───────────────────────
-function submitProfileCode() {
+async function submitProfileCode() {
   const code = (document.getElementById('profile-code-input')?.value || '').trim().toUpperCase();
   const statusEl = document.getElementById('profile-code-status');
   if (code.length !== 6) { if (statusEl) { statusEl.textContent = 'Код должен быть 6 символов'; statusEl.style.color = '#ef4444'; } return; }
-  // Reuse existing submitParentCode logic
-  const inp = document.getElementById('parent-code-input');
-  if (inp) { inp.value = code; submitParentCode(); }
-  if (statusEl) { statusEl.textContent = 'Ученик успешно подключён!'; statusEl.style.color = '#10b981'; }
-  if (document.getElementById('profile-code-input')) document.getElementById('profile-code-input').value = '';
+  const ok = await linkStudentByCode(code, statusEl || { style: {} });
+  if (statusEl) {
+    if (ok) { statusEl.textContent = 'Ученик успешно подключён!'; statusEl.style.color = '#10b981'; }
+    else statusEl.style.color = '#ef4444';
+  }
+  if (ok) {
+    if (document.getElementById('profile-code-input')) document.getElementById('profile-code-input').value = '';
+    loadParentScreen();
+  }
 }
 
 // ─── Update parent banner with child data ─────────────────
@@ -2804,8 +2704,8 @@ function updateParentBanner(childName, streak, readinessPct) {
 }
 
 // ─── Logout ───────────────────────────────────────────────
-function logout() {
-  localStorage.removeItem('fibi_current_user');
+async function logout() {
+  try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
   window.location.href = 'register.html';
 }
 
@@ -2828,7 +2728,7 @@ function ppPhotoChange(e) {
 }
 
 function openParentProfileEdit() {
-  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  const u = P_user;
   if (!u) return;
   _ppPhotoBase64 = null;
   document.getElementById('pp-edit-name').value = u.name || '';
@@ -2855,22 +2755,35 @@ function closeParentProfileEdit() {
   document.getElementById('parent-profile-edit-modal').style.display = 'none';
 }
 
-function saveParentProfile() {
-  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+async function saveParentProfile() {
+  const u = P_user;
   if (!u) return;
   const name = document.getElementById('pp-edit-name').value.trim();
   if (!name) { document.getElementById('pp-edit-name').style.borderColor = '#ef4444'; return; }
-  u.name = name;
-  u.lastName = document.getElementById('pp-edit-lastName').value.trim();
-  u.email = document.getElementById('pp-edit-email').value.trim() || u.email;
-  u.phone = document.getElementById('pp-edit-phone').value.trim();
-  if (_ppPhotoBase64) u.avatar = _ppPhotoBase64;
+  const lastName = document.getElementById('pp-edit-lastName').value.trim();
+  const phone = document.getElementById('pp-edit-phone').value.trim();
 
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const idx = users.findIndex(us => us.id === u.id);
-  if (idx >= 0) users[idx] = { ...users[idx], ...u };
-  localStorage.setItem('fibi_users', JSON.stringify(users));
-  localStorage.setItem('fibi_current_user', JSON.stringify(u));
+  try {
+    const res = await fetch(`${API_BASE}/api/parent/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fullName: [name, lastName].filter(Boolean).join(' '),
+        phone,
+        avatar: _ppPhotoBase64 || undefined,
+      }),
+    });
+    if (!res.ok) throw new Error('save failed');
+  } catch {
+    alert('Не удалось сохранить профиль. Проверьте подключение и попробуйте снова.');
+    return;
+  }
+
+  u.name = name;
+  u.lastName = lastName;
+  u.phone = phone;
+  if (_ppPhotoBase64) u.avatar = _ppPhotoBase64;
 
   // Update all avatar displays
   const ini = ((u.name[0]||'') + ((u.lastName||'')[0]||'')).toUpperCase();
@@ -2893,7 +2806,7 @@ function saveParentProfile() {
 }
 
 function renderParentProfileInfo() {
-  const u = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
+  const u = P_user;
   if (!u) return;
   const ini = ((u.name||'?')[0] + ((u.lastName||'')[0]||'')).toUpperCase();
   const av = document.getElementById('parent-profile-av');
@@ -3097,8 +3010,7 @@ function submitReview() {
   const tutor = DEMO_TUTORS_CATALOG.find(t => t.id === _activeTutorId);
   if (!tutor) return;
 
-  const parent = JSON.parse(localStorage.getItem('fibi_current_user') || 'null');
-  const parentName = parent ? (parent.name[0] + '. ') : 'Родитель ';
+  const parentName = P_user ? (P_user.name[0] + '. ') : 'Родитель ';
 
   const review = {
     id: 'r' + Date.now(),

@@ -1,8 +1,11 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, ClipboardList, FileCheck, TrendingUp, Calendar, MessageSquare, Zap, Star } from 'lucide-react'
 import { Card, KPICard, SectionTitle, Badge, Avatar, Btn } from '@/components/ui'
-import { MOCK_TUTOR, MOCK_STUDENTS, MOCK_HW, MOCK_CHATS, MOCK_LESSONS, ACTIVITY_DATA } from '@/lib/mock'
+import { MOCK_TUTOR, MOCK_CHATS, MOCK_LESSONS, ACTIVITY_DATA } from '@/lib/mock'
+import { getMe, getTutorStudents, getHomework, MeUser } from '@/lib/api'
+import type { Student, Homework } from '@/lib/types'
 
 const fadeUp = { initial: { opacity: 0, y: 16 }, animate: { opacity: 1, y: 0 } }
 
@@ -25,19 +28,31 @@ function ActivityBar({ value, max, day }: { value: number; max: number; day: str
 }
 
 export default function HomePage() {
+  const [me, setMe] = useState<MeUser | null>(null)
+  const [students, setStudents] = useState<Student[]>([])
+  const [hw, setHw] = useState<Homework[]>([])
+
+  useEffect(() => {
+    getMe().then(setMe)
+    getTutorStudents().then(setStudents).catch(() => setStudents([]))
+    getHomework().then(setHw).catch(() => setHw([]))
+  }, [])
+
   const maxChecks = Math.max(...ACTIVITY_DATA.map(d => d.checks))
-  const pendingHW = MOCK_HW.filter(h => h.status === 'submitted').length
+  const pendingHW = hw.filter(h => h.status === 'submitted').length
   const unreadChats = MOCK_CHATS.reduce((s, c) => s + c.unread, 0)
+  const firstName = me?.fullName?.split(' ')[0] || MOCK_TUTOR.name
 
   return (
     <motion.div {...fadeUp} transition={{ duration: 0.4 }} className="space-y-8">
       {/* Header */}
       <div className="flex flex-wrap items-start md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl md:text-3xl font-black text-gray-900 truncate">Добро пожаловать, {MOCK_TUTOR.name}</h1>
+          <h1 className="text-xl md:text-3xl font-black text-gray-900 truncate">Добро пожаловать, {firstName}</h1>
           <p className="text-gray-500 mt-1 text-sm">Сегодня {new Date().toLocaleDateString('ru-RU', { weekday:'long', day:'numeric', month:'long' })}</p>
         </div>
         <div className="flex items-center gap-3">
+          {/* Рейтинг репетиторов пока не рассчитывается на сервере — раздел /chart на моках */}
           <Badge variant="gold">
             <Star size={11} strokeWidth={2}/> #{MOCK_TUTOR.chartRank} в чарте
           </Badge>
@@ -49,13 +64,13 @@ export default function HomePage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <KPICard label="Учеников" value={MOCK_STUDENTS.length} sub="активных" trend={+25}
+        <KPICard label="Учеников" value={students.length} sub="активных"
           icon={<Users size={20} strokeWidth={1.8}/>}/>
-        <KPICard label="Активных ДЗ" value={MOCK_HW.filter(h=>h.status==='assigned').length} sub="на проверку скоро"
+        <KPICard label="Активных ДЗ" value={hw.filter(h=>h.status==='assigned').length} sub="на проверку скоро"
           icon={<ClipboardList size={20} strokeWidth={1.8}/>}/>
         <KPICard label="На проверке" value={pendingHW} sub="ждут оценки"
           icon={<FileCheck size={20} strokeWidth={1.8}/>}/>
-        <KPICard label="Проверок" value={MOCK_TUTOR.checksTotal} sub="всего в чарте" trend={+12}
+        <KPICard label="Проверок" value={MOCK_TUTOR.checksTotal} sub="всего в чарте"
           icon={<TrendingUp size={20} strokeWidth={1.8}/>}/>
       </div>
 
@@ -107,18 +122,18 @@ export default function HomePage() {
             Домашние задания
           </SectionTitle>
           <div className="space-y-2">
-            {MOCK_HW.slice(0,4).map(hw => (
-              <motion.div key={hw.id} whileHover={{ x: 2 }}
+            {hw.slice(0,4).map(item => (
+              <motion.div key={item.id} whileHover={{ x: 2 }}
                 className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer">
                 <div className="flex items-center gap-3 min-w-0">
-                  <Avatar initials={hw.studentName.split(' ').map(n=>n[0]).join('')} size="sm"/>
+                  <Avatar initials={item.studentName.split(' ').map(n=>n[0]).join('')} size="sm"/>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{hw.title}</p>
-                    <p className="text-xs text-gray-400">{hw.studentName} · до {hw.dueDate}</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{item.title}</p>
+                    <p className="text-xs text-gray-400">{item.studentName} · до {item.dueDate}</p>
                   </div>
                 </div>
-                <Badge variant={hw.status==='submitted'?'warning':hw.status==='checked'?'success':hw.status==='overdue'?'danger':'default'}>
-                  {hw.status==='assigned'?'Выдано':hw.status==='submitted'?'Сдано':hw.status==='checked'?'Готово':'Просрочено'}
+                <Badge variant={item.status==='submitted'?'warning':item.status==='checked'?'success':item.status==='overdue'?'danger':'default'}>
+                  {item.status==='assigned'?'Выдано':item.status==='submitted'?'Сдано':item.status==='checked'?'Готово':'Просрочено'}
                 </Badge>
               </motion.div>
             ))}

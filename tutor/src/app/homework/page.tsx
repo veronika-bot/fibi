@@ -1,23 +1,28 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Plus, Filter, Clock, CheckCircle2, AlertCircle, Circle } from 'lucide-react'
 import { Card, SectionTitle, Badge, Avatar, Btn, HWStatusBadge } from '@/components/ui'
-import { MOCK_HW } from '@/lib/mock'
+import { getHomework } from '@/lib/api'
+import type { Homework } from '@/lib/types'
 
 const FILTERS = ['Все', 'Выдано', 'Сдано', 'Проверено', 'Просрочено']
 const STATUS_MAP: Record<string, string> = { 'Выдано':'assigned', 'Сдано':'submitted', 'Проверено':'checked', 'Просрочено':'overdue' }
 
 export default function HomeworkPage() {
   const [filter, setFilter] = useState('Все')
-  const filtered = filter === 'Все' ? MOCK_HW : MOCK_HW.filter(h => h.status === STATUS_MAP[filter])
+  const [allHw, setAllHw] = useState<Homework[]>([])
+
+  useEffect(() => { getHomework().then(setAllHw).catch(() => setAllHw([])) }, [])
+
+  const filtered = filter === 'Все' ? allHw : allHw.filter(h => h.status === STATUS_MAP[filter])
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-gray-900">Домашние задания</h1>
-          <p className="text-gray-500 text-sm mt-1">{MOCK_HW.length} заданий всего</p>
+          <p className="text-gray-500 text-sm mt-1">{allHw.length} заданий всего</p>
         </div>
         <Btn><Plus size={16}/> Создать ДЗ</Btn>
       </div>
@@ -25,10 +30,10 @@ export default function HomeworkPage() {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         {[
-          { label:'Активных', value: MOCK_HW.filter(h=>h.status==='assigned').length, icon:<Circle size={18}/>, color:'text-blue-600' },
-          { label:'Сдано', value: MOCK_HW.filter(h=>h.status==='submitted').length, icon:<Clock size={18}/>, color:'text-amber-600' },
-          { label:'Проверено', value: MOCK_HW.filter(h=>h.status==='checked').length, icon:<CheckCircle2 size={18}/>, color:'text-green-600' },
-          { label:'Просрочено', value: MOCK_HW.filter(h=>h.status==='overdue').length, icon:<AlertCircle size={18}/>, color:'text-red-500' },
+          { label:'Активных', value: allHw.filter(h=>h.status==='assigned').length, icon:<Circle size={18}/>, color:'text-blue-600' },
+          { label:'Сдано', value: allHw.filter(h=>h.status==='submitted').length, icon:<Clock size={18}/>, color:'text-amber-600' },
+          { label:'Проверено', value: allHw.filter(h=>h.status==='checked').length, icon:<CheckCircle2 size={18}/>, color:'text-green-600' },
+          { label:'Просрочено', value: allHw.filter(h=>h.status==='overdue').length, icon:<AlertCircle size={18}/>, color:'text-red-500' },
         ].map(s => (
           <Card key={s.label} className="flex items-center gap-3">
             <div className={`${s.color}`}>{s.icon}</div>

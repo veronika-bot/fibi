@@ -37,3 +37,18 @@ export async function invalidate(pattern: string) {
     if (keys.length) await redis.del(...keys)
   } catch {}
 }
+
+/**
+ * Simple fixed-window rate limiter keyed by e.g. `login:<ip>` or `login:<email>`.
+ * Fails open (allows the request) if Redis is unavailable — matches `cached()`'s fallback behavior.
+ */
+export async function rateLimit(key: string, max: number, windowSec: number): Promise<boolean> {
+  if (!redis) return true
+  try {
+    const count = await redis.incr(`ratelimit:${key}`)
+    if (count === 1) await redis.expire(`ratelimit:${key}`, windowSec)
+    return count <= max
+  } catch {
+    return true
+  }
+}

@@ -34,7 +34,10 @@
 .exam-card{border:2px solid #e5e7eb;border-radius:20px;padding:24px;cursor:pointer;transition:all .25s;background:white;text-align:center}
 .exam-card:hover{border-color:#0D3B66;transform:translateY(-4px);box-shadow:0 12px 32px rgba(13,59,102,.12)}
 .exam-card.selected{border-color:#0D3B66;background:#0D3B66;color:white;transform:translateY(-4px);box-shadow:0 12px 32px rgba(13,59,102,.3)}
-.exam-card.selected p,.exam-card.selected span{color:rgba(255,255,255,.75)!important}
+.exam-card.selected h3{color:white!important}
+.exam-card.selected p,.exam-card.selected span{color:rgba(255,255,255,.82)!important}
+.exam-card.selected svg{color:white!important}
+.exam-card.selected svg [stroke]{stroke:white!important}
 
 .goal-btn{width:48px;height:48px;border-radius:12px;border:2px solid #e5e7eb;font-weight:700;font-size:16px;cursor:pointer;transition:all .2s;background:white;color:#374151}
 .goal-btn:hover{border-color:#0D3B66;color:#0D3B66}
@@ -331,6 +334,18 @@
 </div>
 
 <script>
+// ─── API ─────────────────────────────────────────────────
+const API_BASE = 'http://localhost:3000';
+
+async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data.user;
+}
+
+const EXAM_TO_SERVER = { ogu: 'OGE', ege_base: 'EGE_BASE', ege_prof: 'EGE_PROFILE' };
+
 // ─── State ───────────────────────────────────────────────
 const OB = {
   currentStep: 2,
@@ -341,8 +356,8 @@ const OB = {
   dailyGoal: 5
 };
 
-// Load user from localStorage
-const currentUser = JSON.parse(localStorage.getItem('fibi_current_user') || '{}');
+// Loaded from the server session once /api/auth/me resolves (see Init below)
+let currentUser = {};
 
 // ─── Step navigation ─────────────────────────────────────
 function nextStep(n) {
@@ -436,41 +451,40 @@ function setGoal(n) {
 }
 
 // ─── Finish ───────────────────────────────────────────────
-function finishOnboarding() {
+async function finishOnboarding() {
   // Collect hobbies
   OB.hobbies = [...document.querySelectorAll('#hobbies-group .hobby-chip.selected')].map(h => h.textContent);
   OB.subjects = [...document.querySelectorAll('#subjects-group .hobby-chip.selected')].map(h => h.textContent);
 
-  // Save to user
-  const user = JSON.parse(localStorage.getItem('fibi_current_user') || '{}');
-  Object.assign(user, {
-    city: OB.city,
-    school: OB.school,
-    age: OB.age,
-    gender: OB.gender,
-    hobbies: OB.hobbies,
-    extraSubjects: OB.subjects,
-    exam: OB.exam || 'ogu',
-    dailyGoal: OB.dailyGoal,
-    onboardingDone: true,
-    streak: 0, xp: 0, solved: 0,
-    hasStudyAccess: false,
-    hasBankAccess: false,
-    activeTutor: null,
-    pendingHW: false
-  });
-  localStorage.setItem('fibi_current_user', JSON.stringify(user));
+  const btn = document.getElementById('exam-next-btn') || document.querySelector('#step-7 button');
 
-  // Update users list
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const idx = users.findIndex(u => u.id === user.id);
-  if (idx >= 0) users[idx] = user;
-  localStorage.setItem('fibi_users', JSON.stringify(users));
+  try {
+    const res = await fetch(`${API_BASE}/api/student/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        city: OB.city,
+        school: OB.school,
+        age: OB.age ? Number(OB.age) : undefined,
+        gender: OB.gender || undefined,
+        hobbies: OB.hobbies,
+        extraSubjects: OB.subjects,
+        exam: EXAM_TO_SERVER[OB.exam] || 'OGE',
+        dailyGoal: OB.dailyGoal,
+        onboardingDone: true,
+      }),
+    });
+    if (!res.ok) throw new Error('onboarding save failed');
+  } catch (err) {
+    alert('Не удалось сохранить анкету. Проверьте подключение и попробуйте снова.');
+    return;
+  }
 
   // Show success screen
   nextStep(7);
   const examLabels = { ogu: 'ОГЭ', ege_base: 'ЕГЭ База', ege_prof: 'ЕГЭ Профиль' };
-  document.getElementById('success-name').textContent = `Привет, ${user.name || 'друг'}!`;
+  document.getElementById('success-name').textContent = `Привет, ${(currentUser.fullName || 'друг').split(' ')[0]}!`;
   document.getElementById('summary-exam').textContent = examLabels[OB.exam] || 'ОГЭ';
   document.getElementById('summary-goal').textContent = OB.dailyGoal + ' задач в день';
 
@@ -494,17 +508,19 @@ function launchConfetti() {
 }
 
 // ─── Init ─────────────────────────────────────────────────
-window.addEventListener('load', () => {
-  if (!currentUser.id) {
+window.addEventListener('load', async () => {
+  const user = await fetchMe();
+  if (!user || (user.role || '').toUpperCase() !== 'STUDENT') {
     window.location.href = 'register.html';
     return;
   }
-  if (currentUser.onboardingDone) {
+  if (user.studentProfile?.onboardingDone) {
     window.location.href = 'student-dashboard.html';
     return;
   }
+  currentUser = user;
   // Pre-fill
-  document.getElementById('success-name').textContent = `Привет, ${currentUser.name || 'друг'}!`;
+  document.getElementById('success-name').textContent = `Привет, ${(user.fullName || 'друг').split(' ')[0]}!`;
   updateIndicators();
 });
 

@@ -1,13 +1,13 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Plus, BookOpen, AlertCircle } from 'lucide-react'
 import { Card, SectionTitle, Badge, Avatar, Btn, EmptyState } from '@/components/ui'
-import { MOCK_STUDENTS, MOCK_HW } from '@/lib/mock'
-import type { Student } from '@/lib/types'
+import { getTutorStudents, getHomework } from '@/lib/api'
+import type { Student, Homework } from '@/lib/types'
 
-function StudentCard({ s, onClick }: { s: Student; onClick: () => void }) {
-  const active = MOCK_HW.filter(h => h.studentId === s.id && h.status === 'assigned').length
+function StudentCard({ s, hw, onClick }: { s: Student; hw: Homework[]; onClick: () => void }) {
+  const active = hw.filter(h => h.studentId === s.id && h.status === 'assigned').length
   return (
     <motion.div layout whileHover={{ y: -3 }} onClick={onClick}
       className="bg-white rounded-2xl shadow-card p-5 cursor-pointer hover:shadow-card-hover transition-shadow">
@@ -40,8 +40,8 @@ function StudentCard({ s, onClick }: { s: Student; onClick: () => void }) {
   )
 }
 
-function StudentModal({ s, onClose }: { s: Student; onClose: () => void }) {
-  const hw = MOCK_HW.filter(h => h.studentId === s.id)
+function StudentModal({ s, allHw, onClose }: { s: Student; allHw: Homework[]; onClose: () => void }) {
+  const hw = allHw.filter(h => h.studentId === s.id)
   return (
     <motion.div initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={onClose}>
@@ -93,13 +93,21 @@ function StudentModal({ s, onClose }: { s: Student; onClose: () => void }) {
 export default function StudentsPage() {
   const [q, setQ] = useState('')
   const [selected, setSelected] = useState<Student|null>(null)
-  const filtered = MOCK_STUDENTS.filter(s => s.name.toLowerCase().includes(q.toLowerCase()))
+  const [students, setStudents] = useState<Student[]>([])
+  const [hw, setHw] = useState<Homework[]>([])
+
+  useEffect(() => {
+    getTutorStudents().then(setStudents).catch(() => setStudents([]))
+    getHomework().then(setHw).catch(() => setHw([]))
+  }, [])
+
+  const filtered = students.filter(s => s.name.toLowerCase().includes(q.toLowerCase()))
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-black text-gray-900">Ученики</h1>
-          <p className="text-gray-500 text-sm mt-1">{MOCK_STUDENTS.length} активных</p>
+          <p className="text-gray-500 text-sm mt-1">{students.length} активных</p>
         </div>
         <Btn><Plus size={16}/> Добавить ученика</Btn>
       </div>
@@ -109,12 +117,12 @@ export default function StudentsPage() {
           className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-yale focus:ring-2 focus:ring-blue-100"/>
       </div>
       {filtered.length === 0
-        ? <EmptyState title="Ученики не найдены"/>
+        ? <EmptyState title="Ученики не найдены" sub={students.length === 0 ? 'Пока никто не привязан к вашему кабинету.' : undefined}/>
         : <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filtered.map(s => <StudentCard key={s.id} s={s} onClick={() => setSelected(s)}/>)}
+            {filtered.map(s => <StudentCard key={s.id} s={s} hw={hw} onClick={() => setSelected(s)}/>)}
           </motion.div>}
       <AnimatePresence>
-        {selected && <StudentModal s={selected} onClose={() => setSelected(null)}/>}
+        {selected && <StudentModal s={selected} allHw={hw} onClose={() => setSelected(null)}/>}
       </AnimatePresence>
     </div>
   )

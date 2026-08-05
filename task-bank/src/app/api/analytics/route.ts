@@ -1,18 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { db } from '@/lib/db'
 import { getUserAnalytics, getTutorAnalytics } from '@/lib/analytics'
+import { requireUser, authErrorResponse } from '@/lib/authGuard'
+import { applyCors, corsPreflight } from '@/lib/cors'
+
+export async function OPTIONS(req: NextRequest) {
+  return corsPreflight(req)
+}
 
 export async function GET(req: NextRequest) {
-  const userId   = req.nextUrl.searchParams.get('userId')
-  const tutorId  = req.nextUrl.searchParams.get('tutorId')
-  const studentId = req.nextUrl.searchParams.get('studentId')
+  try {
+    const session   = await requireUser(req, ['STUDENT', 'TUTOR'])
+    const studentId = req.nextUrl.searchParams.get('studentId')
 
-  if (tutorId && studentId) {
-    const data = await getTutorAnalytics(tutorId, studentId)
-    return NextResponse.json(data)
+    if (session.role === 'TUTOR') {
+      if (!studentId) return applyCors(req, NextResponse.json({ error: 'studentId required' }, { status: 400 }))
+      const roster = await db.tutorStudentLink.findUnique({
+        where: { tutorId_studentId: { tutorId: session.userId, studentId } },
+      })
+      if (!roster) return applyCors(req, NextResponse.json({ error: 'Нет доступа' }, { status: 403 }))
+      const data = await getTutorAnalytics(session.userId, studentId)
+      return applyCors(req, NextResponse.json(data))
+    }
+
+    const analytics = await getUserAnalytics(session.userId)
+    return applyCors(req, NextResponse.json(analytics))
+  } catch (err) {
+    return authErrorResponse(err) ?? applyCors(req, NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 }))
   }
-
-  if (!userId) return NextResponse.json({ error: 'userId required' }, { status: 400 })
-
-  const analytics = await getUserAnalytics(userId)
-  return NextResponse.json(analytics)
 }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Фиби — Умная подготовка к ОГЭ и ЕГЭ по математике</title>
-<meta name="description" content="Образовательная платформа для подготовки к ОГЭ и ЕГЭ по математике. Курсы, репетиторы, банк заданий. 92% учеников сдают на 4 и 5.">
+<meta name="description" content="Образовательная платформа для подготовки к ОГЭ и ЕГЭ по математике. Курсы, репетиторы, банк заданий, ИИ-помощник и личный план подготовки.">
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script>
@@ -35,7 +35,7 @@ tailwind.config = {
 .tag{display:inline-flex;align-items:center;gap:6px;background:rgba(13,59,102,.09);color:#0D3B66;border-radius:100px;padding:6px 14px;font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .7s}
 .reveal.visible{opacity:1;transform:translateY(0)}
-.tg{background:linear-gradient(135deg,#0D3B66,#1a5294);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.tg{background:linear-gradient(135deg,#0D3B66,#0a2f50);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-s{background:rgba(255,255,255,.94)!important;box-shadow:0 4px 24px rgba(13,59,102,.08)}
 .math-bg{position:absolute;font-weight:700;color:rgba(13,59,102,.16);pointer-events:none;user-select:none}
 @keyframes xpPop{0%{opacity:0;transform:translateY(0) scale(.8)}30%{opacity:1;transform:translateY(-20px) scale(1.1)}80%{opacity:1;transform:translateY(-40px) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(.9)}}
@@ -44,10 +44,10 @@ tailwind.config = {
 .correct-anim{animation:correctShake .4s ease}
 .game-answer{border:2px solid rgba(13,59,102,.15);border-radius:14px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;background:rgba(255,255,255,.1);color:white;width:100%;text-align:left}
 .game-answer:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.4);transform:translateX(4px)}
-.game-answer.correct{background:rgba(16,185,129,.25);border-color:#10b981;color:#86efac}
+.game-answer.correct{background:rgba(250,240,202,.18);border-color:#FAF0CA;color:#FAF0CA}
 .game-answer.wrong{background:rgba(239,68,68,.2);border-color:#ef4444;color:#fca5a5}
 .topic-target{background:#0D3B66;color:white;border-radius:16px;padding:16px 24px;font-weight:700;font-size:16px;text-align:center;box-shadow:0 8px 24px rgba(13,59,102,.3)}
-.topic-done{background:white;border:2px solid #10b981;color:#065f46;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;transition:transform .2s}
+.topic-done{background:white;border:2px solid #0D3B66;color:#0D3B66;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;transition:transform .2s}
 .topic-done:hover{transform:translateY(-2px)}
 .topic-prog{background:white;border:2px solid #0D3B66;color:#0D3B66;border-radius:14px;padding:11px 14px;font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;transition:transform .2s}
 .topic-prog:hover{transform:translateY(-2px)}
@@ -70,6 +70,21 @@ html{scroll-behavior:smooth}
 .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;border:2px solid white;flex-shrink:0}
 .progress-bar{height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden}
 .progress-fill{height:100%;border-radius:3px;background:#0D3B66;transition:width 1s ease}
+.btn-o-dark:hover{background:#FAF0CA!important;color:#0D3B66!important;border-color:#FAF0CA!important}
+.section-cream{background:linear-gradient(135deg,#ffffff 0%,#FAF0CA 58%,#ffffff 100%)}
+.section-sky{background:linear-gradient(135deg,#ffffff 0%,rgba(13,59,102,.055) 52%,#ffffff 100%)}
+.section-mint{background:linear-gradient(135deg,#ffffff 0%,rgba(250,240,202,.65) 45%,rgba(13,59,102,.045) 100%)}
+.section-brand-soft{background:linear-gradient(135deg,#ffffff 0%,rgba(250,240,202,.78) 50%,rgba(13,59,102,.045) 100%)}
+.section-peach{background:linear-gradient(135deg,#ffffff 0%,rgba(250,240,202,.72) 50%,#ffffff 100%)}
+.section-white{background:#ffffff}
+.section-line{border-top:1px solid rgba(13,59,102,.06);border-bottom:1px solid rgba(13,59,102,.04)}
+.color-band{position:relative;overflow:hidden;isolation:isolate}
+.color-band:before,.color-band:after{content:"";position:absolute;border-radius:999px;pointer-events:none;filter:blur(2px);opacity:.55;z-index:0}
+.color-band:before{width:280px;height:280px;top:-120px;left:-90px;background:radial-gradient(circle,rgba(13,59,102,.13),transparent 68%)}
+.color-band:after{width:340px;height:340px;right:-130px;bottom:-150px;background:radial-gradient(circle,rgba(250,240,202,.95),transparent 66%)}
+.color-band>*{position:relative;z-index:2}
+.card,.glass,.btn-p,.btn-o{position:relative;z-index:3}
+.soft-rainbow{background:linear-gradient(135deg,rgba(250,240,202,.95),rgba(224,242,254,.95),rgba(220,252,231,.9))}
 /* Mobile */
 @media(max-width:768px){.hero-mascot{width:220px!important}}
 @media(max-width:480px){
@@ -82,7 +97,7 @@ html{scroll-behavior:smooth}
 }
 </style>
 </head>
-<body class="bg-white text-gray-900 overflow-x-hidden">
+<body class="text-gray-900 overflow-x-hidden" style="background:#fffaf0">
 
 <!-- ===== NAV ===== -->
 <nav id="nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" style="background:rgba(255,255,255,0)">
@@ -120,7 +135,7 @@ html{scroll-behavior:smooth}
 </nav>
 
 <!-- ===== HERO ===== -->
-<section class="hero-section-main relative flex items-center pt-20 overflow-hidden" style="min-height:100svh;background:linear-gradient(135deg,#ffffff 0%,#fdf8ed 40%,#f8f0d0 70%,#ffffff 100%)">
+<section class="hero-section-main relative flex items-center pt-20 overflow-hidden" style="min-height:100svh;background:linear-gradient(135deg,#ffffff 0%,rgba(13,59,102,.055) 34%,#FAF0CA 72%,#ffffff 100%)">
   <!-- bg math -->
   <div class="math-bg" style="top:8%;left:5%;font-size:22px;transform:rotate(-12deg)">√x² + y²</div>
   <div class="math-bg" style="top:15%;right:8%;font-size:18px;transform:rotate(8deg)">ax² + bx + c = 0</div>
@@ -129,8 +144,8 @@ html{scroll-behavior:smooth}
   <div class="math-bg" style="top:35%;left:45%;font-size:15px;transform:rotate(15deg)">y = kx + b</div>
   <div class="math-bg" style="bottom:15%;left:35%;font-size:17px;transform:rotate(-8deg)">a² + b² = c²</div>
   <!-- blobs -->
-  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.7),transparent);top:5%;right:8%;filter:blur(1px)"></div>
-  <div class="absolute rounded-full" style="width:300px;height:300px;background:radial-gradient(circle,rgba(13,59,102,.05),transparent);bottom:10%;left:5%;filter:blur(2px)"></div>
+  <div class="absolute rounded-full" style="width:560px;height:560px;background:radial-gradient(circle,rgba(250,240,202,.9),transparent);top:5%;right:8%;filter:blur(1px)"></div>
+  <div class="absolute rounded-full" style="width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,.72),transparent);bottom:10%;left:5%;filter:blur(2px)"></div>
 
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full py-16">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
@@ -149,32 +164,19 @@ html{scroll-behavior:smooth}
         <p class="text-xl text-gray-600 mb-4 max-w-lg leading-relaxed">
           Персональный план подготовки, банк заданий, карта знаний и умный ИИ-помощник — всё в одном месте.
         </p>
-        <p class="text-sm text-gray-400 mb-10 max-w-lg"><strong class="text-gray-600">92% учеников сдают на «4» и «5».</strong> ОГЭ · ЕГЭ База · ЕГЭ Профиль</p>
         <div class="flex flex-wrap gap-3 mb-10">
           <a href="for-students.html" class="btn-p">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
             Я ученик
           </a>
-          <a href="#roles" class="btn-o">
+          <a href="register.html" class="btn-o">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
             Я родитель
           </a>
-          <a href="for-tutors.html" class="btn-o" style="border-color:#D4A520;color:#D4A520">
+          <a href="for-tutors.html" class="btn-o" style="border-color:#0D3B66;color:#0D3B66">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
             Я репетитор
           </a>
-        </div>
-        <div class="flex items-center gap-4">
-          <div class="flex -space-x-2">
-            <div class="avatar" style="background:#0D3B66">АК</div>
-            <div class="avatar" style="background:#3b82f6">МП</div>
-            <div class="avatar" style="background:#8b5cf6">СЛ</div>
-            <div class="avatar" style="background:#06b6d4">НВ</div>
-          </div>
-          <div>
-            <div class="flex items-center gap-1"><span style="color:#f59e0b;font-size:15px">★★★★★</span><span class="font-bold text-gray-800 ml-1">4.9</span></div>
-            <p class="text-xs text-gray-500">от <strong>10 000+</strong> учеников</p>
-          </div>
         </div>
       </div>
 
@@ -189,7 +191,7 @@ html{scroll-behavior:smooth}
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
               <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
-            <div><div class="text-base font-bold text-gray-800">92%</div><div class="text-xs text-gray-500">сдают на 4 и 5</div></div>
+            <div><div class="text-base font-bold text-gray-800">План</div><div class="text-xs text-gray-500">подготовки по шагам</div></div>
           </div>
         </div>
 
@@ -207,7 +209,7 @@ html{scroll-behavior:smooth}
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
               <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
             </div>
-            <div><div class="text-base font-bold text-gray-800">1000+</div><div class="text-xs text-gray-500">заданий для подготовки</div></div>
+            <div><div class="text-base font-bold text-gray-800">Банк</div><div class="text-xs text-gray-500">заданий для подготовки</div></div>
           </div>
         </div>
 
@@ -216,7 +218,7 @@ html{scroll-behavior:smooth}
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
               <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
             </div>
-            <div><div class="text-base font-bold text-gray-800">50+</div><div class="text-xs text-gray-500">проверенных репетиторов</div></div>
+            <div><div class="text-base font-bold text-gray-800">Репетиторы</div><div class="text-xs text-gray-500">для занятий онлайн</div></div>
           </div>
         </div>
       </div>
@@ -232,20 +234,8 @@ html{scroll-behavior:smooth}
   </div>
 </section>
 
-<!-- ===== STATS BAR ===== -->
-<section style="background:#0D3B66" class="py-12">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-      <div><div class="text-3xl font-bold text-white mb-1">10 000+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">учеников на платформе</div></div>
-      <div><div class="text-3xl font-bold text-white mb-1">92%</div><div class="text-sm" style="color:rgba(255,255,255,.6)">сдают на «4» и «5»</div></div>
-      <div><div class="text-3xl font-bold text-white mb-1">50+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">проверенных репетиторов</div></div>
-      <div><div class="text-3xl font-bold text-white mb-1">1000+</div><div class="text-sm" style="color:rgba(255,255,255,.6)">заданий для подготовки</div></div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== FOR WHOM ===== -->
-<section id="roles" class="py-24 bg-white">
+<section id="roles" class="py-24 section-sky color-band section-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-14 reveal">
       <div class="tag mb-4">Для кого</div>
@@ -255,20 +245,20 @@ html{scroll-behavior:smooth}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
       <!-- Родитель -->
-      <div class="card p-6 reveal" style="border-top:4px solid #10b981">
-        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(16,185,129,0.09)">
-          <svg class="w-6 h-6" fill="none" stroke="#10b981" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
+      <div class="card p-6 reveal" style="border-top:4px solid #0D3B66">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(13,59,102,0.09)">
+          <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"/></svg>
         </div>
-        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(16,185,129,0.1);color:#059669">Спокойствие</div>
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,0.09);color:#0D3B66">Спокойствие</div>
         <h3 class="text-lg font-bold text-gray-900 mb-2">Родитель</h3>
         <p class="text-sm text-gray-500 leading-relaxed mb-4">Видит понятную траекторию подготовки: что пройдено, что в работе, что предстоит. Контролирует результат без давления на ребёнка.</p>
         <ul class="space-y-2 text-xs text-gray-500">
-          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Прогресс и статистика занятий</li>
-          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Понятная динамика подготовки</li>
-          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Связь с репетитором</li>
-          <li class="flex items-center gap-2"><span style="color:#10b981">→</span> Без лишних разговоров «ты учился?»</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Прогресс и история занятий</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Понятная динамика подготовки</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Связь с репетитором</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Прогресс ребенка всегда под рукой</li>
         </ul>
-        <a href="#pricing" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#059669">Условия доступа <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+        <a href="#pricing" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#0D3B66">Условия доступа <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
       </div>
 
       <!-- Ученик -->
@@ -289,20 +279,20 @@ html{scroll-behavior:smooth}
       </div>
 
       <!-- Репетитор -->
-      <div class="card p-6 reveal" style="border-top:4px solid #D4A520">
+      <div class="card p-6 reveal" style="border-top:4px solid #0D3B66">
         <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-5" style="background:rgba(212,165,32,0.1)">
-          <svg class="w-6 h-6" fill="none" stroke="#D4A520" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+          <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
         </div>
         <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold mb-3" style="background:rgba(212,165,32,0.12);color:#a07a10">Профессионал</div>
         <h3 class="text-lg font-bold text-gray-900 mb-2">Репетитор</h3>
         <p class="text-sm text-gray-500 leading-relaxed mb-4">Видит уровень ученика, историю занятий и задания в одной системе. Ведёт подготовку по понятному плану и фокусируется на объяснении, а не на рутине.</p>
         <ul class="space-y-2 text-xs text-gray-500">
-          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Картина прогресса ученика</li>
-          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> План и задания в одном месте</li>
-          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Подсказки по слабым темам</li>
-          <li class="flex items-center gap-2"><span style="color:#D4A520">→</span> Проверка без лишней рутины</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Картина прогресса ученика</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> План и задания в одном месте</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Подсказки по слабым темам</li>
+          <li class="flex items-center gap-2"><span style="color:#0D3B66">→</span> Проверка без лишней рутины</li>
         </ul>
-        <a href="for-tutors.html" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#D4A520">Рабочее место репетитора <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
+        <a href="for-tutors.html" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold" style="color:#0D3B66">Рабочее место репетитора <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg></a>
       </div>
 
     </div>
@@ -310,7 +300,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== FEATURES GRID ===== -->
-<section id="platform" class="py-24 bg-white">
+<section id="platform" class="py-24 section-white section-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-14 reveal">
       <div class="tag mb-4">Инструменты</div>
@@ -351,9 +341,9 @@ html{scroll-behavior:smooth}
         </div>
         <div class="space-y-2 flex-1">
           <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white">
-            <div class="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center" style="background:#10b981"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+            <div class="w-5 h-5 rounded flex-shrink-0 flex items-center justify-center" style="background:#0D3B66"><svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
             <span class="text-xs font-medium text-gray-700 flex-1">Дроби и проценты</span>
-            <span class="text-xs font-bold" style="color:#10b981">Готово</span>
+            <span class="text-xs font-bold" style="color:#0D3B66">Готово</span>
           </div>
           <div class="flex items-center gap-2.5 p-2.5 rounded-xl bg-white" style="border:2px solid #0D3B66">
             <div class="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center" style="background:rgba(59,130,246,.15)"><div class="w-2 h-2 rounded-full" style="background:#3b82f6"></div></div>
@@ -395,7 +385,7 @@ html{scroll-behavior:smooth}
       </div>
 
       <!-- Card 4: Demo variants -->
-      <div class="rounded-3xl p-6 flex flex-col gap-4 lg:col-span-4 reveal" style="background:#fafafa;min-height:210px">
+      <div class="rounded-3xl p-6 flex flex-col gap-4 lg:col-span-4 reveal" style="background:white;min-height:210px;border:1px solid rgba(13,59,102,.08)">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold mb-3" style="background:rgba(13,59,102,.08);color:#0D3B66">Демоварианты</div>
           <h3 class="text-lg font-bold text-gray-900 mb-1">Демоварианты экзамена</h3>
@@ -405,7 +395,7 @@ html{scroll-behavior:smooth}
           <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#0D3B66;color:white">1</div>
             <span class="text-sm text-gray-700 flex-1">Вариант 2024</span>
-            <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#d1fae5;color:#065f46">Решён</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium" style="background:#FAF0CA;color:#0D3B66">Решён</span>
           </div>
           <div class="flex items-center gap-3 p-2.5 rounded-xl bg-white" style="border:1.5px solid #0D3B66">
             <div class="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:#FAF0CA;color:#0D3B66">2</div>
@@ -431,12 +421,12 @@ html{scroll-behavior:smooth}
           <div class="px-3 py-1.5 rounded-xl text-xs font-bold text-white" style="background:rgba(255,255,255,.15)">Квадратные уравнения</div>
           <div class="w-px h-4" style="background:rgba(255,255,255,.3)"></div>
           <div class="flex gap-3">
-            <div class="px-2.5 py-1 rounded-lg text-xs font-medium" style="background:rgba(16,185,129,.3);color:#86efac">Линейные ур.</div>
+            <div class="px-2.5 py-1 rounded-lg text-xs font-medium" style="background:rgba(250,240,202,.16);color:#FAF0CA">Линейные ур.</div>
             <div class="px-2.5 py-1 rounded-lg text-xs font-medium" style="background:rgba(250,240,202,.2);color:#FAF0CA">Дискриминант</div>
           </div>
           <div class="w-px h-4" style="background:rgba(255,255,255,.3)"></div>
           <div class="flex gap-2">
-            <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(16,185,129,.2);color:#86efac">Числа</div>
+            <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(250,240,202,.14);color:#FAF0CA">Числа</div>
             <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)">Степени</div>
             <div class="px-2.5 py-1 rounded-lg text-xs" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4)">Корни</div>
           </div>
@@ -477,16 +467,16 @@ html{scroll-behavior:smooth}
         </div>
         <div class="space-y-3 flex-1">
           <div>
-            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Линейные уравнения</span><span class="font-bold" style="color:#10b981">92%</span></div>
-            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:92%;background:#10b981"></div></div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Линейные уравнения</span><span class="font-bold" style="color:#6f8fb8">закрыто</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:90%;background:#a9c4e8"></div></div>
           </div>
           <div>
-            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Дроби</span><span class="font-bold" style="color:#f59e0b">65%</span></div>
-            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:65%;background:#f59e0b"></div></div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Дроби</span><span class="font-bold" style="color:#8fae95">в работе</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:65%;background:#bdd9c2"></div></div>
           </div>
           <div>
-            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Геометрия</span><span class="font-bold" style="color:#ef4444">28%</span></div>
-            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:28%;background:#ef4444"></div></div>
+            <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Геометрия</span><span class="font-bold" style="color:#c98a96">начато</span></div>
+            <div class="h-2 rounded-full bg-gray-100"><div class="h-2 rounded-full" style="width:28%;background:#efbbc4"></div></div>
           </div>
           <div>
             <div class="flex justify-between text-xs mb-1"><span class="text-gray-600">Функции</span><span class="font-bold text-gray-400">—</span></div>
@@ -504,7 +494,7 @@ html{scroll-behavior:smooth}
         </div>
         <div class="rounded-2xl p-3.5 flex-1 flex flex-col justify-between" style="background:rgba(255,255,255,.1)">
           <div class="flex items-center gap-2.5 mb-3">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white">АП</div>
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#0a2f50);color:white">АП</div>
             <div>
               <div class="text-xs font-bold text-white">Анна Петрова</div>
               <div class="flex items-center gap-1"><span style="color:#FAF0CA;font-size:11px">★★★★★</span><span class="text-xs" style="color:rgba(255,255,255,.6)">5.0</span></div>
@@ -585,7 +575,7 @@ html{scroll-behavior:smooth}
         </div>
         <div class="flex justify-between items-center mt-5">
           <div class="flex items-center gap-2">
-            <div id="correct-badge" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold" style="background:rgba(16,185,129,.25);color:#86efac">
+            <div id="correct-badge" class="hidden items-center gap-2 px-3 py-1.5 rounded-xl text-sm font-bold" style="background:rgba(250,240,202,.16);color:#FAF0CA">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
               +20 XP заработано!
             </div>
@@ -593,7 +583,7 @@ html{scroll-behavior:smooth}
               Попробуй следующую →
             </div>
           </div>
-          <button onclick="nextQuestion()" class="btn-p" style="background:#FAF0CA;color:#0D3B66;padding:10px 22px;font-size:14px">Дальше →</button>
+          <button id="demo-next-btn" onclick="nextQuestion()" class="btn-p" style="background:#FAF0CA;color:#0D3B66;padding:10px 22px;font-size:14px">Дальше →</button>
         </div>
       </div>
     </div>
@@ -603,26 +593,35 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== GAMIFICATION TEASER ===== -->
-<section class="py-16 bg-white">
+<section class="py-16 section-cream color-band section-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 reveal">
-    <div class="rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8" style="background:#FAF0CA">
+    <div class="rounded-3xl p-8 flex flex-col lg:flex-row items-center gap-8" style="background:linear-gradient(135deg,#f8fbff 0%,#eef6ff 100%)">
       <div class="flex-1">
         <div class="tag mb-3" style="background:rgba(13,59,102,.1)">Мотивация · Внутри кабинета</div>
         <h2 class="font-extrabold mb-2" style="color:#0D3B66;font-size:clamp(22px,2.5vw,32px)">Расти вместе с Фиби</h2>
-        <p class="text-gray-600 max-w-md leading-relaxed">Серии занятий, медали за результат и место в топе учеников — всё ждёт тебя в личном кабинете.</p>
+        <p class="text-gray-600 max-w-lg leading-relaxed">В личном кабинете есть система достижений: ученик получает награды за регулярность, решённые задания и прогресс по темам. А самые активные ребята попадают в рейтинг — участники ТОП-3 получают призы.</p>
       </div>
       <div class="flex flex-wrap gap-3 justify-center">
         <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
           <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
-          <span class="text-base font-bold" style="color:#0D3B66">Серии занятий</span>
+          <div>
+            <span class="block text-base font-bold leading-tight" style="color:#0D3B66">Серии занятий</span>
+            <span class="block text-xs text-gray-500 font-semibold mt-0.5">за регулярность</span>
+          </div>
         </div>
         <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
           <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/></svg>
-          <span class="text-base font-bold" style="color:#0D3B66">Медали</span>
+          <div>
+            <span class="block text-base font-bold leading-tight" style="color:#0D3B66">Медали</span>
+            <span class="block text-xs text-gray-500 font-semibold mt-0.5">за задания и темы</span>
+          </div>
         </div>
         <div class="flex items-center gap-3 px-5 py-3 rounded-xl bg-white shadow-sm">
           <svg class="w-6 h-6" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172"/></svg>
-          <span class="text-base font-bold" style="color:#0D3B66">Подарок ТОП-3</span>
+          <div>
+            <span class="block text-base font-bold leading-tight" style="color:#0D3B66">Призы ТОП-3</span>
+            <span class="block text-xs text-gray-500 font-semibold mt-0.5">за место в рейтинге</span>
+          </div>
         </div>
       </div>
       <a href="register.html" class="btn-p whitespace-nowrap">Войти в кабинет →</a>
@@ -631,7 +630,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== CABINET DEMO GIF ===== -->
-<section class="py-20" style="background:#fafafa">
+<section class="py-20 section-cream color-band section-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center reveal">
 
@@ -810,7 +809,7 @@ html{scroll-behavior:smooth}
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
               <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
             </div>
-            <div><div class="font-semibold text-gray-800 text-sm">Тематический</div><div class="text-xs text-gray-500">Пройдена целая тема на 100%</div></div>
+            <div><div class="font-semibold text-gray-800 text-sm">Тематический</div><div class="text-xs text-gray-500">Пройдена целая тема</div></div>
             <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+30 XP</div>
           </div>
           <div class="flex items-center gap-4 p-3 rounded-xl" style="background:#fafafa">
@@ -824,7 +823,7 @@ html{scroll-behavior:smooth}
             <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:rgba(13,59,102,0.09)">
               <svg class="w-5 h-5" fill="none" stroke="#0D3B66" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
             </div>
-            <div><div class="font-semibold text-gray-800 text-sm">Перфекционист</div><div class="text-xs text-gray-500">100% правильных ответов за неделю</div></div>
+            <div><div class="font-semibold text-gray-800 text-sm">Перфекционист</div><div class="text-xs text-gray-500">Неделя без ошибок</div></div>
             <div class="ml-auto text-xs font-bold" style="color:#0D3B66">+50 XP</div>
           </div>
         </div>
@@ -939,7 +938,7 @@ html{scroll-behavior:smooth}
           <div class="text-sm mb-3" style="color:rgba(255,255,255,.8)">Цена телефона снизилась на 15% и стала 8 500 рублей. Сколько стоил телефон до скидки?</div>
           <div class="flex gap-2 flex-wrap mb-3">
             <div class="rounded-xl px-3 py-2 text-sm text-white flex-1" style="background:rgba(255,255,255,.15);min-width:140px">10 000 рублей</div>
-            <div class="rounded-xl px-4 py-2 text-sm font-bold" style="background:#10b981;color:white">✓ Верно!</div>
+            <div class="rounded-xl px-4 py-2 text-sm font-bold" style="background:#0D3B66;color:white">✓ Верно!</div>
           </div>
           <div class="rounded-xl px-3 py-2.5 text-sm" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.8)">
             <span class="font-semibold text-white">Помощник:</span> Хочешь узнать, как ты к этому пришёл? Разберём решение по шагам →
@@ -989,7 +988,7 @@ html{scroll-behavior:smooth}
         <div class="mt-6 p-4 rounded-xl text-left" style="background:#FAF0CA">
           <div class="text-xs font-semibold mb-3" style="color:#0D3B66">Чек-лист тем:</div>
           <div class="flex items-center gap-2 mb-2">
-            <div class="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style="background:#10b981"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
+            <div class="w-4 h-4 rounded flex items-center justify-center flex-shrink-0" style="background:#0D3B66"><svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg></div>
             <span class="text-xs text-gray-700">Дроби и проценты — уверен</span>
           </div>
           <div class="flex items-center gap-2 mb-2">
@@ -1012,7 +1011,7 @@ html{scroll-behavior:smooth}
         <p class="text-gray-500 text-sm leading-relaxed">Платформа собирает план на учебный год: сначала подтянуть слабые темы, потом закрепить всё. Ни одна тема экзамена не пропадёт.</p>
         <div class="mt-6 space-y-2">
           <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background:#FAF0CA">
-            <svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+            <svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
             <span class="text-sm font-medium text-gray-700">Дроби — закрыто</span>
           </div>
           <div class="flex items-center gap-3 p-2.5 rounded-xl" style="background:#dbeafe">
@@ -1040,7 +1039,7 @@ html{scroll-behavior:smooth}
               <circle cx="50" cy="50" r="40" fill="none" stroke="#0D3B66" stroke-width="8" stroke-dasharray="251" stroke-dashoffset="50" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1.5s ease"/>
             </svg>
             <div class="absolute inset-0 flex flex-col items-center justify-center">
-              <div class="text-2xl font-bold" style="color:#0D3B66">80%</div>
+              <div class="text-xl font-bold" style="color:#0D3B66">Почти</div>
               <div class="text-xs text-gray-500">готов</div>
             </div>
           </div>
@@ -1080,28 +1079,28 @@ html{scroll-behavior:smooth}
 
       <!-- Level 2 -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
-        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Линейные уравнения</span></div></div>
-        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Дискриминант</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Линейные уравнения</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Дискриминант</span></div></div>
         <div class="flex justify-center"><div class="topic-prog w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l3 3"/></svg><span>Формулы сокр. умн.</span></div></div>
       </div>
 
       <!-- vertical lines level 2 → 3 -->
       <div class="grid grid-cols-3 gap-4 mb-2">
-        <div class="flex justify-center"><div style="width:2px;height:24px;background:linear-gradient(to bottom,#10b981,rgba(16,185,129,.2))"></div></div>
+        <div class="flex justify-center"><div style="width:2px;height:24px;background:linear-gradient(to bottom,#0D3B66,rgba(13,59,102,.18))"></div></div>
         <div class="flex justify-center opacity-0"><div style="width:2px;height:24px"></div></div>
         <div class="flex justify-center"><div style="width:2px;height:24px;background:linear-gradient(to bottom,#0D3B66,rgba(13,59,102,.2))"></div></div>
       </div>
 
       <!-- Level 3 -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Числа и действия</span></div></div>
-        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#10b981" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Буквенные выражения</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Числа и действия</span></div></div>
+        <div class="flex justify-center"><div class="topic-done w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0" style="color:#0D3B66" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg><span>Буквенные выражения</span></div></div>
         <div class="flex justify-center"><div class="topic-lock w-full max-w-[220px]"><svg class="w-4 h-4 flex-shrink-0 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0110 0v4"/></svg><span>Степени и корни</span></div></div>
       </div>
 
       <!-- Legend -->
       <div class="flex flex-wrap justify-center gap-4 mt-10">
-        <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full" style="background:#10b981"></div>Изучено</div>
+        <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full" style="background:#0D3B66"></div>Изучено</div>
         <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full" style="background:#0D3B66"></div>В процессе</div>
         <div class="flex items-center gap-2 text-sm text-gray-600"><div class="w-3 h-3 rounded-full bg-gray-200"></div>Заблокировано</div>
       </div>
@@ -1110,7 +1109,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== TUTORS ===== -->
-<section id="tutors" class="py-24 bg-white">
+<section id="tutors" class="py-24 section-white section-line">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-12 reveal">
       <div class="tag mb-4">Репетиторы ФИБИ</div>
@@ -1123,7 +1122,7 @@ html{scroll-behavior:smooth}
       <div class="card p-6 reveal" style="border:2px solid #0D3B66;position:relative">
         <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#0D3B66">Топ репетитор</div>
         <div class="flex items-start gap-4 mb-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)">АП</div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#0D3B66,#0a2f50)">АП</div>
           <div>
             <h3 class="font-bold text-gray-900">Анна Петрова</h3>
             <p class="text-sm text-gray-500">Математика · 5 лет</p>
@@ -1135,15 +1134,15 @@ html{scroll-behavior:smooth}
           <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">ЕГЭ</span>
           <span class="px-2.5 py-1 rounded-full text-xs font-medium" style="background:#FAF0CA;color:#0D3B66">Авторские курсы</span>
         </div>
-        <p class="text-sm text-gray-500 mb-4 leading-relaxed">98% учеников сдают ОГЭ на «4» и «5». Понятные объяснения, индивидуальный подход.</p>
+        <p class="text-sm text-gray-500 mb-4 leading-relaxed">Понятные объяснения, индивидуальный подход и работа с типичными ошибками.</p>
         <button class="btn-p w-full text-sm" style="padding:10px">Записаться</button>
       </div>
 
       <!-- Tutor 2 -->
       <div class="card p-6 reveal" style="position:relative">
-        <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#D4A520">Группы и индивидуально</div>
+        <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold text-white" style="background:#0D3B66">Группы и индивидуально</div>
         <div class="flex items-start gap-4 mb-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9)">ЕС</div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:#0D3B66">ЕС</div>
           <div>
             <h3 class="font-bold text-gray-900">Елена Смирнова</h3>
             <p class="text-sm text-gray-500">Математика · 12 лет</p>
@@ -1163,7 +1162,7 @@ html{scroll-behavior:smooth}
       <div class="card p-6 reveal" style="position:relative">
         <div class="absolute -top-3 left-4 px-3 py-1 rounded-full text-xs font-bold" style="background:#f0f4ff;color:#0D3B66">Сложные темы</div>
         <div class="flex items-start gap-4 mb-4">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:linear-gradient(135deg,#06b6d4,#0284c7)">АП</div>
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold text-white flex-shrink-0" style="background:#0D3B66">АП</div>
           <div>
             <h3 class="font-bold text-gray-900">Андрей Петров</h3>
             <p class="text-sm text-gray-500">Математика · Аспирант МГУ</p>
@@ -1188,14 +1187,14 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== TESTIMONIALS ===== -->
-<section class="py-24" style="background:#fafafa">
+<section class="py-24 section-line" style="background:#FAF0CA">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-12 reveal">
       <div class="tag mb-4">Отзывы</div>
       <h2 class="font-extrabold text-gray-900 mb-4" style="font-size:clamp(32px,4vw,52px);line-height:1.08">Что говорят<br>ученики</h2>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div class="card p-6 reveal">
+      <div class="card p-6 reveal" >
         <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
         <p class="text-gray-600 mb-6 leading-relaxed text-sm">Боялась математики, думала не сдам. С Фиби за 3 месяца подтянула все темы — сдала на 4! Особенно помогли пошаговые объяснения задач.</p>
         <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
@@ -1204,20 +1203,20 @@ html{scroll-behavior:smooth}
           <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
         </div>
       </div>
-      <div class="card p-6 reveal">
+      <div class="card p-6 reveal" >
         <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
         <p class="text-gray-600 mb-6 leading-relaxed text-sm">Серия дней помогает не забрасывать. Решаю хотя бы 5 задач в день — и уже чувствую, как становлюсь увереннее. Репетитор Михаил — огонь!</p>
         <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
-          <div class="avatar" style="background:#8b5cf6">ДМ</div>
+          <div class="avatar" style="background:#0D3B66">ДМ</div>
           <div><div class="font-semibold text-gray-800 text-sm">Дима Морозов</div><div class="text-xs text-gray-500">9 класс, СПб · ОГЭ 2024</div></div>
           <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
         </div>
       </div>
-      <div class="card p-6 reveal">
+      <div class="card p-6 reveal" >
         <div class="text-5xl font-playfair mb-4" style="color:rgba(13,59,102,.1);line-height:1">"</div>
         <p class="text-gray-600 mb-6 leading-relaxed text-sm">Карта знаний — это гениально. Видно, что учить сначала, а что потом. Не трачу время на темы, которые уже знаю. Сдала на 5!</p>
         <div class="flex items-center gap-3 pt-4 border-t border-gray-100">
-          <div class="avatar" style="background:#10b981">НВ</div>
+          <div class="avatar" style="background:#0D3B66">НВ</div>
           <div><div class="font-semibold text-gray-800 text-sm">Настя Волкова</div><div class="text-xs text-gray-500">9 класс, Казань · ОГЭ 2024</div></div>
           <div class="ml-auto" style="color:#f59e0b;font-size:13px">★★★★★</div>
         </div>
@@ -1227,7 +1226,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== PRICING ===== -->
-<section id="pricing" class="py-24 bg-white">
+<section id="pricing" class="py-24 section-white section-line">
   <div class="max-w-6xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-10 reveal">
       <div class="tag mb-4">Условия</div>
@@ -1236,10 +1235,10 @@ html{scroll-behavior:smooth}
     </div>
 
     <!-- Student pricing (only students on main landing) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 reveal">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 reveal">
 
       <!-- Free -->
-      <div class="card p-7">
+      <div class="card p-7" >
         <div class="mb-6">
           <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Бесплатно</div>
           <div class="text-4xl font-bold text-gray-900 mb-1">0 ₽</div>
@@ -1256,6 +1255,24 @@ html{scroll-behavior:smooth}
         <a href="register.html" class="btn-o w-full text-center" style="padding:12px">Начать бесплатно</a>
       </div>
 
+      <!-- Task bank -->
+      <div class="card p-7">
+        <div class="mb-6">
+          <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Банк заданий</div>
+          <div class="text-4xl font-bold text-gray-900 mb-1">отдельно</div>
+          <div class="text-sm text-gray-400">можно купить без курса</div>
+        </div>
+        <ul class="space-y-3 mb-8 text-sm">
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Полный банк заданий</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Фильтры по темам и сложности</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Подсказки и разборы</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Демоварианты и решения</li>
+          <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">—</span> Персональный план на год</li>
+          <li class="flex items-center gap-2 text-gray-400"><span class="text-gray-300">—</span> Материалы для самоподготовки</li>
+        </ul>
+        <a href="register.html" class="btn-o w-full text-center" style="padding:12px">Купить банк заданий</a>
+      </div>
+
       <!-- Self-study -->
       <div class="rounded-2xl p-7" style="background:#0D3B66;box-shadow:0 12px 40px rgba(13,59,102,.3)">
         <div class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold mb-4" style="background:rgba(255,255,255,.15);color:white">Популярный</div>
@@ -1265,25 +1282,25 @@ html{scroll-behavior:smooth}
           <div class="text-sm" style="color:rgba(255,255,255,.5)">в месяц</div>
         </div>
         <ul class="space-y-3 mb-8 text-sm">
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Полный банк заданий</li>
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Персональный план на год</li>
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> ИИ-помощник без ограничений</li>
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Полная карта знаний</li>
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Демоварианты и решения</li>
-          <li class="flex items-center gap-2 text-white"><span style="color:#4ade80">✓</span> Материалы для самоподготовки</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> Всё из «Банка заданий»</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> Персональный план на год</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> ИИ-помощник без ограничений</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> Полная карта знаний</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> Демоварианты и решения</li>
+          <li class="flex items-center gap-2 text-white"><span style="color:#FAF0CA">✓</span> Материалы для самоподготовки</li>
         </ul>
         <a href="register.html" class="w-full text-center btn-o" style="padding:12px;background:white;color:#0D3B66;border-color:transparent">Выбрать тариф</a>
       </div>
 
       <!-- With tutor -->
-      <div class="card p-7">
+      <div class="card p-7" >
         <div class="mb-6">
           <div class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">С репетитором</div>
           <div class="text-2xl font-bold text-gray-900 mb-1">по стоимости занятия</div>
           <div class="text-sm text-gray-400">оплата через платформу</div>
         </div>
         <ul class="space-y-3 mb-8 text-sm">
-          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Всё из «Самостоятельной»</li>
+          <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Можно подключить к любому формату</li>
           <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Занятия с проверенным репетитором</li>
           <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Оплата безопасно — через ФИБИ</li>
           <li class="flex items-center gap-2 text-gray-600"><span style="color:#0D3B66">✓</span> Проверка заданий 2-й части</li>
@@ -1302,7 +1319,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== FAQ ===== -->
-<section class="py-20" style="background:#fafafa">
+<section class="py-20 section-cream color-band section-line">
   <div class="max-w-2xl mx-auto px-4 sm:px-6">
     <div class="text-center mb-12 reveal">
       <div class="tag mb-4">FAQ</div>
@@ -1355,7 +1372,7 @@ html{scroll-behavior:smooth}
           Что доступно бесплатно?
           <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
-        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Бесплатно доступны стартовый доступ к платформе, часть заданий из банка, базовый прогресс и серии, а также пробные подсказки ИИ. Для полного доступа к банку заданий, персональному плану и ИИ-помощнику без ограничений — тариф «Самостоятельная подготовка».</p></div>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Бесплатно доступны стартовый доступ к платформе, часть заданий из банка, базовый прогресс и серии, а также пробные подсказки ИИ. Если нужен только полный набор задач, можно отдельно подключить «Банк заданий». Если нужен план подготовки, материалы, карта знаний и ИИ-помощник без ограничений — подойдёт «Самостоятельная подготовка», в неё банк заданий уже включён.</p></div>
       </div>
 
       <div class="card faq-item overflow-hidden" style="border-radius:16px">
@@ -1379,7 +1396,7 @@ html{scroll-behavior:smooth}
           Можно ли заниматься с репетитором через платформу?
           <svg class="w-5 h-5 text-gray-400 transition-transform faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
         </button>
-        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Да. Ученик выбирает репетитора в каталоге, договаривается о занятии и оплачивает через ФИБИ. Платформа переводит деньги репетитору после состоявшегося урока. Это безопаснее, чем платить напрямую: обе стороны защищены.</p></div>
+        <div class="faq-body px-5"><p class="text-sm text-gray-500 pb-4 leading-relaxed">Да. В ФИБИ можно выбрать репетитора из каталога, согласовать удобное время занятия и оплатить урок прямо на платформе. Родителю видны занятия и статус оплаты, а все детали по уроку остаются в одном месте.</p></div>
       </div>
 
     </div>
@@ -1395,7 +1412,7 @@ html{scroll-behavior:smooth}
       <a href="register.html" class="btn-p" style="background:white;color:#0D3B66;box-shadow:0 4px 20px rgba(255,255,255,.3)">
         Начать бесплатно
       </a>
-      <a href="#tutors" class="btn-o" style="border-color:rgba(255,255,255,.4);color:white">
+      <a href="#tutors" class="btn-o btn-o-dark" style="border-color:rgba(255,255,255,.4);color:white">
         Найти репетитора
       </a>
     </div>
@@ -1408,7 +1425,7 @@ html{scroll-behavior:smooth}
 </section>
 
 <!-- ===== FOOTER ===== -->
-<footer class="py-16 bg-white border-t border-gray-100">
+<footer class="py-16 section-white border-t border-gray-100">
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
       <div class="col-span-2">
@@ -1568,6 +1585,7 @@ function renderQuestion() {
   document.getElementById('correct-badge').style.display = '';
   document.getElementById('wrong-badge').classList.add('hidden');
   document.getElementById('wrong-badge').style.display = '';
+  document.getElementById('demo-next-btn').textContent = currentQ === questions.length - 1 ? 'Зарегистрироваться →' : 'Дальше →';
 
   const area = document.getElementById('answers-area');
   area.innerHTML = '';
@@ -1625,7 +1643,11 @@ function spawnXP(xp) {
 }
 
 function nextQuestion() {
-  currentQ = (currentQ + 1) % questions.length;
+  if (currentQ === questions.length - 1) {
+    window.location.href = 'register.html';
+    return;
+  }
+  currentQ = currentQ + 1;
   renderQuestion();
 }
 

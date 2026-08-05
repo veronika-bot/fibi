@@ -160,6 +160,14 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       Чат
     </div>
+    <div class="nav-item" onclick="goScreen('t-knowledge')" id="nav-t-knowledge">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      База знаний
+    </div>
+    <div class="nav-item" onclick="goScreen('t-documents')" id="nav-t-documents">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8M8 9h2"/></svg>
+      Документы
+    </div>
     <div class="nav-item" onclick="goScreen('t-subscription')" id="nav-t-subscription">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
       Подписка
@@ -175,8 +183,9 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
   </nav>
 
-  <div class="p-4">
-    <button onclick="logout()" class="w-full text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти</button>
+  <div class="p-4 flex items-center justify-between gap-2">
+    <button onclick="openSupportChat()" class="text-xs text-blue-200 hover:text-white transition-colors py-2">Поддержка</button>
+    <button onclick="logout()" class="text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти</button>
   </div>
 </div>
 
@@ -198,7 +207,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 
   <!-- ==================== OVERVIEW ==================== -->
   <div class="screen active" id="t-overview">
-    <div class="grid grid-cols-4 gap-4 mb-6">
+    <div class="grid grid-cols-3 gap-4 mb-6">
       <div class="stat-chip">
         <p class="text-2xl font-black text-yale" id="ov-students">0</p>
         <p class="text-xs text-gray-500 mt-1">Учеников</p>
@@ -209,11 +218,43 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       </div>
       <div class="stat-chip">
         <p class="text-2xl font-black text-yale" id="ov-checked">0</p>
-        <p class="text-xs text-gray-500 mt-1">Проверено ч.2</p>
+        <p class="text-xs text-gray-500 mt-1">Баллы рейтинга</p>
       </div>
       <div class="stat-chip">
         <p class="text-2xl font-black text-yale" id="ov-rank">#—</p>
         <p class="text-xs text-gray-500 mt-1">Место в рейтинге</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-yale" id="ov-hours">0 ч</p>
+        <p class="text-xs text-gray-500 mt-1">Проведено занятий</p>
+      </div>
+      <div class="stat-chip">
+        <p class="text-2xl font-black text-green-600" id="ov-earned">0 ₽</p>
+        <p class="text-xs text-gray-500 mt-1">Заработано всего</p>
+      </div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <h3 class="font-bold text-gray-900">Аналитика за месяц</h3>
+          <p class="text-sm text-gray-500 mt-1">Занятия, доход и рост учеников</p>
+        </div>
+        <select id="analytics-month" onchange="renderMonthlyAnalytics()" style="width:auto;min-width:170px">
+          <option value="2026-08">Август 2026</option>
+          <option value="2026-07">Июль 2026</option>
+          <option value="2026-06">Июнь 2026</option>
+        </select>
+      </div>
+      <div class="grid grid-cols-4 gap-3 mb-6">
+        <div class="rounded-2xl bg-blue-50 p-4"><p class="text-xs text-gray-500">Занятий</p><p class="text-2xl font-black text-yale mt-1" id="ma-lessons">0</p><p class="text-xs text-green-600 mt-1" id="ma-lessons-delta"></p></div>
+        <div class="rounded-2xl bg-indigo-50 p-4"><p class="text-xs text-gray-500">Часов</p><p class="text-2xl font-black text-yale mt-1" id="ma-hours">0</p><p class="text-xs text-green-600 mt-1" id="ma-hours-delta"></p></div>
+        <div class="rounded-2xl bg-green-50 p-4"><p class="text-xs text-gray-500">Доход</p><p class="text-2xl font-black text-green-700 mt-1" id="ma-income">0 ₽</p><p class="text-xs text-green-600 mt-1" id="ma-income-delta"></p></div>
+        <div class="rounded-2xl bg-yellow-50 p-4"><p class="text-xs text-gray-500">Новых учеников</p><p class="text-2xl font-black text-yale mt-1" id="ma-students">0</p><p class="text-xs text-green-600 mt-1" id="ma-students-delta"></p></div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between mb-3"><p class="text-sm font-bold text-gray-800">Доход по неделям</p><p class="text-xs text-gray-400">₽</p></div>
+        <div id="ma-chart" class="flex items-end gap-4" style="height:150px"></div>
       </div>
     </div>
 
@@ -464,7 +505,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <p class="text-5xl font-black" id="my-rank-num">#—</p>
         </div>
         <div class="text-right">
-          <p class="text-sm opacity-80 mb-1">Проверено заданий ч.2</p>
+          <p class="text-sm opacity-80 mb-1">Баллы рейтинга</p>
           <p class="text-4xl font-black" id="my-checked-count">0</p>
         </div>
       </div>
@@ -475,6 +516,9 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         <h3 class="font-bold text-gray-900">Рейтинг репетиторов ФИБИ</h3>
         <a href="tutor-chart.html" target="_blank" class="btn-o text-sm py-2 px-4">Публичная страница</a>
       </div>
+      <div class="rounded-2xl bg-blue-50 p-4 mb-4 text-sm text-gray-600">
+        Балл складывается из прогресса учеников (45%), отзывов (35%) и активности на платформе (20%).
+      </div>
       <div id="chart-list" class="space-y-1"></div>
     </div>
   </div>
@@ -484,7 +528,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <div class="flex gap-4" style="height:calc(100vh - 180px)">
       <!-- Contact list -->
       <div class="card w-64 flex-shrink-0">
-        <h3 class="font-bold text-gray-900 mb-3 text-sm">Ученики</h3>
+        <h3 class="font-bold text-gray-900 mb-3 text-sm">Диалоги</h3>
         <div id="chat-contacts" class="space-y-1"></div>
       </div>
       <!-- Chat area -->
@@ -499,6 +543,116 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <input type="text" id="chat-input-t" placeholder="Сообщение..." onkeydown="if(event.key==='Enter')sendTutorChat()" />
           <button class="btn-p px-5" onclick="sendTutorChat()">→</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== KNOWLEDGE BASE ==================== -->
+  <div class="screen" id="t-knowledge">
+    <div class="card mb-5" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);color:white">
+      <h2 class="font-black text-2xl mb-2">База знаний</h2>
+      <p class="text-sm text-blue-100">Короткие инструкции по работе с кабинетом и учениками.</p>
+    </div>
+    <div class="grid grid-cols-2 gap-4">
+      <button class="card text-left hover:shadow-md transition-shadow" onclick="alert('Раздел «Первый старт» скоро будет дополнен подробной инструкцией.')">
+        <p class="font-bold text-gray-900">Первый старт</p><p class="text-sm text-gray-500 mt-1">Настройка профиля, анкеты и расписания</p>
+      </button>
+      <button class="card text-left hover:shadow-md transition-shadow" onclick="goScreen('t-students')">
+        <p class="font-bold text-gray-900">Работа с учениками</p><p class="text-sm text-gray-500 mt-1">Добавление учеников и отслеживание прогресса</p>
+      </button>
+      <button class="card text-left hover:shadow-md transition-shadow" onclick="goScreen('t-homework')">
+        <p class="font-bold text-gray-900">Домашние задания</p><p class="text-sm text-gray-500 mt-1">Как назначать и проверять работы</p>
+      </button>
+      <button class="card text-left hover:shadow-md transition-shadow" onclick="openSupportChat()">
+        <p class="font-bold text-gray-900">Нужна помощь?</p><p class="text-sm text-gray-500 mt-1">Написать в техническую поддержку ФИБИ</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== DOCUMENTS ==================== -->
+  <div class="screen" id="t-documents">
+    <div class="card mb-5" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);color:white">
+      <h2 class="font-black text-2xl mb-2">Документы и договоры</h2>
+      <p class="text-sm text-blue-100">Документооборот и договоры о сотрудничестве с ФИБИ.</p>
+    </div>
+    <div class="grid grid-cols-3 gap-4 mb-5">
+      <div class="stat-chip"><p class="text-2xl font-black text-yale" id="doc-active-count">1</p><p class="text-xs text-gray-500 mt-1">Действующий договор</p></div>
+      <div class="stat-chip"><p class="text-2xl font-black text-green-600">Подписан</p><p class="text-xs text-gray-500 mt-1">Текущий статус</p></div>
+      <div class="stat-chip"><p class="text-2xl font-black text-yale">ЭДО</p><p class="text-xs text-gray-500 mt-1">Способ обмена</p></div>
+    </div>
+    <div class="card mb-5">
+      <div class="flex items-start justify-between gap-4 flex-wrap mb-5">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <h3 class="font-bold text-gray-900">Счёт за услуги преподавателя</h3>
+            <span class="tag bg-yellow-100 text-yellow-700" id="invoice-status">Ожидает подтверждения</span>
+          </div>
+          <p class="text-sm text-gray-500 mt-1">Шаблон ФИБИ заполняется автоматически по итогам месяца</p>
+        </div>
+        <select id="invoice-month" onchange="renderInvoice()" style="width:auto;min-width:170px">
+          <option value="2026-08">Август 2026</option>
+          <option value="2026-07">Июль 2026</option>
+          <option value="2026-06">Июнь 2026</option>
+        </select>
+      </div>
+      <div class="rounded-2xl border border-gray-200 p-5 mb-4" id="invoice-preview">
+        <div class="flex items-center gap-2 mb-4 rounded-xl bg-gray-50 px-3 py-2 text-xs text-gray-600">
+          <span>🔒</span>
+          <span>Документ сформирован автоматически и защищён от изменений.</span>
+        </div>
+        <div class="flex justify-between gap-4 flex-wrap border-b border-gray-100 pb-4 mb-4">
+          <div><p class="text-xs text-gray-400">Документ</p><p class="font-black text-gray-900" id="invoice-number"></p></div>
+          <div class="text-right"><p class="text-xs text-gray-400">Дата формирования</p><p class="font-bold text-gray-900" id="invoice-date"></p></div>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+          <div><p class="text-xs text-gray-400">Исполнитель</p><p class="font-bold" id="invoice-tutor"></p></div>
+          <div><p class="text-xs text-gray-400">Заказчик</p><p class="font-bold">ФИБИ</p></div>
+          <div><p class="text-xs text-gray-400">Основание</p><p class="font-medium">Договор № ФИБИ-Т-2026-0142</p></div>
+          <div><p class="text-xs text-gray-400">Период услуг</p><p class="font-medium" id="invoice-period"></p></div>
+        </div>
+        <div class="flex items-center justify-between gap-4 rounded-xl bg-gray-50 p-4">
+          <div><p class="font-bold text-gray-900">Преподавательские услуги</p><p class="text-xs text-gray-500" id="invoice-details"></p></div>
+          <p class="text-2xl font-black text-green-700 whitespace-nowrap" id="invoice-amount"></p>
+        </div>
+      </div>
+      <div id="invoice-actions" class="flex items-center justify-between gap-3 flex-wrap">
+        <p class="text-xs text-gray-500">Проверьте сумму и данные перед отправкой.</p>
+        <div class="flex gap-2">
+          <button class="btn-o" onclick="alert('В демо-режиме открывается предварительный просмотр счёта.')">Предпросмотр</button>
+          <button class="btn-o" onclick="downloadInvoice()">Скачать счёт</button>
+          <button class="btn-p" id="invoice-confirm-btn" onclick="confirmInvoice()">Подтвердить и отправить в ФИБИ</button>
+        </div>
+      </div>
+    </div>
+    <div class="card mb-5">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-4">
+        <div>
+          <h3 class="font-bold text-gray-900">Архив ежемесячных счетов</h3>
+          <p class="text-sm text-gray-500 mt-1">Все сформированные счета хранятся в личном кабинете</p>
+        </div>
+        <span class="tag bg-blue-100 text-blue-700" id="invoice-archive-count">3 документа</span>
+      </div>
+      <div id="invoice-archive" class="space-y-2"></div>
+    </div>
+    <div class="card mb-5">
+      <div class="flex items-center justify-between gap-4 flex-wrap mb-4">
+        <div>
+          <h3 class="font-bold text-gray-900">Договор о сотрудничестве № ФИБИ-Т-2026-0142</h3>
+          <p class="text-sm text-gray-500 mt-1">Действует с 15 июля 2026 года • бессрочно</p>
+        </div>
+        <span class="tag bg-green-100 text-green-700">Действует</span>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        <button class="btn-p" onclick="alert('В демо-режиме доступен предварительный просмотр договора.')">Посмотреть договор</button>
+        <button class="btn-o" onclick="alert('Скачивание документов будет доступно после подключения электронного документооборота.')">Скачать PDF</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3 class="font-bold text-gray-900 mb-4">История документооборота</h3>
+      <div class="space-y-3">
+        <div class="flex items-start gap-3"><div class="w-2.5 h-2.5 rounded-full bg-green-500 mt-1.5"></div><div><p class="text-sm font-bold">Договор подписан обеими сторонами</p><p class="text-xs text-gray-500">15 июля 2026, 14:32</p></div></div>
+        <div class="flex items-start gap-3"><div class="w-2.5 h-2.5 rounded-full bg-blue-400 mt-1.5"></div><div><p class="text-sm font-bold">Документ подписан преподавателем</p><p class="text-xs text-gray-500">15 июля 2026, 13:48</p></div></div>
+        <div class="flex items-start gap-3"><div class="w-2.5 h-2.5 rounded-full bg-gray-300 mt-1.5"></div><div><p class="text-sm font-bold">Договор отправлен на подпись</p><p class="text-xs text-gray-500">14 июля 2026, 10:15</p></div></div>
       </div>
     </div>
   </div>
@@ -843,24 +997,167 @@ const DEMO_STUDENTS = [
 ];
 
 const DEMO_CHART = [
-  {id:'t1',name:'Анна Петрова',initials:'АП',checked:89,students:12},
-  {id:'t2',name:'Михаил Козлов',initials:'МК',checked:76,students:9},
-  {id:'t3',name:'Светлана Иванова',initials:'СИ',checked:54,students:7},
-  {id:'t4',name:'Дмитрий Новиков',initials:'ДН',checked:41,students:5},
+  {id:'t1',name:'Анна Петрова',initials:'АП',score:94,students:12,rating:4.9},
+  {id:'t2',name:'Михаил Козлов',initials:'МК',score:89,students:9,rating:4.8},
+  {id:'t3',name:'Светлана Иванова',initials:'СИ',score:86,students:7,rating:4.9},
+  {id:'t4',name:'Дмитрий Новиков',initials:'ДН',score:78,students:5,rating:4.7},
 ];
 
+const MONTHLY_ANALYTICS = {
+  '2026-08': {lessons:32,hours:43.5,income:65250,students:3,deltas:['+14% к июлю','+12% к июлю','+18% к июлю','+1 к июлю'],weeks:[13200,16800,15750,19500]},
+  '2026-07': {lessons:28,hours:38.8,income:55200,students:2,deltas:['+8% к июню','+9% к июню','+11% к июню','Без изменений'],weeks:[12400,13800,14200,14800]},
+  '2026-06': {lessons:26,hours:35.5,income:49800,students:2,deltas:['+4% к маю','+5% к маю','+7% к маю','+1 к маю'],weeks:[10800,12600,12000,14400]},
+};
+
+const INVOICE_META = {
+  '2026-08': {month:'Август 2026',number:'СЧ-ФИБИ-2026-08-0142',date:'31 августа 2026',period:'1–31 августа 2026',status:'draft'},
+  '2026-07': {month:'Июль 2026',number:'СЧ-ФИБИ-2026-07-0142',date:'31 июля 2026',period:'1–31 июля 2026',status:'closed'},
+  '2026-06': {month:'Июнь 2026',number:'СЧ-ФИБИ-2026-06-0142',date:'30 июня 2026',period:'1–30 июня 2026',status:'closed'},
+};
+let invoiceStatusesLoaded = false;
+
+// ===== API / SESSION =====
+// Identity + profile fields (name/email/subject/bio/testingData/profileStatus) are
+// server-backed now (task-bank). courses/subscription/checkedCount have no backend
+// model yet — same "in development" boundary as the tutor/ Next app — so they stay
+// cached locally per real account id.
+const API_BASE = 'http://localhost:3000';
+
+async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data.user;
+}
+
+function localStateKey(userId) { return 'fibi_tutor_local_' + userId; }
+
+function loadLocalState(userId) {
+  try { return JSON.parse(localStorage.getItem(localStateKey(userId)) || '{}'); }
+  catch { return {}; }
+}
+
+function saveLocalState() {
+  if (!T.user?.id) return;
+  const { courses, subscription, checkedCount } = T.user;
+  localStorage.setItem(localStateKey(T.user.id), JSON.stringify({ courses, subscription, checkedCount }));
+}
+
+function buildTutorState(serverUser) {
+  const tp = serverUser.tutorProfile || {};
+  const local = loadLocalState(serverUser.id);
+  const [firstName, ...rest] = (serverUser.fullName || '').split(' ');
+  let testingData = {};
+  try { testingData = JSON.parse(tp.testingData || '{}'); } catch {}
+  return Object.assign({
+    courses: [], subscription: null, checkedCount: 0, lessonHours: 0, totalEarned: 0,
+  }, local, {
+    id: serverUser.id,
+    name: firstName || '',
+    lastName: rest.join(' '),
+    email: serverUser.email,
+    phone: serverUser.phone,
+    avatar: serverUser.avatar,
+    role: 'tutor',
+    subject: tp.subject || '',
+    priceRub: tp.priceRub,
+    experienceText: tp.experienceText || '',
+    bio: tp.bio || '',
+    profileStatus: tp.profileStatus || 'testing_required',
+    testingData,
+    rating: tp.rating || 0,
+    reviewsCount: tp.reviewsCount || 0,
+  });
+}
+
+function buildDemoTutorState() {
+  return {
+    id: 'demo-tutor',
+    name: 'Светлана',
+    lastName: 'Иванова',
+    email: 'demo@fibi.ru',
+    phone: '',
+    avatar: null,
+    role: 'tutor',
+    subject: 'Математика',
+    priceRub: 1500,
+    experienceText: '5 лет',
+    bio: 'Помогаю понять математику и уверенно подготовиться к экзаменам.',
+    profileStatus: 'approved',
+    testingData: {},
+    rating: 4.9,
+    reviewsCount: 12,
+    courses: ['oge','ege-base','ege-prof'],
+    subscription: 'own',
+    checkedCount: 54,
+    lessonHours: 128.5,
+    totalEarned: 192750,
+  };
+}
+
+// Persists testingData/profileStatus/subject/bio to the server. Fire-and-forget —
+// call sites already re-render from the in-memory T.user immediately.
+async function syncTutorProfile() {
+  try {
+    await fetch(`${API_BASE}/api/tutor/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fullName: [T.user.name, T.user.lastName].filter(Boolean).join(' '),
+        phone: T.user.phone,
+        avatar: T.user.avatar,
+        subject: T.user.subject,
+        testingData: T.user.testingData,
+        profileStatus: T.user.profileStatus,
+      }),
+    });
+  } catch {}
+}
+
 // ===== INIT =====
-function init() {
-  const stored = localStorage.getItem('fibi_current_user');
-  if (!stored) { location.href='register.html'; return; }
-  T.user = JSON.parse(stored);
-  if (T.user.role !== 'tutor') { location.href='student-dashboard.html'; return; }
-  if (!T.user.courses) T.user.courses = [];
-  if (!T.user.subscription) T.user.subscription = null;
-  if (!T.user.checkedCount) T.user.checkedCount = 0;
-  if (!T.user.profileStatus) T.user.profileStatus = 'testing_required';
-  if (!T.user.testingData) T.user.testingData = {};
+async function init() {
+  const demoRequested = new URLSearchParams(location.search).get('demo') === '1';
+  let serverUser = null;
+  if (!demoRequested) {
+    try { serverUser = await fetchMe(); } catch {}
+  }
+  if (demoRequested) {
+    T.user = buildDemoTutorState();
+    T.demoMode = true;
+    T.checkedCount = 54;
+    T.students = [...DEMO_STUDENTS];
+    T.chatMessages = {
+      's1':[{from:'student',text:'Здравствуйте! Когда следующее занятие?'},{from:'tutor',text:'Привет! В четверг в 17:00.'}],
+      'support':[{from:'support',text:'Здравствуйте! Это техническая поддержка ФИБИ. Чем можем помочь?'}],
+    };
+    document.getElementById('demo-btn')?.classList.add('on');
+    renderAll();
+    return;
+  }
+  if (!serverUser) { location.href = 'register.html'; return; }
+  const role = (serverUser.role || '').toLowerCase();
+  if (role === 'parent') { location.href = 'dashboard.html'; return; }
+  if (role === 'student') { location.href = 'student-dashboard.html'; return; }
+  if (role !== 'tutor') { location.href = 'register.html'; return; }
+
+  T.user = buildTutorState(serverUser);
   T.checkedCount = T.user.checkedCount;
+
+  const hasAccess = T.user.subscription === 'own' || T.user.subscription === 'platform';
+  if (hasAccess) {
+    try {
+      const r = await fetch(`${API_BASE}/api/tutor/students`, { credentials: 'include' });
+      if (r.ok) {
+        const d = await r.json();
+        T.students = (d.students || []).map(s => ({
+          id: s.id, name: s.name,
+          initials: s.name.split(' ').map(w => w[0] || '').join('').toUpperCase().slice(0, 2),
+          exam: s.exam, streak: s.streak, solved: s.hwDone, accuracy: s.score,
+        }));
+      }
+    } catch {}
+  }
 
   renderSidebar();
   renderOverview();
@@ -874,11 +1171,8 @@ function init() {
 }
 
 function saveUser() {
-  localStorage.setItem('fibi_current_user', JSON.stringify(T.user));
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const idx = users.findIndex(u => u.id === T.user.id);
-  if (idx !== -1) users[idx] = T.user;
-  localStorage.setItem('fibi_users', JSON.stringify(users));
+  saveLocalState();
+  syncTutorProfile();
 }
 
 // ===== NAV =====
@@ -892,12 +1186,13 @@ function goScreen(id) {
   const titles = {
     't-overview':'Обзор','t-students':'Мои ученики','t-homework':'ДЗ и проверка',
     't-courses':'Учебные материалы','t-chart':'Рейтинг репетиторов',
-    't-chat':'Чат','t-subscription':'Подписка','t-profile':'Профиль',
+    't-chat':'Чат','t-knowledge':'База знаний','t-documents':'Документы и договоры','t-subscription':'Подписка','t-profile':'Профиль',
     't-testing':'Публикация анкеты'
   };
   const ptEl = document.getElementById('page-title');
   if (ptEl) ptEl.textContent = titles[id]||'';
   if (id === 't-testing') renderTestingScreen();
+  if (id === 't-documents') renderInvoice();
 }
 
 // ===== DEMO =====
@@ -914,6 +1209,7 @@ function toggleDemo() {
     T.students = [...DEMO_STUDENTS];
     T.chatMessages = {
       's1':[{from:'student',text:'Здравствуйте! Когда следующее занятие?'},{from:'tutor',text:'Привет! В четверг в 17:00.'}],
+      'support':[{from:'support',text:'Здравствуйте! Это техническая поддержка ФИБИ. Чем можем помочь?'}],
     };
   } else {
     T.user.courses = [];
@@ -956,9 +1252,14 @@ function renderOverview() {
   const students = T.demoMode ? DEMO_STUDENTS : T.students;
   document.getElementById('ov-students').textContent = students.length;
   document.getElementById('ov-hw').textContent = T.demoMode ? 7 : 0;
-  document.getElementById('ov-checked').textContent = T.checkedCount;
+  document.getElementById('ov-checked').textContent = buildChartData().find(r=>r.isMe)?.score || 0;
   const myRank = getMyRank();
   document.getElementById('ov-rank').textContent = myRank > 0 ? '#' + myRank : '#—';
+  const lessonHours = T.demoMode ? 128.5 : (T.user.lessonHours || 0);
+  const totalEarned = T.demoMode ? 192750 : (T.user.totalEarned || 0);
+  document.getElementById('ov-hours').textContent = `${lessonHours.toLocaleString('ru-RU')} ч`;
+  document.getElementById('ov-earned').textContent = `${totalEarned.toLocaleString('ru-RU')} ₽`;
+  renderMonthlyAnalytics();
 
   const sl = document.getElementById('ov-students-list');
   sl.innerHTML = students.slice(0,3).map(s => `
@@ -982,9 +1283,140 @@ function renderOverview() {
   renderRankPreview();
 }
 
+function renderMonthlyAnalytics() {
+  const key = document.getElementById('analytics-month')?.value || '2026-08';
+  const data = MONTHLY_ANALYTICS[key] || MONTHLY_ANALYTICS['2026-08'];
+  document.getElementById('ma-lessons').textContent = data.lessons;
+  document.getElementById('ma-hours').textContent = `${data.hours.toLocaleString('ru-RU')} ч`;
+  document.getElementById('ma-income').textContent = `${data.income.toLocaleString('ru-RU')} ₽`;
+  document.getElementById('ma-students').textContent = `+${data.students}`;
+  ['lessons','hours','income','students'].forEach((name,i) => {
+    document.getElementById(`ma-${name}-delta`).textContent = data.deltas[i];
+  });
+  const max = Math.max(...data.weeks);
+  document.getElementById('ma-chart').innerHTML = data.weeks.map((value,i) => `
+    <div class="flex-1 flex flex-col items-center justify-end h-full gap-2">
+      <span class="text-xs font-bold text-yale">${Math.round(value/1000)} тыс.</span>
+      <div class="w-full rounded-t-xl" style="height:${Math.max(12,Math.round(value/max*100))}px;background:linear-gradient(180deg,#1a5fa8,#0D3B66)"></div>
+      <span class="text-xs text-gray-400">${i+1} неделя</span>
+    </div>
+  `).join('');
+}
+
+function renderInvoice() {
+  if (!invoiceStatusesLoaded) {
+    try {
+      const saved = JSON.parse(localStorage.getItem('fibi_tutor_invoice_statuses') || '{}');
+      Object.entries(saved).forEach(([key,status]) => {
+        if (INVOICE_META[key] && ['draft','sent','closed'].includes(status)) INVOICE_META[key].status = status;
+      });
+    } catch {}
+    invoiceStatusesLoaded = true;
+  }
+  const key = document.getElementById('invoice-month')?.value || '2026-08';
+  const invoice = INVOICE_META[key] || INVOICE_META['2026-08'];
+  const analytics = MONTHLY_ANALYTICS[key] || MONTHLY_ANALYTICS['2026-08'];
+  const tutorName = [T.user?.name, T.user?.lastName].filter(Boolean).join(' ') || 'Преподаватель';
+  document.getElementById('invoice-number').textContent = invoice.number;
+  document.getElementById('invoice-date').textContent = invoice.date;
+  document.getElementById('invoice-tutor').textContent = tutorName;
+  document.getElementById('invoice-period').textContent = invoice.period;
+  document.getElementById('invoice-details').textContent = `${analytics.lessons} занятий • ${analytics.hours.toLocaleString('ru-RU')} часа`;
+  document.getElementById('invoice-amount').textContent = `${analytics.income.toLocaleString('ru-RU')} ₽`;
+
+  const status = document.getElementById('invoice-status');
+  const button = document.getElementById('invoice-confirm-btn');
+  const states = {
+    draft:  {label:'Ожидает подтверждения',cls:'tag bg-yellow-100 text-yellow-700'},
+    sent:   {label:'Отправлен в ФИБИ',cls:'tag bg-blue-100 text-blue-700'},
+    closed: {label:'Закрыт ФИБИ',cls:'tag bg-green-100 text-green-700'},
+  };
+  const current = states[invoice.status];
+  status.textContent = current.label;
+  status.className = current.cls;
+  button.style.display = invoice.status === 'draft' ? '' : 'none';
+  renderInvoiceArchive();
+}
+
+function confirmInvoice() {
+  const key = document.getElementById('invoice-month')?.value || '2026-08';
+  if (!INVOICE_META[key] || INVOICE_META[key].status !== 'draft') return;
+  INVOICE_META[key].status = 'sent';
+  localStorage.setItem('fibi_tutor_invoice_statuses', JSON.stringify(
+    Object.fromEntries(Object.entries(INVOICE_META).map(([month,invoice]) => [month,invoice.status]))
+  ));
+  renderInvoice();
+  alert('Счёт подтверждён и отправлен в ФИБИ. После обработки он получит статус «Закрыт».');
+}
+
+function renderInvoiceArchive() {
+  const archive = document.getElementById('invoice-archive');
+  if (!archive) return;
+  const statusLabels = {
+    draft:'Ожидает подтверждения',
+    sent:'Отправлен в ФИБИ',
+    closed:'Закрыт ФИБИ',
+  };
+  const statusClasses = {
+    draft:'bg-yellow-100 text-yellow-700',
+    sent:'bg-blue-100 text-blue-700',
+    closed:'bg-green-100 text-green-700',
+  };
+  const entries = Object.entries(INVOICE_META);
+  document.getElementById('invoice-archive-count').textContent = `${entries.length} документа`;
+  archive.innerHTML = entries.map(([key,invoice]) => {
+    const amount = MONTHLY_ANALYTICS[key]?.income || 0;
+    return `<div class="w-full flex items-center gap-3 rounded-2xl border border-gray-100 p-4 text-left hover:border-yale transition-colors cursor-pointer" onclick="openArchivedInvoice('${key}')">
+      <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-lg">📄</div>
+      <div class="flex-1 min-w-0">
+        <p class="font-bold text-sm text-gray-900">${invoice.month}</p>
+        <p class="text-xs text-gray-500 truncate">${invoice.number}</p>
+      </div>
+      <p class="font-black text-yale whitespace-nowrap">${amount.toLocaleString('ru-RU')} ₽</p>
+      <span class="tag ${statusClasses[invoice.status]}">${statusLabels[invoice.status]}</span>
+      <button class="btn-o" style="padding:7px 12px;font-size:12px" onclick="event.stopPropagation();downloadInvoice('${key}')">Скачать</button>
+    </div>`;
+  }).join('');
+}
+
+function openArchivedInvoice(key) {
+  const select = document.getElementById('invoice-month');
+  if (!select || !INVOICE_META[key]) return;
+  select.value = key;
+  renderInvoice();
+  document.getElementById('invoice-preview')?.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function downloadInvoice(forcedKey) {
+  const key = forcedKey || document.getElementById('invoice-month')?.value || '2026-08';
+  const invoice = INVOICE_META[key];
+  const analytics = MONTHLY_ANALYTICS[key];
+  if (!invoice || !analytics) return;
+  const tutorName = [T.user?.name, T.user?.lastName].filter(Boolean).join(' ') || 'Преподаватель';
+  const statusLabels = {draft:'Ожидает подтверждения',sent:'Отправлен в ФИБИ',closed:'Закрыт ФИБИ'};
+  const documentHtml = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><title>${invoice.number}</title>
+  <style>body{font-family:Arial,sans-serif;color:#172033;max-width:800px;margin:50px auto;padding:0 28px}h1{color:#0D3B66}.meta{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:28px 0}.line{border-top:1px solid #ddd;padding-top:18px}.total{background:#f2f7fc;padding:18px;border-radius:12px;font-size:24px;font-weight:700;text-align:right}.lock{color:#667085;font-size:12px;margin-top:30px}</style>
+  </head><body><h1>Счёт за услуги преподавателя</h1><p><b>${invoice.number}</b></p>
+  <div class="meta"><div>Исполнитель<br><b>${tutorName}</b></div><div>Заказчик<br><b>ФИБИ</b></div>
+  <div>Период услуг<br><b>${invoice.period}</b></div><div>Дата формирования<br><b>${invoice.date}</b></div>
+  <div>Основание<br><b>Договор № ФИБИ-Т-2026-0142</b></div><div>Статус<br><b>${statusLabels[invoice.status]}</b></div></div>
+  <div class="line"><p><b>Преподавательские услуги</b><br>${analytics.lessons} занятий • ${analytics.hours.toLocaleString('ru-RU')} часа</p>
+  <div class="total">${analytics.income.toLocaleString('ru-RU')} ₽</div></div>
+  <p class="lock">Документ сформирован автоматически в личном кабинете ФИБИ и защищён от изменений.</p></body></html>`;
+  const blob = new Blob([documentHtml], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${invoice.number}.html`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
 function getMyRank() {
   if (!T.demoMode) return 0;
-  const sorted = [...DEMO_CHART].sort((a,b)=>b.checked-a.checked);
+  const sorted = [...DEMO_CHART].sort((a,b)=>b.score-a.score);
   const me = sorted.findIndex(r=>r.id==='t3'); // demo: Светлана ≈ me
   return me+1;
 }
@@ -1003,7 +1435,7 @@ function renderRankPreview() {
         </div>
         <span class="text-xs text-gray-400">${r.students} учеников</span>
       </div>
-      <span class="text-sm font-black text-yale">${r.checked} ч.2</span>
+      <span class="text-sm font-black text-yale">${r.score} баллов</span>
     </div>
   `).join('');
 }
@@ -1028,7 +1460,7 @@ function renderStudents() {
         <p class="font-bold text-gray-900">${s.name}</p>
         <p class="text-xs text-gray-500">${s.exam} • Серия: ${s.streak}д • ${s.solved} задач</p>
       </div>
-      <span class="font-black text-yale">${s.xp} XP</span>
+      <span class="font-black text-yale">${s.accuracy != null ? s.accuracy + '%' : (s.xp || 0) + ' XP'}</span>
       <button class="btn-o text-xs py-1.5 px-3" onclick="goScreen('t-homework')">ДЗ</button>
       <button class="text-gray-400 hover:text-yale px-2" onclick="openChatWith('${s.id}')">💬</button>
     </div>
@@ -1044,7 +1476,7 @@ function filterStudents() {
     <div class="student-row">
       <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale">${s.initials}</div>
       <div class="flex-1"><p class="font-bold text-gray-900">${s.name}</p><p class="text-xs text-gray-500">${s.exam}</p></div>
-      <span class="font-black text-yale">${s.xp} XP</span>
+      <span class="font-black text-yale">${s.accuracy != null ? s.accuracy + '%' : (s.xp || 0) + ' XP'}</span>
     </div>
   `).join('');
 }
@@ -1274,22 +1706,27 @@ function openCourseContent(id) {
 
 // ===== CHART =====
 function buildChartData() {
+  const studentCount = T.demoMode ? DEMO_STUDENTS.length : T.students.length;
+  const myScore = T.demoMode ? 86 : Math.min(100, Math.round(
+    (T.user.rating || 0) * 7 + Math.min(studentCount, 15) * 2 + Math.min(T.checkedCount, 30)
+  ));
   const my = {
     id:'me', name: T.user.name+(T.user.lastName?' '+T.user.lastName:''),
     initials: (T.user.name[0]||'T') + ((T.user.lastName||'')[0]||''),
-    checked: T.checkedCount,
-    students: T.demoMode ? DEMO_STUDENTS.length : T.students.length,
+    score: myScore,
+    rating: T.user.rating || 0,
+    students: studentCount,
     isMe: true,
   };
-  let all = [...DEMO_CHART, my].sort((a,b)=>b.checked-a.checked);
+  let all = [...DEMO_CHART.filter(r => !(T.demoMode && r.id === 't3')), my].sort((a,b)=>b.score-a.score);
   return all;
 }
 
 function renderChart() {
   const chart = buildChartData();
   const myRank = chart.findIndex(r=>r.isMe) + 1;
-  document.getElementById('my-rank-num').textContent = '#' + (T.demoMode ? 5 : myRank);
-  document.getElementById('my-checked-count').textContent = T.checkedCount;
+  document.getElementById('my-rank-num').textContent = '#' + myRank;
+  document.getElementById('my-checked-count').textContent = chart.find(r=>r.isMe)?.score || 0;
 
   const el = document.getElementById('chart-list');
   el.innerHTML = chart.map((r, i) => {
@@ -1303,10 +1740,10 @@ function renderChart() {
           <span class="font-bold text-sm text-gray-900">${r.name}</span>
           ${r.isMe?'<span class="tag bg-blue-100 text-blue-700">Ты</span>':''}
         </div>
-        <span class="text-xs text-gray-400">${r.students} учеников</span>
+        <span class="text-xs text-gray-400">${r.students} учеников • ★ ${r.rating || '—'}</span>
       </div>
-      <span class="font-black text-yale">${r.checked}</span>
-      <span class="text-xs text-gray-400 ml-1">проверено ч.2</span>
+      <span class="font-black text-yale">${r.score}</span>
+      <span class="text-xs text-gray-400 ml-1">баллов</span>
     </div>`;
   }).join('');
 }
@@ -1315,12 +1752,29 @@ function renderChart() {
 function renderChat() {
   const students = T.demoMode ? DEMO_STUDENTS : T.students;
   const el = document.getElementById('chat-contacts');
-  el.innerHTML = students.map(s => `
+  el.innerHTML = `
+    <div class="flex items-center gap-2 p-2 rounded-xl cursor-pointer hover:bg-gray-50 ${T.chatWith==='support'?'bg-blue-50':''}" onclick="openSupportChat()">
+      <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center text-sm">🛟</div>
+      <div><span class="text-sm font-bold text-gray-800">Техподдержка</span><p class="text-xs text-green-600">Мы на связи</p></div>
+    </div>
+    <div class="text-xs font-bold text-gray-400 uppercase mt-3 mb-1 px-2">Ученики</div>
+  ` + students.map(s => `
     <div class="flex items-center gap-2 p-2 rounded-xl cursor-pointer hover:bg-gray-50 ${T.chatWith===s.id?'bg-blue-50':''}" onclick="openChatWith('${s.id}')">
       <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-yale">${s.initials}</div>
       <span class="text-sm font-medium text-gray-800">${s.name}</span>
     </div>
   `).join('') || '<p class="text-xs text-gray-400">Нет учеников</p>';
+}
+
+function openSupportChat() {
+  goScreen('t-chat');
+  T.chatWith = 'support';
+  document.getElementById('chat-student-name').textContent = 'Техническая поддержка ФИБИ';
+  if (!T.chatMessages.support) {
+    T.chatMessages.support = [{from:'support',text:'Здравствуйте! Это техническая поддержка ФИБИ. Чем можем помочь?'}];
+  }
+  renderChat();
+  renderTMessages();
 }
 
 function openChatWith(sid) {
@@ -1354,6 +1808,12 @@ function sendTutorChat() {
   T.chatMessages[T.chatWith].push({from:'tutor',text});
   input.value = '';
   renderTMessages();
+  if (T.chatWith === 'support' && T.demoMode) {
+    setTimeout(() => {
+      T.chatMessages.support.push({from:'support',text:'Спасибо! Обращение принято. Специалист поддержки ответит в этом чате.'});
+      renderTMessages();
+    }, 500);
+  }
 }
 
 // ===== SUBSCRIPTION =====
@@ -1836,7 +2296,10 @@ function diffTagSmall(d) {
 }
 function openModal(id){document.getElementById(id).classList.add('open')}
 function closeModal(id){document.getElementById(id).classList.remove('open')}
-function logout(){localStorage.removeItem('fibi_current_user');location.href='index.html'}
+async function logout(){
+  try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
+  location.href='index.html';
+}
 function openMobSidebar(){document.getElementById('tutor-sidebar').classList.add('open');document.getElementById('mob-overlay').classList.add('open')}
 function closeMobSidebar(){document.getElementById('tutor-sidebar').classList.remove('open');document.getElementById('mob-overlay').classList.remove('open')}
 

@@ -53,6 +53,9 @@
 /* Tab switcher */
 .tab-btn{flex:1;padding:10px;font-size:14px;font-weight:600;border:none;background:transparent;cursor:pointer;border-radius:10px;transition:all .2s;color:#6b7280}
 .tab-btn.active{background:#0D3B66;color:white}
+.next-steps{display:grid;gap:8px;margin:-4px 0 20px}
+.next-step{display:flex;align-items:center;gap:9px;border-radius:12px;background:#f8fafc;padding:9px 12px;color:#475569;font-size:12px;font-weight:600}
+.next-step svg{flex-shrink:0}
 
 /* Success state */
 #success-screen{display:none}
@@ -111,7 +114,7 @@
         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
           <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
         </div>
-        <span class="text-sm font-medium text-white">92% учеников сдают на «4» и «5»</span>
+        <span class="text-sm font-medium text-white">Понятный маршрут подготовки с первого дня</span>
       </div>
       <div class="benefit">
         <div class="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style="background:rgba(255,255,255,.15)">
@@ -146,7 +149,21 @@
         <!-- ===== REGISTRATION FORM ===== -->
         <div id="form-reg" class="fade-in">
           <h1 class="text-2xl font-extrabold text-gray-900 mb-1">Создать аккаунт</h1>
-          <p class="text-sm text-gray-500 mb-6">Присоединяйся к 10 000+ ученикам</p>
+          <p class="text-sm text-gray-500 mb-6">Создай профиль и начни подготовку в своём темпе</p>
+          <div class="next-steps">
+            <div class="next-step">
+              <svg width="15" height="15" fill="none" stroke="#0D3B66" stroke-width="2.2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+              Сначала создадим безопасный профиль
+            </div>
+            <div class="next-step">
+              <svg width="15" height="15" fill="none" stroke="#0D3B66" stroke-width="2.2" viewBox="0 0 24 24"><path d="M12 20v-6M6 20V10M18 20V4"/></svg>
+              Потом соберём цель и уровень подготовки
+            </div>
+            <div class="next-step">
+              <svg width="15" height="15" fill="none" stroke="#0D3B66" stroke-width="2.2" viewBox="0 0 24 24"><path d="M13 2L4.5 13.5H11L10 22L20 9.5H13.5L13 2z"/></svg>
+              В кабинете откроется короткий квест-тур
+            </div>
+          </div>
 
           <form id="reg-form" novalidate class="space-y-4">
 
@@ -174,14 +191,14 @@
             <div class="field">
               <label for="r-pass">Пароль <span class="text-red-400">*</span></label>
               <div style="position:relative">
-                <input id="r-pass" type="password" placeholder="Минимум 6 символов" autocomplete="new-password" oninput="checkStrength(this.value)">
+                <input id="r-pass" type="password" placeholder="Минимум 8 символов" autocomplete="new-password" oninput="checkStrength(this.value)">
                 <button type="button" class="eye-btn" onclick="togglePass('r-pass',this)" tabindex="-1">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
               </div>
               <div class="strength-bar"><div id="strength-fill" class="strength-fill"></div></div>
               <div id="strength-label" class="hint"></div>
-              <div class="err-msg">Пароль минимум 6 символов</div>
+              <div class="err-msg">Пароль минимум 8 символов</div>
             </div>
 
             <!-- Confirm password -->
@@ -337,6 +354,9 @@
 </div>
 
 <script>
+// ─── API ─────────────────────────────────────────────────
+const API_BASE = 'http://localhost:3000';
+
 // ─── State ───────────────────────────────────────────────
 let selectedRole = 'student';
 let selectedGrade = '9';
@@ -424,8 +444,22 @@ function initials(name, last) {
   return ((name[0] || '') + (last[0] || '')).toUpperCase() || name.slice(0,2).toUpperCase();
 }
 
+function routeAfterAuth(user) {
+  const role = (user.role || '').toUpperCase();
+  if (role === 'TUTOR') return 'tutor-dashboard.html';
+  if (role === 'STUDENT') return user.studentProfile?.onboardingDone ? 'student-dashboard.html' : 'student-onboarding.html';
+  return 'dashboard.html';
+}
+
+async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data.user;
+}
+
 // ─── REGISTRATION submit ──────────────────────────────────
-document.getElementById('reg-form').addEventListener('submit', function(e) {
+document.getElementById('reg-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   let valid = true;
 
@@ -444,7 +478,7 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
 
   if (!name) { setError('r-name', 'Введи имя'); valid = false; }
   if (!isValidEmail(email)) { setError('r-email', 'Введи корректный email'); valid = false; }
-  if (pass.length < 6) { setError('r-pass', 'Пароль минимум 6 символов'); valid = false; }
+  if (pass.length < 8) { setError('r-pass', 'Пароль минимум 8 символов'); valid = false; }
   if (pass !== pass2) {
     document.getElementById('r-pass2').classList.add('error');
     document.getElementById('pass-match-err').style.display = 'block';
@@ -454,51 +488,61 @@ document.getElementById('reg-form').addEventListener('submit', function(e) {
 
   if (!valid) return;
 
-  // Check if email already exists
-  const existing = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  if (existing.find(u => u.email === email)) {
-    const errEl = document.getElementById('reg-global-err');
-    errEl.textContent = 'Пользователь с таким email уже зарегистрирован';
-    errEl.style.display = 'block';
-    setError('r-email', 'Email уже используется');
-    return;
-  }
-
   // Show loading
   const btn = document.getElementById('reg-btn');
   document.getElementById('reg-btn-text').style.display = 'none';
   document.getElementById('reg-spinner').style.display = 'block';
   btn.disabled = true;
 
-  setTimeout(() => {
-    // Save user with emailVerified: false
-    const user = {
-      id: Date.now(),
-      name, lastName: last,
-      email, password: pass,
-      role: selectedRole,
-      grade: selectedRole === 'student' ? selectedGrade : null,
-      registeredAt: new Date().toISOString(),
-      streak: 0, solved: 0, accuracy: 0, xp: 0,
-      childrenIds: [], parentIds: [],
-      emailVerified: false, // TODO: set to true after real email verification
-      // Tutor-specific fields
-      profileStatus: selectedRole === 'tutor' ? 'testing_required' : undefined,
-      testingData: selectedRole === 'tutor' ? {} : undefined,
-      reviews: selectedRole === 'tutor' ? [] : undefined,
-    };
-    existing.push(user);
-    localStorage.setItem('fibi_users', JSON.stringify(existing));
-    localStorage.setItem('fibi_current_user', JSON.stringify(user));
+  function resetBtn() {
+    document.getElementById('reg-btn-text').style.display = '';
+    document.getElementById('reg-spinner').style.display = 'none';
+    btn.disabled = false;
+  }
 
-    // Show email verification screen instead of immediate redirect
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/register`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email, password: pass,
+        fullName: [name, last].filter(Boolean).join(' '),
+        role: selectedRole.toUpperCase(),
+        grade: selectedRole === 'student' ? Number(selectedGrade) : undefined,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (res.status === 409) {
+      resetBtn();
+      const errEl = document.getElementById('reg-global-err');
+      errEl.textContent = 'Пользователь с таким email уже зарегистрирован';
+      errEl.style.display = 'block';
+      setError('r-email', 'Email уже используется');
+      return;
+    }
+    if (!res.ok) {
+      resetBtn();
+      const errEl = document.getElementById('reg-global-err');
+      errEl.textContent = (data.error && (data.error.form?.[0] || Object.values(data.error)[0]?.[0])) || 'Не удалось создать аккаунт. Попробуйте ещё раз.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    const user = await fetchMe();
     document.getElementById('form-reg').style.display = 'none';
     showEmailVerification(email, name, user);
-  }, 900);
+  } catch (err) {
+    resetBtn();
+    const errEl = document.getElementById('reg-global-err');
+    errEl.textContent = 'Сервер недоступен. Проверьте подключение и попробуйте снова.';
+    errEl.style.display = 'block';
+  }
 });
 
 // ─── LOGIN submit ─────────────────────────────────────────
-document.getElementById('login-form').addEventListener('submit', function(e) {
+document.getElementById('login-form').addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const email = document.getElementById('l-email').value.trim();
@@ -519,52 +563,47 @@ document.getElementById('login-form').addEventListener('submit', function(e) {
   document.getElementById('login-spinner').style.display = 'block';
   btn.disabled = true;
 
-  setTimeout(() => {
-    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-    const user = users.find(u => u.email === email && u.password === pass);
+  function fail(msg) {
+    document.getElementById('login-btn-text').style.display = 'block';
+    document.getElementById('login-spinner').style.display = 'none';
+    btn.disabled = false;
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    setError('l-email', ' ');
+    setError('l-pass', ' ');
+  }
 
-    if (!user) {
-      document.getElementById('login-btn-text').style.display = 'block';
-      document.getElementById('login-spinner').style.display = 'none';
-      btn.disabled = false;
-      errEl.textContent = 'Неверный email или пароль';
-      errEl.style.display = 'block';
-      setError('l-email', ' ');
-      setError('l-pass', ' ');
-      return;
-    }
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass }),
+    });
+    if (!res.ok) { fail('Неверный email или пароль'); return; }
 
-    localStorage.setItem('fibi_current_user', JSON.stringify(user));
+    const user = await fetchMe();
 
     // Show success
     document.getElementById('form-login').style.display = 'none';
     const ss = document.getElementById('success-screen');
     ss.style.display = 'block';
-    document.getElementById('success-name').textContent = `С возвращением, ${user.name}! 👋`;
+    document.getElementById('success-name').textContent = `С возвращением, ${(user.fullName || '').split(' ')[0]}! 👋`;
     setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 50);
     setTimeout(() => {
-      if (user.role === 'tutor') {
-        window.location.href = 'tutor-dashboard.html';
-      } else if (user.role === 'student') {
-        if (!user.onboardingDone) {
-          window.location.href = 'student-onboarding.html';
-        } else {
-          window.location.href = 'student-dashboard.html';
-        }
-      } else {
-        window.location.href = 'dashboard.html';
-      }
+      window.location.href = routeAfterAuth(user);
     }, 1700);
-  }, 800);
+  } catch (err) {
+    fail('Сервер недоступен. Проверьте подключение и попробуйте снова.');
+  }
 });
 
 // ─── Auto-fill if already logged in ──────────────────────
-window.addEventListener('load', () => {
-  const cur = localStorage.getItem('fibi_current_user');
-  if (cur) {
-    const u = JSON.parse(cur);
+window.addEventListener('load', async () => {
+  const user = await fetchMe().catch(() => null);
+  if (user) {
     const le = document.getElementById('l-email');
-    if (le) le.value = u.email;
+    if (le) le.value = user.email;
   }
 });
 
@@ -577,30 +616,20 @@ function showEmailVerification(email, name, user) {
   document.getElementById('email-verify-screen').style.display = '';
   document.getElementById('verify-email-display').textContent = email;
   // TODO: вызвать реальный API для отправки письма с подтверждением
-  // Пример: await fetch('/api/send-verification', { method:'POST', body: JSON.stringify({ email, name }) })
   console.log('[TODO] Send verification email to:', email);
 }
 
 function skipEmailVerification() {
-  // DEV: пропускаем подтверждение, помечаем emailVerified: true
-  if (_pendingUser) {
-    _pendingUser.emailVerified = true;
-    localStorage.setItem('fibi_current_user', JSON.stringify(_pendingUser));
-    const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-    const idx = users.findIndex(u => u.id === _pendingUser.id);
-    if (idx >= 0) { users[idx].emailVerified = true; localStorage.setItem('fibi_users', JSON.stringify(users)); }
-  }
+  // DEV: пропускаем подтверждение email (аккаунт уже создан и сессия открыта на сервере)
   document.getElementById('email-verify-screen').style.display = 'none';
   const ss = document.getElementById('success-screen');
   ss.style.display = 'block';
-  document.getElementById('success-name').textContent = `Привет, ${_pendingUser?.name || ''}! 👋`;
+  document.getElementById('success-name').textContent = `Привет, ${(_pendingUser?.fullName || '').split(' ')[0]}! 👋`;
   setTimeout(() => { document.getElementById('progress-bar').style.width = '100%'; }, 50);
   setTimeout(() => {
     const u = _pendingUser;
     if (!u) return;
-    if (u.role === 'tutor') window.location.href = 'tutor-dashboard.html';
-    else if (u.role === 'student') window.location.href = 'student-onboarding.html';
-    else window.location.href = 'dashboard.html';
+    window.location.href = routeAfterAuth(u);
   }, 1700);
 }
 

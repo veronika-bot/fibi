@@ -52,6 +52,8 @@ body{background:#f4f6fb;margin:0}
 .paywall-card{background:white;border-radius:20px;padding:28px;box-shadow:0 8px 40px rgba(0,0,0,0.15);text-align:center;max-width:360px;width:100%}
 .demo-toggle{background:#FAF0CA;border:2px solid #0D3B66;border-radius:20px;padding:6px 16px;font-size:12px;font-weight:700;color:#0D3B66;cursor:pointer;transition:all .2s}
 .demo-toggle.on{background:#0D3B66;color:#FAF0CA}
+.tour-btn{background:white;border:2px solid #e5e7eb;border-radius:20px;padding:6px 14px;font-size:12px;font-weight:800;color:#0D3B66;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.tour-btn:hover{border-color:#0D3B66;box-shadow:0 4px 16px rgba(13,59,102,.12)}
 .stat-chip{background:#f4f6fb;border-radius:12px;padding:12px 16px;text-align:center}
 .topic-pill{padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid #e5e7eb;background:white;transition:all .2s}
 .topic-pill.active{background:#0D3B66;color:white;border-color:#0D3B66}
@@ -66,6 +68,40 @@ body{background:#f4f6fb;margin:0}
 .hw-card.done{border-left-color:#22c55e}
 .achievement{text-align:center;padding:16px;border-radius:16px;background:#f9fafb;border:2px solid #e5e7eb;opacity:.55}
 .achievement.earned{background:#f0f4ff;border-color:#c7d7fa;opacity:1}
+.progress-tabs{display:inline-flex;background:white;border:1px solid #e5e7eb;border-radius:14px;padding:4px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.progress-tab{border:none;background:transparent;color:#64748b;border-radius:10px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
+.progress-tab.active{background:#0D3B66;color:white;box-shadow:0 4px 14px rgba(13,59,102,.22)}
+.progress-panel{display:none}
+.progress-panel.active{display:block}
+.achievement-summary{display:grid;grid-template-columns:1.15fr .85fr;gap:16px;align-items:stretch}
+.achievement-hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#ffffff 0%,#FAF0CA 58%,#ffffff 100%)!important;border:1.5px solid rgba(13,59,102,.06)}
+.achievement-hero:after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;right:-70px;top:-70px;background:rgba(255,255,255,.42);pointer-events:none;z-index:0}
+.achievement-hero>*{position:relative;z-index:2}
+.achievement-prize{width:70px;height:70px;border-radius:22px;background:#0D3B66;color:#FAF0CA;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px rgba(13,59,102,.22)}
+.achievement-stat{position:relative;z-index:3;background:#ffffff;border:1px solid rgba(13,59,102,.08);border-radius:18px;padding:14px;text-align:center;box-shadow:0 8px 22px rgba(13,59,102,.07)}
+.achievement-next{position:relative;z-index:3;background:#ffffff;border:1.5px solid rgba(13,59,102,.1);border-radius:18px;padding:14px;margin-top:14px;box-shadow:0 8px 22px rgba(13,59,102,.06)}
+.achievement-stage{position:relative;background:#fff;border:1.5px solid #e5e7eb;border-radius:16px;padding:16px;overflow:hidden}
+.achievement-stage:before{content:"";position:absolute;left:0;top:0;bottom:0;width:6px;background:#dbe3ee}
+.achievement-stage.current{background:linear-gradient(135deg,#ffffff,#FAF0CA);border-color:rgba(13,59,102,.18)}
+.achievement-stage.current:before{background:#0D3B66}
+.achievement-stage.open{background:linear-gradient(135deg,#ffffff,rgba(13,59,102,.055));border-color:rgba(13,59,102,.18)}
+.achievement-stage.open:before{background:#0D3B66}
+.achievement-stage.locked{opacity:.78}
+.achievement-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.achievement-list-card{display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:center;padding:16px;border:2px solid #e5e7eb;border-radius:18px;background:white;transition:all .2s;box-shadow:0 4px 14px rgba(13,59,102,.04)}
+.achievement-list-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(13,59,102,.08)}
+.achievement-list-card.earned{border-color:rgba(13,59,102,.22);background:linear-gradient(135deg,#ffffff,rgba(13,59,102,.045))}
+.achievement-list-card.next{border-color:#0D3B66;background:#ffffff}
+.achievement-icon{width:54px;height:54px;border-radius:17px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;font-size:25px}
+.achievement-list-card.earned .achievement-icon{background:rgba(13,59,102,.08)}
+.achievement-list-card.next .achievement-icon{background:rgba(13,59,102,.08)}
+.achievement-reward{display:inline-flex;align-items:center;gap:5px;background:#FAF0CA;color:#0D3B66;border-radius:999px;padding:4px 9px;font-size:11px;font-weight:900}
+@media(max-width:767px){
+  .achievement-summary{grid-template-columns:1fr}
+  .achievement-list{grid-template-columns:1fr}
+  .progress-tabs{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  .progress-tab{justify-content:center}
+}
 .progress-ring{transform:rotate(-90deg);transform-origin:50%}
 input[type=text],input[type=number],textarea,select{border:2px solid #e5e7eb;border-radius:12px;padding:10px 14px;font-family:inherit;font-size:14px;outline:none;transition:border-color .2s;width:100%}
 input:focus,textarea:focus,select:focus{border-color:#0D3B66}
@@ -116,6 +152,25 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 .answer-field:focus{border-color:#0D3B66}
 .answer-feedback-ok{background:#f0fdf4;border:1.5px solid #86efac;border-radius:12px;padding:11px 16px;color:#15803d;font-weight:700;font-size:14px;margin-top:10px;display:flex;align-items:center;gap:7px}
 .answer-feedback-err{background:#fff1f2;border:1.5px solid #fca5a5;border-radius:12px;padding:11px 16px;color:#b91c1c;font-weight:700;font-size:14px;margin-top:10px;display:flex;align-items:center;gap:7px}
+
+/* ── FIRST LOGIN QUEST TOUR ── */
+.tour-overlay{display:none;position:fixed;inset:0;background:rgba(5,17,33,.58);z-index:140;pointer-events:none}
+.tour-overlay.open{display:block}
+.tour-focus{position:relative;z-index:151!important;box-shadow:0 0 0 4px rgba(250,240,202,.95),0 12px 40px rgba(0,0,0,.28)!important;animation:tourPulse 1.4s ease-in-out infinite}
+@keyframes tourPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-2px)}}
+.tour-card{display:none;position:fixed;z-index:160;width:min(360px,calc(100vw - 32px));background:white;border-radius:18px;padding:18px;box-shadow:0 20px 60px rgba(0,0,0,.25);border:1px solid rgba(13,59,102,.08)}
+.tour-card.open{display:block}
+.tour-card:before{content:"";position:absolute;width:14px;height:14px;background:white;transform:rotate(45deg)}
+.tour-card.pos-bottom:before{top:-7px;left:28px}
+.tour-card.pos-top:before{bottom:-7px;left:28px}
+.tour-card.pos-left:before{right:-7px;top:28px}
+.tour-card.pos-right:before{left:-7px;top:28px}
+.tour-progress{height:7px;background:#e5e7eb;border-radius:999px;overflow:hidden}
+.tour-progress span{display:block;height:100%;background:linear-gradient(90deg,#0D3B66,#3B82F6);border-radius:999px;transition:width .25s ease}
+@media(max-width:767px){
+  .tour-card{left:16px!important;right:16px!important;bottom:16px!important;top:auto!important;width:auto}
+  .tour-card:before{display:none}
+}
 </style>
 </head>
 <body>
@@ -199,14 +254,13 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Профиль
     </div>
-    <div class="nav-item" onclick="goScreen('s-payment')" id="nav-s-payment">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20M6 15h4"/></svg>
-      Оплата
-    </div>
   </nav>
 
   <div class="p-4">
-    <button onclick="logout()" class="w-full text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти из аккаунта</button>
+    <div class="grid grid-cols-2 gap-2">
+      <button onclick="openSupportChat()" class="text-xs font-bold text-yale rounded-xl py-2 px-2 transition-colors" style="background:#FAF0CA">Поддержка</button>
+      <button onclick="logout()" class="text-xs text-blue-200 hover:text-white transition-colors py-2">Выйти</button>
+    </div>
   </div>
 </div>
 
@@ -220,8 +274,12 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <p id="page-sub" class="text-sm font-semibold text-gray-700">Добро пожаловать!</p>
     </div>
     <div class="flex items-center gap-3">
+      <button class="tour-btn" id="tour-help-btn" onclick="startCabinetTour(true)" title="Показать тур по кабинету">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="2.4"><path d="M13 2L4.5 13.5H11L10 22L20 9.5H13.5L13 2z"/></svg>
+        Квест
+      </button>
       <button class="demo-toggle" id="demo-btn" onclick="toggleDemo()">✨ Демо</button>
-      <div class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm cursor-pointer" onclick="goScreen('s-profile')">
+      <div class="bg-white rounded-full w-10 h-10 flex items-center justify-center shadow-sm cursor-pointer" id="top-profile-shortcut" onclick="goScreen('s-profile')">
         <span id="top-avatar" class="font-bold text-yale text-sm"></span>
       </div>
     </div>
@@ -230,7 +288,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
   <!-- ==================== SCREEN: HOME ==================== -->
   <div class="screen active" id="s-home">
     <!-- Daily goal progress -->
-    <div class="card mb-6">
+    <div class="card mb-6" id="tour-daily-goal">
       <div class="flex items-center justify-between mb-4">
         <div>
           <h2 class="font-black text-lg text-gray-900">Цель на сегодня</h2>
@@ -265,16 +323,16 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <!-- 3 blocks -->
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
       <!-- Block 1: Find Tutor -->
-      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-tutors')">
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" id="tour-tutor-card" onclick="goScreen('s-tutors')">
         <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
           <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
         </div>
         <h3 class="font-bold text-gray-900 mb-1">Найти репетитора</h3>
         <p class="text-xs text-gray-500 mb-3">Подбор репетитора, ДЗ, чат</p>
-        <span class="tag bg-green-100 text-green-700">Бесплатно</span>
+        <span class="tag bg-yale text-white">Бесплатно</span>
       </div>
       <!-- Block 2: Self-Study -->
-      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-study')">
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" id="tour-study-card" onclick="goScreen('s-study')">
         <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
           <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
         </div>
@@ -283,7 +341,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
         <span class="tag bg-blue-100 text-blue-700" id="b2-tag-home">Платно</span>
       </div>
       <!-- Block 3: Task Bank -->
-      <div class="card cursor-pointer hover:shadow-lg transition-shadow" onclick="goScreen('s-bank')">
+      <div class="card cursor-pointer hover:shadow-lg transition-shadow" id="tour-bank-card" onclick="goScreen('s-bank')">
         <div class="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center mb-3">
           <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
         </div>
@@ -316,7 +374,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     <!-- Recent activity + Quick tasks -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <!-- Quick task -->
-      <div class="card">
+      <div class="card" id="tour-quick-task">
         <h3 class="font-bold text-gray-900 mb-4">Быстрое задание</h3>
         <div id="quick-task-area">
           <p class="text-sm text-gray-500">Загрузка...</p>
@@ -370,7 +428,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
             <div>
               <div class="flex items-center gap-2">
                 <h2 class="font-black text-gray-900 text-lg" id="at-name">Имя Репетитора</h2>
-                <span class="tag bg-green-100 text-green-700">Активный</span>
+                <span class="tag bg-yale text-white">Активный</span>
               </div>
               <p class="text-sm text-gray-500" id="at-subject"></p>
             </div>
@@ -496,9 +554,27 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
     </div>
 
     <div id="bank-unlocked" style="display:none">
-      <div id="bank-tasks-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-      <div id="bank-part1-grid" style="display:none" class="space-y-3"></div>
-      <div id="bank-part2-grid" style="display:none" class="space-y-3"></div>
+      <div id="bank-main-view">
+        <div class="card mb-4" style="background:linear-gradient(135deg,#0D3B66,#1a5fa8);color:white">
+          <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+              <h3 class="font-black text-xl mb-1">Собственный вариант</h3>
+              <p class="text-sm text-blue-100">Выбери количество заданий по каждому номеру и решай вариант прямо на платформе.</p>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+              <button class="btn-p" style="background:#FAF0CA;color:#0D3B66" onclick="openVariantBuilder()">Сформировать вариант</button>
+              <button class="btn-o" style="border-color:white;color:white" onclick="openVariantHistory()">История вариантов <span id="variant-history-count"></span></button>
+            </div>
+          </div>
+        </div>
+        <div id="bank-tasks-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+        <div id="bank-part1-grid" style="display:none" class="space-y-3"></div>
+        <div id="bank-part2-grid" style="display:none" class="space-y-3"></div>
+      </div>
+
+      <div id="variant-builder-view" style="display:none"></div>
+      <div id="variant-runner-view" style="display:none"></div>
+      <div id="variant-history-view" style="display:none"></div>
     </div>
 
     <!-- Task solving modal -->
@@ -862,7 +938,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <p class="text-xs text-gray-500 mt-1">Всего ДЗ</p>
         </div>
         <div class="stat-chip">
-          <p class="text-2xl font-black text-green-600" id="hw-done-count">0</p>
+          <p class="text-2xl font-black text-yale" id="hw-done-count">0</p>
           <p class="text-xs text-gray-500 mt-1">Сдано</p>
         </div>
         <div class="stat-chip">
@@ -876,73 +952,136 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
 
   <!-- ==================== SCREEN: PROGRESS ==================== -->
   <div class="screen" id="s-progress">
-    <!-- Level & XP -->
-    <div class="card mb-6">
-      <div class="flex items-center gap-6">
-        <div class="text-center">
-          <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-1" style="background:#e8f0fb" id="prog-level-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2.5"><circle cx="12" cy="12" r="3"/></svg>
+    <div class="flex items-center justify-between gap-3 flex-wrap mb-6">
+      <div>
+        <h2 class="font-black text-gray-900 text-xl">Прогресс</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Уровень, прогресс и личные этапы</p>
+      </div>
+      <div class="progress-tabs" role="tablist" aria-label="Разделы прогресса">
+        <button class="progress-tab active" id="progress-tab-overview" onclick="switchProgressTab('overview')">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3"><path d="M18 20V10M12 20V4M6 20v-6M3 20h18"/></svg>
+          Обзор
+        </button>
+        <button class="progress-tab" id="progress-tab-achievements" onclick="switchProgressTab('achievements')">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.3"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z"/><path d="M5 6H3a3 3 0 003 3M19 6h2a3 3 0 01-3 3"/></svg>
+          Достижения
+        </button>
+      </div>
+    </div>
+
+    <div class="progress-panel active" id="progress-panel-overview">
+      <!-- Level & XP -->
+      <div class="card mb-6">
+        <div class="flex items-center gap-6">
+          <div class="text-center">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-1" style="background:linear-gradient(135deg,#FAF0CA,#e8f0fb);box-shadow:0 8px 22px rgba(13,59,102,.12)" id="prog-level-icon">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L5 14h6l-1 8 9-13h-6l0-7z"/><path d="M4 5l1.5 1.5M19 18l1.5 1.5"/></svg>
+            </div>
+            <p class="font-black text-yale" id="prog-level-name">Новичок</p>
           </div>
-          <p class="font-black text-yale" id="prog-level-name">Новичок</p>
-        </div>
-        <div class="flex-1">
-          <div class="flex justify-between mb-2">
-            <span class="font-bold text-gray-900" id="prog-xp-current">0 XP</span>
-            <span class="text-gray-500 text-sm" id="prog-xp-next">до следующего уровня: 100 XP</span>
+          <div class="flex-1">
+            <div class="flex justify-between mb-2">
+              <span class="font-bold text-gray-900" id="prog-xp-current">0 XP</span>
+              <span class="text-gray-500 text-sm" id="prog-xp-next">до следующего уровня: 100 XP</span>
+            </div>
+            <div class="xp-bar-outer" style="height:14px">
+              <div id="prog-xp-bar" class="xp-bar-inner" style="width:0%;height:14px"></div>
+            </div>
           </div>
-          <div class="xp-bar-outer" style="height:14px">
-            <div id="prog-xp-bar" class="xp-bar-inner" style="width:0%;height:14px"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Stats grid -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-      <div class="stat-chip">
-        <p class="text-2xl font-black text-yale" id="prog-solved">0</p>
-        <p class="text-xs text-gray-500 mt-1">Решено</p>
-      </div>
-      <div class="stat-chip">
-        <p class="text-2xl font-black text-yale" id="prog-accuracy">—</p>
-        <p class="text-xs text-gray-500 mt-1">Точность</p>
-      </div>
-      <div class="stat-chip">
-        <p class="text-2xl font-black text-yale" id="prog-streak3">0</p>
-        <p class="text-xs text-gray-500 mt-1">Серия дней</p>
-      </div>
-      <div class="stat-chip">
-        <p class="text-2xl font-black text-yale" id="prog-best-streak">0</p>
-        <p class="text-xs text-gray-500 mt-1">Лучшая серия</p>
-      </div>
-    </div>
-
-    <!-- Topics breakdown -->
-    <div class="card mb-6">
-      <h3 class="font-bold text-gray-900 mb-4">По темам</h3>
-      <div id="topics-breakdown" class="space-y-3"></div>
-    </div>
-
-    <!-- Achievements -->
-    <div class="card mb-6">
-      <h3 class="font-bold text-gray-900 mb-4">Достижения</h3>
-      <div id="achievements-grid" class="grid grid-cols-2 md:grid-cols-4 gap-3"></div>
-    </div>
-
-    <!-- Leaderboard -->
-    <div class="card">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="font-bold text-gray-900">Таблица лидеров</h3>
-        <div class="flex items-center gap-2">
-          <span class="text-xs text-gray-500">🏆 Топ-3 получают призы</span>
         </div>
       </div>
-      <div id="leaderboard-full"></div>
+
+      <!-- Stats grid -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-yale" id="prog-solved">0</p>
+          <p class="text-xs text-gray-500 mt-1">Решено</p>
+        </div>
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-yale" id="prog-accuracy">—</p>
+          <p class="text-xs text-gray-500 mt-1">Точность</p>
+        </div>
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-yale" id="prog-streak3">0</p>
+          <p class="text-xs text-gray-500 mt-1">Серия дней</p>
+        </div>
+        <div class="stat-chip">
+          <p class="text-2xl font-black text-yale" id="prog-best-streak">0</p>
+          <p class="text-xs text-gray-500 mt-1">Лучшая серия</p>
+        </div>
+      </div>
+
+      <!-- Topics breakdown -->
+      <div class="card mb-6">
+        <h3 class="font-bold text-gray-900 mb-4">По темам</h3>
+        <div id="topics-breakdown" class="space-y-3"></div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div>
+            <h3 class="font-bold text-gray-900">Достижения</h3>
+            <p class="text-xs text-gray-500 mt-1" id="achievements-mini-text">Получено 0 из 8</p>
+          </div>
+          <button class="btn-o text-sm" style="width:auto;padding:9px 14px" onclick="switchProgressTab('achievements')">Открыть достижения</button>
+        </div>
+      </div>
+
+      <!-- Leaderboard -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-bold text-gray-900">Таблица лидеров</h3>
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-gray-500">🏆 Топ-3 получают призы</span>
+          </div>
+        </div>
+        <div id="leaderboard-full"></div>
+      </div>
+    </div>
+
+    <div class="progress-panel" id="progress-panel-achievements">
+      <div class="achievement-summary mb-6">
+        <div class="card achievement-hero">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h3 class="font-black text-gray-900 text-lg">Карта достижений</h3>
+              <p class="text-sm text-gray-600 mt-1">Открывай медали за регулярность, задачи и темы. Чем активнее занимаешься, тем выше место в рейтинге и шанс попасть в ТОП-3 за призами.</p>
+            </div>
+            <div class="achievement-prize flex-shrink-0">
+              <svg width="34" height="34" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 01-10 0V4z"/><path d="M5 6H3a3 3 0 003 3M19 6h2a3 3 0 01-3 3"/></svg>
+            </div>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mt-5">
+            <div class="achievement-stat">
+              <p class="text-2xl font-black text-yale" id="ach-earned-count">0</p>
+              <p class="text-xs text-gray-500 mt-1">Получено</p>
+            </div>
+            <div class="achievement-stat">
+              <p class="text-2xl font-black text-yale" id="ach-total-count">8</p>
+              <p class="text-xs text-gray-500 mt-1">Всего</p>
+            </div>
+            <div class="achievement-stat">
+              <p class="text-2xl font-black text-yale" id="ach-next-percent">0%</p>
+              <p class="text-xs text-gray-500 mt-1">Ближайшая</p>
+            </div>
+          </div>
+          <div class="achievement-next" id="achievement-next-card"></div>
+        </div>
+        <div class="card">
+          <h3 class="font-bold text-gray-900 mb-3">Этап ученика</h3>
+          <div id="achievement-stages" class="space-y-2"></div>
+        </div>
+      </div>
+      <div id="achievements-grid" class="achievement-list"></div>
     </div>
   </div>
 
   <!-- ==================== SCREEN: CHAT ==================== -->
   <div class="screen" id="s-chat">
+    <div class="flex p-1 rounded-xl mb-4" style="background:#e9eef5;max-width:420px">
+      <button id="chat-tab-tutor" class="tab-btn active" onclick="switchChatChannel('tutor')">Репетитор</button>
+      <button id="chat-tab-support" class="tab-btn" onclick="switchChatChannel('support')">Поддержка</button>
+    </div>
     <div id="chat-no-tutor" class="card text-center py-12">
       <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="#0D3B66" stroke-width="1.8"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
       <h3 class="font-black text-xl text-gray-900 mb-2">Нет активного репетитора</h3>
@@ -955,7 +1094,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
           <div id="chat-tutor-avatar" class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-yale"></div>
           <div>
             <p id="chat-tutor-name" class="font-bold text-gray-900"></p>
-            <p class="text-xs text-green-500">онлайн</p>
+            <p class="text-xs text-green-500" id="chat-status">онлайн</p>
           </div>
         </div>
         <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 mb-4" style="max-height:420px;overflow-y:auto">
@@ -1055,23 +1194,19 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
             </div>
             <h3 class="font-bold text-gray-900">Доступ для родителей</h3>
           </div>
-          <label class="flex items-start gap-3 p-3 mb-3 rounded-xl cursor-pointer" style="background:#f8fafc;border:1px solid #e5e7eb">
-            <input type="checkbox" id="parent-stats-consent" onchange="toggleParentStatsConsent()" class="accent-yale w-5 h-5 mt-0.5 flex-shrink-0">
-            <span>
-              <span class="font-semibold text-sm text-gray-800 block">Разрешить родителю доступ к моей статистике</span>
-              <span class="text-xs text-gray-500">Родитель увидит прогресс, серию занятий и готовность к экзамену.</span>
-            </span>
-          </label>
-          <div id="parent-access-disabled" class="text-xs text-amber-700 p-3 mb-3 rounded-xl" style="background:#fffbeb;border:1px solid #fde68a">Поставьте галочку, чтобы открыть код привязки.</div>
-          <div id="parent-access-enabled" style="display:none">
           <p class="text-xs text-gray-500 mb-3">Передайте этот код родителю — он вводит его в своём кабинете в поле «Введите код ребёнка»</p>
           <div class="flex items-center justify-center p-4 bg-blue-50 rounded-xl mb-3 cursor-pointer" onclick="copyParentCode()" title="Нажмите, чтобы скопировать">
             <span class="font-mono font-black text-3xl text-yale tracking-[0.25em]" id="prof-invite-code">——————</span>
           </div>
-          <button id="copy-parent-btn" class="btn-p w-full text-sm" onclick="copyParentCode()">
-            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Скопировать код
-          </button>
+          <div class="flex gap-2">
+            <button id="copy-parent-btn" class="btn-p w-full text-sm" onclick="copyParentCode()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Скопировать код
+            </button>
+            <button class="btn-o text-sm px-3" title="Обновить код" onclick="regenerateLinkCode()">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+            </button>
+          </div>
           <div class="mt-3 rounded-xl p-3 text-xs text-gray-500 leading-relaxed" style="background:#f8fafc;border:1px solid #e5e7eb">
             <p class="font-semibold text-gray-700 mb-1">Как подвязать аккаунты:</p>
             <ol class="space-y-1 list-none">
@@ -1079,64 +1214,14 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
               <li><span class="font-semibold text-yale">2.</span> В своём кабинете он вводит этот код в поле «Введите код ребёнка»</li>
               <li><span class="font-semibold text-yale">3.</span> После ввода аккаунты связываются — родитель видит ваш прогресс, серию и готовность к экзамену</li>
             </ol>
-            <p class="mt-1.5 text-gray-400">Код одноразовый. После подвязки он становится недействительным.</p>
-          </div>
+            <p class="mt-1.5 text-gray-400">Код постоянный — им можно поделиться с обоими родителями. Если код узнал кто-то посторонний, обновите его кнопкой справа.</p>
           </div>
         </div>
       </div>
-    </div>
-  </div>
-
-  <!-- ==================== SCREEN: PAYMENT ==================== -->
-  <div class="screen" id="s-payment">
-    <div class="card max-w-3xl">
-      <div class="flex items-start justify-between gap-4 flex-wrap mb-5">
-        <div>
-          <h2 class="font-black text-xl text-gray-900">Оплата подписки</h2>
-          <p class="text-sm text-gray-500 mt-1">Оплатить может ученик или привязанный родитель.</p>
-        </div>
-        <span id="student-sub-badge" class="tag bg-gray-200 text-gray-600">Не активна</span>
-      </div>
-      <div class="p-5 rounded-2xl mb-5" style="background:#FAF0CA">
-        <div class="flex items-center justify-between gap-4 flex-wrap">
-          <div>
-            <p id="student-plan-name" class="font-black text-yale">Самостоятельная подготовка</p>
-            <p class="text-sm text-gray-600 mt-1">Курсы, банк заданий и статистика</p>
-          </div>
-          <div class="text-right"><span id="student-plan-price" class="text-2xl font-black text-yale">679 ₽</span><span id="student-plan-period-label" class="text-sm text-gray-500"> / месяц</span></div>
-        </div>
-      </div>
-      <label class="text-xs font-bold text-gray-500 block mb-1.5">Сумма к оплате по выбранному тарифу</label>
-      <div class="flex items-center justify-between p-4 mb-5 rounded-xl" style="border:2px solid #e5e7eb;background:#f8fafc">
-        <span id="student-checkout-plan" class="text-sm font-semibold text-gray-700">Самостоятельная подготовка · 1 месяц</span>
-        <span id="student-checkout-price" class="font-black text-yale">679 ₽</span>
-      </div>
-      <button id="student-pay-btn" class="btn-p w-full" onclick="paySubscription('student')">Оплатить подписку</button>
-      <div class="grid grid-cols-2 gap-2 mt-3">
-        <button id="student-renew-btn" class="btn-o text-sm" onclick="enableStudentAutoRenew()">Включить автопродление</button>
-        <button class="btn-o text-sm" onclick="openStudentTariffModal()">Изменить тариф</button>
-        <button class="btn-o text-sm col-span-2" onclick="cancelStudentSubscription()" style="color:#ef4444;border-color:#ef4444">Отменить автопродление</button>
-      </div>
-      <p id="student-sub-note" class="text-xs text-gray-500 text-center mt-3">Сумма фиксирована тарифом и не может быть увеличена вручную.</p>
     </div>
   </div>
 
 </div><!-- end main-content -->
-
-<!-- Student tariff modal -->
-<div class="modal-overlay" id="student-tariff-modal" onclick="if(event.target===this)closeStudentTariffModal()">
-  <div class="modal">
-    <div class="flex items-start justify-between gap-4 mb-5">
-      <div><h3 class="font-black text-xl text-gray-900">Выберите тариф</h3><p class="text-sm text-gray-500 mt-1">Сумма оплаты будет равна точной стоимости тарифа.</p></div>
-      <button onclick="closeStudentTariffModal()" class="text-2xl text-gray-400" aria-label="Закрыть">×</button>
-    </div>
-    <div id="student-tariff-options" class="space-y-3"></div>
-    <div class="flex gap-2 mt-5">
-      <button class="btn-p flex-1" onclick="applyStudentTariff()">Выбрать тариф</button>
-      <button class="btn-o flex-1" onclick="closeStudentTariffModal()">Отмена</button>
-    </div>
-  </div>
-</div>
 
 <!-- Connect Tutor Modal -->
 <div class="modal-overlay" id="connect-tutor-modal">
@@ -1188,7 +1273,7 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
       <!-- Photo upload -->
       <div class="flex justify-center mb-2">
         <label for="ep-photo-input" class="relative cursor-pointer group" style="width:80px;height:80px">
-          <div id="ep-photo-preview" class="w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl text-white overflow-hidden select-none" style="background:linear-gradient(135deg,#0D3B66,#8b5cf6)"></div>
+          <div id="ep-photo-preview" class="w-20 h-20 rounded-full flex items-center justify-center font-black text-2xl text-white overflow-hidden select-none" style="background:linear-gradient(135deg,#0D3B66,#0a2f50)"></div>
           <div class="absolute inset-0 rounded-full bg-black flex items-center justify-center transition-opacity opacity-0 group-hover:opacity-40"></div>
           <svg class="absolute inset-0 m-auto w-6 h-6 text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
           <div class="absolute -bottom-0.5 -right-0.5 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center" style="background:#0D3B66">
@@ -1251,6 +1336,26 @@ input:focus,textarea:focus,select:focus{border-color:#0D3B66}
   </div>
 </div>
 
+<!-- First login quest tour -->
+<div class="tour-overlay" id="tour-overlay"></div>
+<div class="tour-card" id="tour-card" role="dialog" aria-live="polite" aria-modal="false">
+  <div class="flex items-start justify-between gap-3 mb-3">
+    <div>
+      <div class="text-xs font-black uppercase tracking-widest mb-1" style="color:#0D3B66" id="tour-step-label">Шаг 1 из 7</div>
+      <h3 class="font-black text-gray-900 text-lg leading-tight" id="tour-title">Добро пожаловать</h3>
+    </div>
+    <button onclick="skipCabinetTour()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors" aria-label="Закрыть тур">
+      <svg width="13" height="13" fill="none" stroke="#374151" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <p class="text-sm text-gray-600 leading-relaxed mb-4" id="tour-text">Покажем, где что находится.</p>
+  <div class="tour-progress mb-4"><span id="tour-progress-fill" style="width:0%"></span></div>
+  <div class="flex items-center justify-between gap-2">
+    <button class="btn-o" style="width:auto;padding:9px 14px;border-width:1.5px" id="tour-prev-btn" onclick="prevCabinetTourStep()">Назад</button>
+    <button class="btn-p" style="width:auto;padding:10px 16px" id="tour-next-btn" onclick="nextCabinetTourStep()">Дальше</button>
+  </div>
+</div>
+
 <script src="tasks.js"></script>
 <script>
 // ===== STATE =====
@@ -1263,15 +1368,89 @@ let S = {
   bankFilter: 'all',
   bankTaskNum: 0,
   chatMessages: [],
+  supportMessages: [],
+  chatChannel: 'tutor',
   todayXP: 0,
   todayDone: 0,
-  selectedPlanId: 'monthly',
 };
+
+// ===== API / SESSION =====
+// Identity, profile fields (name/city/school/exam/…) and the parent link code
+// live server-side now (task-bank). Gamification/demo state below (xp, streak,
+// achievements, hasStudyAccess/hasBankAccess, activeTutor, pendingHW…) has no
+// backend model yet, so it stays cached locally per real account id — it is
+// cosmetic UI state, not an auth/identity store.
+const API_BASE = 'http://localhost:3000';
+let S_realUserSnapshot = null; // used to restore state when demo mode is turned off
+
+async function fetchMe() {
+  const r = await fetch(`${API_BASE}/api/auth/me`, { credentials: 'include' });
+  if (!r.ok) return null;
+  const data = await r.json();
+  return data.user;
+}
+
+function localStateKey(userId) { return 'fibi_local_' + userId; }
+
+function loadLocalState(userId) {
+  try { return JSON.parse(localStorage.getItem(localStateKey(userId)) || '{}'); }
+  catch { return {}; }
+}
+
+function saveLocalState() {
+  if (!S.user?.id) return;
+  const {
+    streak, bestStreak, xp, solved, correct, accuracy,
+    solvedTasks, achievements, activityLog,
+    hasStudyAccess, hasBankAccess, activeTutor, pendingHW,
+    firstCabinetTourDone, firstCabinetTourRewarded,
+  } = S.user;
+  localStorage.setItem(localStateKey(S.user.id), JSON.stringify({
+    streak, bestStreak, xp, solved, correct, accuracy,
+    solvedTasks, achievements, activityLog,
+    hasStudyAccess, hasBankAccess, activeTutor, pendingHW,
+    firstCabinetTourDone, firstCabinetTourRewarded,
+  }));
+}
+
+const EXAM_FROM_SERVER = { OGE: 'ogu', EGE_BASE: 'ege_base', EGE_PROFILE: 'ege_prof' };
+
+function buildStudentState(serverUser) {
+  const sp = serverUser.studentProfile || {};
+  const local = loadLocalState(serverUser.id);
+  const [firstName, ...rest] = (serverUser.fullName || '').split(' ');
+  return Object.assign({
+    // cosmetic/demo defaults — overridden by whatever was cached locally
+    streak: 0, bestStreak: 0, xp: 0, solved: 0, correct: 0, accuracy: 0,
+    solvedTasks: [], achievements: [], activityLog: [],
+    hasStudyAccess: false, hasBankAccess: false, activeTutor: null, pendingHW: false,
+    firstCabinetTourDone: false, firstCabinetTourRewarded: false,
+  }, local, {
+    // authoritative server fields always win
+    id: serverUser.id,
+    name: firstName || '',
+    lastName: rest.join(' '),
+    email: serverUser.email,
+    avatar: serverUser.avatar,
+    role: 'student',
+    grade: sp.grade,
+    exam: EXAM_FROM_SERVER[sp.examType] || 'ogu',
+    city: sp.city || '',
+    school: sp.school || '',
+    age: sp.age,
+    gender: sp.gender,
+    hobbies: JSON.parse(sp.hobbies || '[]'),
+    extraSubjects: JSON.parse(sp.extraSubjects || '[]'),
+    dailyGoal: sp.dailyGoal || 3,
+    onboardingDone: !!sp.onboardingDone,
+    linkCode: sp.linkCode,
+  });
+}
 
 // svg icons per level (neutral, yale-blue style)
 const _LI = `style="flex-shrink:0;display:inline-block;vertical-align:middle"`;
 const LEVEL_ICONS = [
-  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><circle cx="12" cy="12" r="3"/></svg>`,
+  `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" ${_LI}><path d="M13 2L5 14h6l-1 8 9-13h-6l0-7z"/></svg>`,
   `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" stroke-linejoin="round"/></svg>`,
   `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" stroke-linejoin="round"/></svg>`,
   `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ${_LI}><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/></svg>`,
@@ -1330,19 +1509,67 @@ const ACHIEVEMENTS = [
 ];
 
 const DEMO_TUTORS = [
-  {id:'t1',name:'Анна Петрова',initials:'АП',subject:'Математика, ОГЭ',rating:4.9,reviews:48,exams:['ОГЭ'],experience:5,bio:'Опытный репетитор, 98% учеников сдают на 4 и 5.',students:12},
+  {id:'t1',name:'Анна Петрова',initials:'АП',subject:'Математика, ОГЭ',rating:4.9,reviews:48,exams:['ОГЭ'],experience:5,bio:'Опытный репетитор, объясняет спокойно и помогает закрывать пробелы.',students:12},
   {id:'t2',name:'Михаил Козлов',initials:'МК',subject:'Математика, ЕГЭ',rating:4.8,reviews:63,exams:['ЕГЭ База','ЕГЭ Профиль'],experience:8,bio:'КМС по математике, преподаватель вуза.',students:9},
   {id:'t3',name:'Светлана Иванова',initials:'СИ',subject:'Математика',rating:5.0,reviews:31,exams:['ОГЭ','ЕГЭ База'],experience:3,bio:'Помогаю разобраться с нуля. Объясняю просто.',students:7},
   {id:'t4',name:'Дмитрий Новиков',initials:'ДН',subject:'Математика, ЕГЭ Профиль',rating:4.7,reviews:55,exams:['ЕГЭ Профиль'],experience:10,bio:'Олимпиадник, помогаю с задачами повышенной сложности.',students:5},
 ];
 
+const CABINET_TOUR_STEPS = [
+  {
+    target: 'tour-daily-goal',
+    title: 'Цель на сегодня',
+    text: 'Здесь главный игровой счётчик дня: сколько задач осталось до цели, сколько XP набрано и держится ли серия.'
+  },
+  {
+    target: 'sb-level',
+    title: 'Уровень и XP',
+    text: 'За решения и полезные действия начисляются XP. Чем больше практики, тем выше звание в профиле ученика.'
+  },
+  {
+    target: 'tour-tutor-card',
+    title: 'Репетитор',
+    text: 'Отсюда можно подобрать репетитора, получить домашние задания и перейти к общению.'
+  },
+  {
+    target: 'tour-study-card',
+    title: 'Самообучение',
+    text: 'В этом разделе живут темы, теория и тренировка по блокам. Удобно идти по плану, а не прыгать хаотично.'
+  },
+  {
+    target: 'tour-bank-card',
+    title: 'Банк заданий',
+    text: 'Здесь практика: задачи по темам, сложность, подсказки, попытки и подробные разборы.'
+  },
+  {
+    target: 'demo-btn',
+    title: 'Демо-режим',
+    text: 'Кнопка включает наполненный пример кабинета. Хорошо подходит, чтобы быстро посмотреть платные зоны и прогресс.'
+  },
+  {
+    target: 'top-profile-shortcut',
+    title: 'Профиль и настройки',
+    text: 'Тут можно поменять цель дня, экзамен, город, фото и посмотреть код приглашения для родителя.'
+  }
+];
+let _tourStep = 0;
+let _tourManualStart = false;
+
 // ===== INIT =====
-function init() {
-  const stored = localStorage.getItem('fibi_current_user');
-  if (!stored) { location.href='register.html'; return; }
-  S.user = JSON.parse(stored);
-  if (S.user.role !== 'student') { location.href='dashboard.html'; return; }
-  if (!S.user.onboardingDone) { location.href='student-onboarding.html'; return; }
+async function init() {
+  const serverUser = await fetchMe();
+  if (!serverUser || (serverUser.role || '').toUpperCase() !== 'STUDENT') {
+    location.href = 'register.html';
+    return;
+  }
+  if (!serverUser.studentProfile?.onboardingDone) {
+    location.href = 'student-onboarding.html';
+    return;
+  }
+
+  S.user = buildStudentState(serverUser);
+  S_realUserSnapshot = JSON.parse(JSON.stringify(S.user));
+
   renderSidebar();
   renderHome();
   renderTutors();
@@ -1352,14 +1579,13 @@ function init() {
   renderProgress();
   renderProfile();
   updateTopbar();
+  setTimeout(() => {
+    if (!S.user.firstCabinetTourDone) startCabinetTour(false);
+  }, 650);
 }
 
 function saveUser() {
-  localStorage.setItem('fibi_current_user', JSON.stringify(S.user));
-  const users = JSON.parse(localStorage.getItem('fibi_users') || '[]');
-  const idx = users.findIndex(u => u.id === S.user.id);
-  if (idx !== -1) users[idx] = S.user;
-  localStorage.setItem('fibi_users', JSON.stringify(users));
+  saveLocalState();
 }
 
 function getLevelInfo(xp) {
@@ -1367,6 +1593,119 @@ function getLevelInfo(xp) {
     if (xp >= LEVELS[i].min) return {...LEVELS[i], index:i};
   }
   return {...LEVELS[0], index:0};
+}
+
+// ===== CABINET QUEST TOUR =====
+function startCabinetTour(manual = false) {
+  _tourManualStart = manual;
+  _tourStep = 0;
+  goScreen('s-home');
+  closeSidebar();
+  document.getElementById('tour-overlay').classList.add('open');
+  document.getElementById('tour-card').classList.add('open');
+  renderCabinetTourStep();
+}
+
+function renderCabinetTourStep() {
+  clearTourFocus();
+  const step = CABINET_TOUR_STEPS[_tourStep];
+  const target = document.getElementById(step.target);
+  const card = document.getElementById('tour-card');
+  target?.classList.add('tour-focus');
+  target?.scrollIntoView({behavior:'smooth', block:'center', inline:'nearest'});
+
+  document.getElementById('tour-step-label').textContent = `Шаг ${_tourStep + 1} из ${CABINET_TOUR_STEPS.length}`;
+  document.getElementById('tour-title').textContent = step.title;
+  document.getElementById('tour-text').textContent = step.text;
+  document.getElementById('tour-progress-fill').style.width = Math.round(((_tourStep + 1) / CABINET_TOUR_STEPS.length) * 100) + '%';
+  document.getElementById('tour-prev-btn').style.visibility = _tourStep === 0 ? 'hidden' : 'visible';
+  document.getElementById('tour-next-btn').textContent = _tourStep === CABINET_TOUR_STEPS.length - 1 ? 'Завершить' : 'Дальше';
+
+  setTimeout(() => positionTourCard(target, card), 180);
+}
+
+function positionTourCard(target, card) {
+  card.classList.remove('pos-top','pos-bottom','pos-left','pos-right');
+  if (!target || window.innerWidth < 768) return;
+
+  const r = target.getBoundingClientRect();
+  const cw = card.offsetWidth || 360;
+  const ch = card.offsetHeight || 230;
+  const gap = 18;
+  let top = r.bottom + gap;
+  let left = r.left;
+  let pos = 'bottom';
+
+  if (top + ch > window.innerHeight - 16) {
+    top = r.top - ch - gap;
+    pos = 'top';
+  }
+  if (top < 16) {
+    top = Math.max(16, Math.min(window.innerHeight - ch - 16, r.top));
+    if (r.right + gap + cw <= window.innerWidth - 16) {
+      left = r.right + gap;
+      pos = 'right';
+    } else {
+      left = r.left - cw - gap;
+      pos = 'left';
+    }
+  }
+  left = Math.max(16, Math.min(window.innerWidth - cw - 16, left));
+  card.style.top = top + 'px';
+  card.style.left = left + 'px';
+  card.style.bottom = 'auto';
+  card.classList.add('pos-' + pos);
+}
+
+function nextCabinetTourStep() {
+  if (_tourStep < CABINET_TOUR_STEPS.length - 1) {
+    _tourStep++;
+    renderCabinetTourStep();
+    return;
+  }
+  finishCabinetTour();
+}
+
+function prevCabinetTourStep() {
+  if (_tourStep <= 0) return;
+  _tourStep--;
+  renderCabinetTourStep();
+}
+
+function finishCabinetTour() {
+  clearTourFocus();
+  document.getElementById('tour-overlay').classList.remove('open');
+  document.getElementById('tour-card').classList.remove('open');
+  S.user.firstCabinetTourDone = true;
+  if (!S.user.firstCabinetTourRewarded) {
+    S.user.firstCabinetTourRewarded = true;
+    addXP(15);
+    showCabinetTourReward();
+  } else {
+    saveUser();
+  }
+}
+
+function skipCabinetTour() {
+  clearTourFocus();
+  document.getElementById('tour-overlay').classList.remove('open');
+  document.getElementById('tour-card').classList.remove('open');
+  if (!_tourManualStart) {
+    S.user.firstCabinetTourDone = true;
+    saveUser();
+  }
+}
+
+function clearTourFocus() {
+  document.querySelectorAll('.tour-focus').forEach(el => el.classList.remove('tour-focus'));
+}
+
+function showCabinetTourReward() {
+  const notif = document.createElement('div');
+  notif.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#0D3B66;color:white;border-radius:16px;padding:16px 20px;z-index:999;font-weight:800;font-size:14px;box-shadow:0 8px 32px rgba(0,0,0,0.2)';
+  notif.innerHTML = 'Квест пройден! +15 XP';
+  document.body.appendChild(notif);
+  setTimeout(()=>notif.remove(), 3200);
 }
 
 // ===== NAVIGATION =====
@@ -1381,14 +1720,14 @@ function goScreen(id) {
   const titles = {
     's-home':'Главная','s-tutors':'Репетиторы','s-study':'Самообучение',
     's-bank':'Банк заданий','s-homework':'Домашние задания',
-    's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль','s-payment':'Оплата',
+    's-progress':'Прогресс','s-chat':'Чат','s-profile':'Профиль',
     's-oge2':'ОГЭ по математике: часть 2','s-oge2-task':'Задание','s-bank-task':'Банк заданий','s-demo':'Демоварианты ОГЭ'
   };
   const subs = {
     's-home':'Твои успехи и цели','s-tutors':'Управление репетитором',
     's-study':'Курсы и теория','s-bank':'Практика и задания',
     's-homework':'Задания от репетитора','s-progress':'Статистика и достижения',
-    's-chat':'Сообщения','s-profile':'Настройки аккаунта','s-payment':'Подписка и способы оплаты',
+    's-chat':'Сообщения','s-profile':'Настройки аккаунта',
     's-oge2':'Задания 20–25 с подробными решениями','s-oge2-task':'Пошаговое решение и подсказки','s-bank-task':'Практика — Часть 1',
     's-demo':'Полный экзамен с автопроверкой'
   };
@@ -1396,13 +1735,21 @@ function goScreen(id) {
   document.getElementById('page-sub').textContent = subs[id] || '';
 
   if (id === 's-chat') renderChat();
-  if (id === 's-payment') renderStudentSubscription();
   if (id === 's-oge2') renderOge2List();
   if (id === 's-bank') renderBank();
   if (id === 's-demo') renderDemoList();
 }
 
-function openChat() { goScreen('s-chat'); }
+function openChat() { S.chatChannel = 'tutor'; goScreen('s-chat'); }
+
+function switchProgressTab(tab) {
+  const isAchievements = tab === 'achievements';
+  document.getElementById('progress-tab-overview')?.classList.toggle('active', !isAchievements);
+  document.getElementById('progress-tab-achievements')?.classList.toggle('active', isAchievements);
+  document.getElementById('progress-panel-overview')?.classList.toggle('active', !isAchievements);
+  document.getElementById('progress-panel-achievements')?.classList.toggle('active', isAchievements);
+  if (isAchievements) renderAchievements();
+}
 
 // ===== DEMO MODE =====
 function toggleDemo() {
@@ -1429,8 +1776,7 @@ function activateDemo() {
 }
 
 function deactivateDemo() {
-  const stored = localStorage.getItem('fibi_current_user');
-  if (stored) { S.user = JSON.parse(stored); S.user.hasStudyAccess = false; S.user.hasBankAccess = false; }
+  if (S_realUserSnapshot) { S.user = JSON.parse(JSON.stringify(S_realUserSnapshot)); S.user.hasStudyAccess = false; S.user.hasBankAccess = false; }
   S.taskHistory = [];
   S.todayDone = 0;
   S.todayXP = 0;
@@ -1508,9 +1854,9 @@ function renderHome() {
   document.getElementById('home-goal-target').textContent = 'цель: ' + goal;
 
   document.getElementById('b2-tag-home').textContent = u.hasStudyAccess ? 'Активно' : 'Платно';
-  document.getElementById('b2-tag-home').className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700');
+  document.getElementById('b2-tag-home').className = 'tag ' + (u.hasStudyAccess ? 'bg-yale text-white' : 'bg-lemon text-yale');
   document.getElementById('b3-tag-home').textContent = u.hasBankAccess ? 'Активно' : 'Платно';
-  document.getElementById('b3-tag-home').className = 'tag ' + (u.hasBankAccess ? 'bg-green-100 text-green-700' : 'bg-purple-100 text-purple-700');
+  document.getElementById('b3-tag-home').className = 'tag ' + (u.hasBankAccess ? 'bg-yale text-white' : 'bg-yellow-100 text-yale');
 
   renderQuickTask();
   renderLeaderboardMini();
@@ -1528,7 +1874,7 @@ async function renderQuickTask() {
   let tasks = _bankCache.filter(t => t.part === 1);
   if (!tasks.length) {
     try {
-      const r = await fetch(`${BANK_API}/api/tasks?part=1&limit=20`);
+      const r = await fetch(`${BANK_API}/api/tasks?part=1&limit=20`, { credentials: 'include' });
       const d = await r.json();
       tasks = d.tasks || [];
       _bankCache = [..._bankCache, ...tasks.filter(t => !_bankCache.find(c=>c.id===t.id))];
@@ -1552,10 +1898,9 @@ async function checkQT(id) {
   const val   = input.value.trim();
   if (!val) return;
   try {
-    const userId = (S.user?.name||'student').replace(/\s+/g,'_').toLowerCase();
     const r = await fetch(`${BANK_API}/api/tasks/${id}/attempt`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ userId, answer: val }),
+      method:'POST', headers:{'Content-Type':'application/json'}, credentials: 'include',
+      body: JSON.stringify({ answer: val }),
     });
     const d = await r.json();
     if (d.isCorrect) {
@@ -1792,7 +2137,7 @@ async function renderBank() {
     // Blurred preview from API
     const preview = document.getElementById('bank-tasks-preview');
     try {
-      const r = await fetch(`${BANK_API}/api/tasks?limit=4`);
+      const r = await fetch(`${BANK_API}/api/tasks?limit=4`, { credentials: 'include' });
       const d = await r.json();
       preview.innerHTML = (d.tasks || []).map(t => `
         <div class="task-card">
@@ -1875,7 +2220,7 @@ async function renderBankTasks() {
 
   let tasks = [];
   try {
-    const r = await fetch(`${BANK_API}/api/tasks?${sp}`);
+    const r = await fetch(`${BANK_API}/api/tasks?${sp}`, { credentials: 'include' });
     const d = await r.json();
     tasks = d.tasks || [];
     _bankCache = tasks;
@@ -1912,7 +2257,7 @@ async function renderBankTasks() {
           </div>
           <p class="text-sm font-bold text-gray-800 mb-1">Задание ${t.taskNumber}</p>
           <p class="text-xs text-gray-500 line-clamp-2">${t.description.substring(0,100)}${t.description.length>100?'…':''}</p>
-          ${isSolved?'<div class="mt-2"><span class="tag bg-green-100 text-green-700 text-xs">✓ Решено</span></div>':''}
+          ${isSolved?'<div class="mt-2"><span class="tag bg-yale text-white text-xs">✓ Решено</span></div>':''}
         </div>`;
       }).join('');
 }
@@ -1931,7 +2276,7 @@ async function openTask(id) {
   let t = _bankCache.find(x => x.id === id);
   if (!t) {
     try {
-      const r = await fetch(`${BANK_API}/api/tasks/${id}`);
+      const r = await fetch(`${BANK_API}/api/tasks/${id}`, { credentials: 'include' });
       t = await r.json();
     } catch { return; }
   }
@@ -1980,11 +2325,11 @@ async function submitAnswer() {
 
   let data;
   try {
-    const userId = (S.user?.name || 'student').replace(/\s+/g,'_').toLowerCase();
     const r = await fetch(`${BANK_API}/api/tasks/${t.id}/attempt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, answer: val }),
+      credentials: 'include',
+      body: JSON.stringify({ answer: val }),
     });
     data = await r.json();
     if (data.error === 'Max attempts reached') {
@@ -2068,7 +2413,13 @@ function markTaskSolved(id, correct) {
   if (!S.user.solvedTasks) S.user.solvedTasks = [];
   if (!S.user.solvedTasks.includes(id)) S.user.solvedTasks.push(id);
   S.user.solved = (S.user.solved||0)+1;
-  if (correct) S.user.correct = (S.user.correct||0)+1;
+  if (correct) {
+    S.user.correct = (S.user.correct||0)+1;
+    S.user.correctStreak = (S.user.correctStreak||0)+1;
+    if (S.user.correctStreak > (S.user.bestCorrectStreak||0)) S.user.bestCorrectStreak = S.user.correctStreak;
+  } else {
+    S.user.correctStreak = 0;
+  }
   const today = new Date().toISOString().split('T')[0];
   if (!S.user.activityLog) S.user.activityLog = [];
   const entry = S.user.activityLog.find(e => e.date === today);
@@ -2082,17 +2433,9 @@ function markTaskSolved(id, correct) {
   renderHome();
 }
 
-function getOrCreateInviteCode() {
-  if (!S.user.inviteCode) {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    S.user.inviteCode = Array.from({length:6}, ()=>chars[Math.floor(Math.random()*chars.length)]).join('');
-    saveUser();
-  }
-  return S.user.inviteCode;
-}
-
 function copyParentCode() {
-  const code = getOrCreateInviteCode();
+  const code = S.user.linkCode;
+  if (!code) return;
   navigator.clipboard.writeText(code).then(() => {
     const btn = document.getElementById('copy-parent-btn');
     if (btn) {
@@ -2107,6 +2450,19 @@ function copyParentCode() {
 }
 
 function copyParentLink() { copyParentCode(); }
+
+async function regenerateLinkCode() {
+  if (!confirm('Старый код перестанет работать для новых привязок. Уже привязанные родители сохранят доступ. Продолжить?')) return;
+  try {
+    const r = await fetch(`${API_BASE}/api/student/link-code/regenerate`, { method: 'POST', credentials: 'include' });
+    if (!r.ok) throw new Error('regenerate failed');
+    const d = await r.json();
+    S.user.linkCode = d.code;
+    renderProfile();
+  } catch {
+    alert('Не удалось обновить код. Попробуйте ещё раз.');
+  }
+}
 
 function nextTask() {
   closeModal('task-modal');
@@ -2148,7 +2504,7 @@ function renderHomework() {
           <p class="font-bold text-gray-900">${h.title}</p>
           <p class="text-xs text-gray-500 mt-0.5">Дедлайн: ${h.deadline} • ${h.tasks} заданий</p>
         </div>
-        ${h.done ? `<span class="tag bg-green-100 text-green-700">✓ Сдано${h.score?' · '+h.score:''}</span>` : h.urgent ? `<span class="tag bg-red-100 text-red-700">Срочно</span>` : `<span class="tag bg-yellow-100 text-yellow-700">Ждёт</span>`}
+        ${h.done ? `<span class="tag bg-yale text-white">✓ Сдано${h.score?' · '+h.score:''}</span>` : h.urgent ? `<span class="tag bg-red-100 text-red-700">Срочно</span>` : `<span class="tag bg-lemon text-yale">Ждёт</span>`}
       </div>
       ${!h.done?`<button class="btn-p text-sm py-2 mt-3" onclick="startHW('${h.title}')">Выполнить</button>`:''}
     </div>
@@ -2171,7 +2527,7 @@ function renderProgress() {
   const pct = lvl.index === LEVELS.length-1 ? 100 : Math.round(((xp-lvl.min)/(nextLvl.min-lvl.min))*100);
 
   const iconEl = document.getElementById('prog-level-icon');
-  if(iconEl) iconEl.innerHTML = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2">${['<circle cx="12" cy="12" r="3"/>','<path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" stroke-linejoin="round"/>','<path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" stroke-linejoin="round"/>','<polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/><circle cx="12" cy="12" r="3" fill="white"/>','<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>','<path fill="#0D3B66" stroke="none" d="M12 1l2.75 8.46h8.9l-7.2 5.23 2.75 8.46L12 18.92l-7.2 5.23 2.75-8.46L.35 9.46h8.9z"/>'][lvl.index]}</svg>`;
+  if(iconEl) iconEl.innerHTML = `<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0D3B66" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${['<path d="M13 2L5 14h6l-1 8 9-13h-6l0-7z"/><path d="M4 5l1.5 1.5M19 18l1.5 1.5"/>','<path d="M12 2l2 7h7l-6 4 2 7-5-4-5 4 2-7-6-4h7z" stroke-linejoin="round"/>','<path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" stroke-linejoin="round"/>','<polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>','<path fill="#0D3B66" stroke="none" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/><circle cx="12" cy="12" r="3" fill="white"/>','<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>','<path fill="#0D3B66" stroke="none" d="M12 1l2.75 8.46h8.9l-7.2 5.23 2.75 8.46L12 18.92l-7.2 5.23 2.75-8.46L.35 9.46h8.9z"/>'][lvl.index]}</svg>`;
   document.getElementById('prog-level-name').textContent = lvl.name;
   document.getElementById('prog-xp-current').textContent = xp + ' XP';
   document.getElementById('prog-xp-next').textContent = lvl.index<LEVELS.length-1 ? `до «${nextLvl.name}»: ${nextLvl.min-xp} XP` : 'Максимальный уровень!';
@@ -2218,12 +2574,123 @@ function renderTopicsBreakdown() {
 
 function renderAchievements() {
   const el = document.getElementById('achievements-grid');
+  if (!el) return;
   const earned = S.user.achievements || (S.demoMode ? ['first_solve','streak3','solve10'] : []);
-  el.innerHTML = ACHIEVEMENTS.map(a => `
-    <div class="achievement ${earned.includes(a.id)?'earned':''}">
-      <div class="text-2xl mb-1">${a.emoji}</div>
-      <p class="text-xs font-bold ${earned.includes(a.id)?'text-gray-900':'text-gray-400'}">${a.name}</p>
-      <p class="text-xs ${earned.includes(a.id)?'text-gray-600':'text-gray-300'} mt-0.5">${a.desc}</p>
+  const progress = ACHIEVEMENTS.map(a => ({...a, ...getAchievementProgress(a.id, earned.includes(a.id))}));
+  const earnedCount = progress.filter(a => a.earned).length;
+  const next = progress.filter(a => !a.earned).sort((a,b) => b.pct - a.pct)[0];
+
+  const mini = document.getElementById('achievements-mini-text');
+  if (mini) mini.textContent = `Получено ${earnedCount} из ${ACHIEVEMENTS.length}`;
+  const earnedEl = document.getElementById('ach-earned-count');
+  const totalEl = document.getElementById('ach-total-count');
+  const pctEl = document.getElementById('ach-next-percent');
+  if (earnedEl) earnedEl.textContent = earnedCount;
+  if (totalEl) totalEl.textContent = ACHIEVEMENTS.length;
+  if (pctEl) pctEl.textContent = next ? next.pct + '%' : '100%';
+  renderNextAchievement(next);
+
+  renderAchievementStages(earnedCount);
+
+  el.innerHTML = progress.map(a => `
+    <div class="achievement-list-card ${a.earned?'earned':''} ${next && next.id === a.id ? 'next' : ''}">
+      <div class="achievement-icon">${a.emoji}</div>
+      <div class="min-w-0">
+        <div class="flex items-center gap-2 flex-wrap mb-1">
+          <p class="font-black text-gray-900">${a.name}</p>
+          <span class="tag ${a.earned?'bg-yale text-white':next && next.id === a.id ? 'bg-lemon text-yale':'bg-gray-100 text-gray-500'} text-xs">${a.earned?'Получено':next && next.id === a.id ? 'Ближайшая':'В процессе'}</span>
+          <span class="achievement-reward">${a.reward}</span>
+        </div>
+        <p class="text-sm text-gray-500 mb-2">${a.desc}</p>
+        <div class="xp-bar-outer" style="height:8px">
+          <div class="xp-bar-inner" style="width:${a.pct}%"></div>
+        </div>
+        <div class="flex items-center justify-between gap-2 mt-2">
+          <p class="text-xs text-gray-500">${a.detail}</p>
+          <p class="font-black ${a.earned?'text-yale':'text-yale'}">${a.pct}%</p>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderNextAchievement(next) {
+  const el = document.getElementById('achievement-next-card');
+  if (!el) return;
+  if (!next) {
+    el.innerHTML = `
+      <div class="flex items-center gap-3">
+        <div class="achievement-icon" style="background:rgba(13,59,102,.08)">🏆</div>
+        <div>
+          <p class="font-black text-gray-900">Все награды открыты</p>
+          <p class="text-sm text-gray-500">Теперь цель — удерживать место в рейтинге и собирать призы ТОП-3.</p>
+        </div>
+      </div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="flex items-center gap-3">
+      <div class="achievement-icon" style="background:rgba(13,59,102,.08)">${next.emoji}</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs font-black uppercase tracking-wide" style="color:#0D3B66">Следующая награда</p>
+        <p class="font-black text-gray-900">${next.name}</p>
+        <p class="text-sm text-gray-500">${next.detail}</p>
+      </div>
+      <span class="achievement-reward">${next.reward}</span>
+    </div>`;
+}
+
+function getAchievementProgress(id, earned) {
+  const u = S.user;
+  const solved = u.solved || 0;
+  const streak = u.streak || 0;
+  const solvedTasks = u.solvedTasks || [];
+  const topicCount = [...new Set(_bankCache.filter(t=>solvedTasks.includes(t.id)).flatMap(t=>t.topics?.map(tt=>tt.topic?.name)||[]))].length;
+  const part2Solved = _bankCache.some(t => solvedTasks.includes(t.id) && t.part === 2);
+  const values = {
+    first_solve: {current: solved, target: 1, unit: 'задание'},
+    streak3: {current: streak, target: 3, unit: 'дня серии'},
+    streak7: {current: streak, target: 7, unit: 'дней серии'},
+    solve10: {current: solved, target: 10, unit: 'заданий'},
+    solve50: {current: solved, target: 50, unit: 'заданий'},
+    perfect: {current: Math.min(u.bestCorrectStreak || u.correctStreak || 0, 5), target: 5, unit: 'верных подряд'},
+    allTopics: {current: topicCount, target: 10, unit: 'тем'},
+    part2: {current: part2Solved ? 1 : 0, target: 1, unit: 'задание части 2'},
+  };
+  const v = values[id] || {current: earned ? 1 : 0, target: 1, unit: 'шаг'};
+  const pct = earned ? 100 : Math.min(99, Math.round((v.current / v.target) * 100));
+  const detail = earned ? 'Этап завершён' : `${Math.min(v.current, v.target)} из ${v.target}: ${v.unit}`;
+  const rewards = {
+    first_solve: '+10 XP',
+    streak3: '+20 XP',
+    streak7: '+40 XP',
+    solve10: '+30 XP',
+    solve50: '+80 XP',
+    perfect: '+50 XP',
+    allTopics: 'редкая',
+    part2: 'трофей',
+  };
+  return {earned, pct, detail, reward: rewards[id] || '+XP'};
+}
+
+function renderAchievementStages(earnedCount) {
+  const el = document.getElementById('achievement-stages');
+  if (!el) return;
+  const stages = [
+    {name:'Старт', need:1, text:'первые действия'},
+    {name:'Ритм', need:3, text:'серия и регулярность'},
+    {name:'Уверенность', need:5, text:'стабильная практика'},
+    {name:'Мастерство', need:8, text:'все ключевые награды'},
+  ];
+  el.innerHTML = stages.map(s => `
+    <div class="achievement-stage ${earnedCount >= s.need ? 'open' : earnedCount + 1 === s.need ? 'current' : 'locked'}">
+      <div class="flex items-center justify-between gap-3">
+        <div>
+          <p class="font-black text-gray-900">${s.name}</p>
+          <p class="text-xs text-gray-500">${s.text}</p>
+        </div>
+        <span class="tag ${earnedCount >= s.need ? 'bg-yale text-white' : earnedCount + 1 === s.need ? 'bg-lemon text-yale' : 'bg-gray-100 text-gray-500'}">${earnedCount >= s.need ? 'открыто' : s.need + ' нагр.'}</span>
+      </div>
     </div>
   `).join('');
 }
@@ -2245,18 +2712,54 @@ function renderLeaderboard() {
 }
 
 // ===== CHAT =====
+function supportChatStorageKey() {
+  return `fibi_support_chat_${S.user?.id || 'guest'}`;
+}
+
+function loadSupportMessages() {
+  try { return JSON.parse(localStorage.getItem(supportChatStorageKey()) || '[]'); }
+  catch { return []; }
+}
+
+function saveSupportMessages() {
+  localStorage.setItem(supportChatStorageKey(), JSON.stringify(S.supportMessages.slice(-100)));
+}
+
+function openSupportChat() {
+  S.chatChannel = 'support';
+  goScreen('s-chat');
+}
+
+function switchChatChannel(channel) {
+  S.chatChannel = channel;
+  renderChat();
+}
+
 function renderChat() {
   const u = S.user;
   const hasTutor = u.activeTutor;
-  document.getElementById('chat-no-tutor').style.display = hasTutor ? 'none' : 'block';
-  document.getElementById('chat-area').style.display = hasTutor ? 'flex' : 'none';
-  if (!hasTutor) return;
+  const isSupport = S.chatChannel === 'support';
+  document.getElementById('chat-tab-tutor').classList.toggle('active', !isSupport);
+  document.getElementById('chat-tab-support').classList.toggle('active', isSupport);
+  document.getElementById('chat-no-tutor').style.display = (!isSupport && !hasTutor) ? 'block' : 'none';
+  document.getElementById('chat-area').style.display = (isSupport || hasTutor) ? 'flex' : 'none';
+  if (!isSupport && !hasTutor) return;
 
-  const t = u.activeTutor;
-  document.getElementById('chat-tutor-avatar').textContent = t.initials||t.name[0];
-  document.getElementById('chat-tutor-name').textContent = t.name;
+  if (isSupport) {
+    if (!S.supportMessages.length) S.supportMessages = loadSupportMessages();
+    document.getElementById('chat-tutor-avatar').textContent = 'Ф';
+    document.getElementById('chat-tutor-name').textContent = 'Поддержка ФИБИ';
+    document.getElementById('chat-status').textContent = 'обычно отвечает в течение 10 минут';
+    document.getElementById('chat-input').placeholder = 'Опиши вопрос или проблему...';
+  } else {
+    const t = u.activeTutor;
+    document.getElementById('chat-tutor-avatar').textContent = t.initials||t.name[0];
+    document.getElementById('chat-tutor-name').textContent = t.name;
+    document.getElementById('chat-status').textContent = 'онлайн';
+    document.getElementById('chat-input').placeholder = 'Напиши сообщение...';
+  }
 
-  if (S.demoMode && !S.chatMessages.length) {
+  if (!isSupport && S.demoMode && !S.chatMessages.length) {
     S.chatMessages = [
       {from:'tutor',text:'Привет! Я твой репетитор. Сегодня разберём функции.'},
       {from:'student',text:'Отлично, жду!'},
@@ -2268,15 +2771,19 @@ function renderChat() {
 
 function renderMessages() {
   const el = document.getElementById('chat-messages');
-  if (!S.chatMessages.length) {
-    el.innerHTML = '<div class="text-center text-xs text-gray-400">Начало переписки</div>';
+  const isSupport = S.chatChannel === 'support';
+  const messages = isSupport ? S.supportMessages : S.chatMessages;
+  if (!messages.length) {
+    el.innerHTML = isSupport
+      ? '<div class="text-center text-xs text-gray-400 py-6">Напиши нам — поможем с аккаунтом, оплатой или работой платформы.</div>'
+      : '<div class="text-center text-xs text-gray-400">Начало переписки</div>';
     return;
   }
   el.innerHTML = '<div class="text-center text-xs text-gray-400 mb-2">Начало переписки</div>' +
-    S.chatMessages.map(m => {
+    messages.map(m => {
       const isMe = m.from === 'student';
       return `<div class="flex ${isMe?'justify-end':'justify-start'}">
-        <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${isMe?'bg-yale text-white rounded-br-sm':'bg-gray-100 text-gray-800 rounded-bl-sm'}">${m.text}</div>
+        <div class="max-w-xs px-4 py-2 rounded-2xl text-sm ${isMe?'bg-yale text-white rounded-br-sm':'bg-gray-100 text-gray-800 rounded-bl-sm'}">${escapeVariantText(m.text)}</div>
       </div>`;
     }).join('');
   el.scrollTop = el.scrollHeight;
@@ -2286,11 +2793,18 @@ function sendChat() {
   const input = document.getElementById('chat-input');
   const text = input.value.trim();
   if (!text) return;
-  S.chatMessages.push({from:'student',text});
+  const isSupport = S.chatChannel === 'support';
+  const messages = isSupport ? S.supportMessages : S.chatMessages;
+  messages.push({from:'student',text});
+  if (isSupport) saveSupportMessages();
   input.value = '';
   renderMessages();
   setTimeout(()=>{
-    S.chatMessages.push({from:'tutor',text:'Понял, скоро отвечу!'});
+    messages.push({
+      from:isSupport?'support':'tutor',
+      text:isSupport?'Спасибо! Мы получили сообщение и скоро ответим здесь.':'Понял, скоро отвечу!'
+    });
+    if (isSupport) saveSupportMessages();
     renderMessages();
   }, 1500);
 }
@@ -2329,130 +2843,18 @@ function renderProfile() {
 
   const studySt = document.getElementById('prof-study-status');
   studySt.textContent = u.hasStudyAccess ? 'Активно' : 'Не активно';
-  studySt.className = u.hasStudyAccess ? 'tag bg-green-100 text-green-700' : 'tag bg-gray-200 text-gray-600';
-  studySt.className = 'tag ' + (u.hasStudyAccess ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
+  studySt.className = u.hasStudyAccess ? 'tag bg-yale text-white' : 'tag bg-gray-200 text-gray-600';
+  studySt.className = 'tag ' + (u.hasStudyAccess ? 'bg-yale text-white' : 'bg-gray-200 text-gray-600');
   const bankSt = document.getElementById('prof-bank-status');
   bankSt.textContent = (u.hasBankAccess||u.hasStudyAccess) ? 'Активно' : 'Не активно';
-  bankSt.className = (u.hasBankAccess||u.hasStudyAccess) ? 'tag bg-green-100 text-green-700' : 'tag bg-gray-200 text-gray-600';
-  bankSt.className = 'tag ' + ((u.hasBankAccess||u.hasStudyAccess) ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
+  bankSt.className = (u.hasBankAccess||u.hasStudyAccess) ? 'tag bg-yale text-white' : 'tag bg-gray-200 text-gray-600';
+  bankSt.className = 'tag ' + ((u.hasBankAccess||u.hasStudyAccess) ? 'bg-yale text-white' : 'bg-gray-200 text-gray-600');
 
   const hobbies = document.getElementById('prof-hobbies');
   const h = u.hobbies||[];
   hobbies.innerHTML = h.length ? h.map(x=>`<span class="tag bg-blue-50 text-blue-700">${x}</span>`).join('') : '<span class="text-sm text-gray-400">Не указаны</span>';
 
-  document.getElementById('parent-stats-consent').checked = !!u.parentStatsConsent;
-  document.getElementById('parent-access-enabled').style.display = u.parentStatsConsent ? 'block' : 'none';
-  document.getElementById('parent-access-disabled').style.display = u.parentStatsConsent ? 'none' : 'block';
-  if (u.parentStatsConsent) document.getElementById('prof-invite-code').textContent = getOrCreateInviteCode();
-  renderStudentSubscription();
-}
-
-function toggleParentStatsConsent() {
-  S.user.parentStatsConsent = document.getElementById('parent-stats-consent').checked;
-  saveUser();
-  renderProfile();
-}
-
-function getSharedSubscription() {
-  try { return JSON.parse(localStorage.getItem('fibi_subscription') || 'null'); } catch { return null; }
-}
-
-const STUDENT_PAYMENT_PLANS = [
-  { id:'monthly', name:'Самостоятельная подготовка', period:'1 месяц', price:679, label:'/ месяц' },
-  { id:'quarter', name:'Самостоятельная подготовка', period:'3 месяца', price:1890, label:'за 3 месяца' },
-  { id:'year', name:'Самостоятельная подготовка', period:'12 месяцев', price:6790, label:'за 12 месяцев' }
-];
-function selectedStudentPlan() {
-  return STUDENT_PAYMENT_PLANS.find(p => p.id === S.selectedPlanId) || STUDENT_PAYMENT_PLANS[0];
-}
-
-function renderStudentSubscription() {
-  const sub = getSharedSubscription();
-  const active = !!(sub && sub.active);
-  const plan = selectedStudentPlan();
-  const badge = document.getElementById('student-sub-badge');
-  const btn = document.getElementById('student-pay-btn');
-  const renewBtn = document.getElementById('student-renew-btn');
-  const note = document.getElementById('student-sub-note');
-  document.getElementById('student-plan-name').textContent = active ? (sub.plan || plan.name) : plan.name;
-  document.getElementById('student-plan-price').textContent = (active ? Number(sub.price) : plan.price).toLocaleString('ru-RU') + ' ₽';
-  document.getElementById('student-plan-period-label').textContent = active ? ` · ${sub.period || '1 месяц'}` : ` · ${plan.period}`;
-  document.getElementById('student-checkout-plan').textContent = `${plan.name} · ${plan.period}`;
-  document.getElementById('student-checkout-price').textContent = plan.price.toLocaleString('ru-RU') + ' ₽';
-  badge.textContent = active ? 'Активна' : 'Не активна';
-  badge.className = 'tag ' + (active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600');
-  btn.disabled = active;
-  btn.style.opacity = active ? '.55' : '1';
-  btn.style.cursor = active ? 'not-allowed' : 'pointer';
-  btn.textContent = active ? 'Подписка уже оплачена' : `Оплатить ${plan.price.toLocaleString('ru-RU')} ₽`;
-  renewBtn.disabled = !active || !!sub?.autoRenew;
-  renewBtn.style.opacity = renewBtn.disabled ? '.55' : '1';
-  renewBtn.style.cursor = renewBtn.disabled ? 'not-allowed' : 'pointer';
-  renewBtn.textContent = sub?.autoRenew ? 'Автопродление включено' : 'Включить автопродление';
-  note.textContent = active
-    ? `Оплачено: ${sub.paidBy === 'parent' ? 'родителем' : 'учеником'}. ${sub.autoRenew ? 'Следующее списание — после окончания периода.' : 'Повторная оплата сейчас недоступна.'}`
-    : 'Сумма фиксирована тарифом. Статус подписки общий для аккаунтов ученика и родителя.';
-}
-
-function paySubscription(paidBy) {
-  if (getSharedSubscription()?.active) { renderStudentSubscription(); return; }
-  const plan = selectedStudentPlan();
-  localStorage.setItem('fibi_subscription', JSON.stringify({active:true, paidBy, plan:plan.name, planId:plan.id, period:plan.period, price:plan.price, autoRenew:false, startedAt:new Date().toISOString()}));
-  S.user.hasStudyAccess = true;
-  S.user.hasBankAccess = true;
-  saveUser();
-  renderStudentSubscription();
-  renderProfile();
-  alert(`Оплачено ${plan.price.toLocaleString('ru-RU')} ₽. Подписка успешно активирована.`);
-}
-
-function enableStudentAutoRenew() {
-  const sub = getSharedSubscription();
-  if (!sub?.active || sub.autoRenew) return;
-  sub.autoRenew = true;
-  localStorage.setItem('fibi_subscription', JSON.stringify(sub));
-  renderStudentSubscription();
-  alert('Автопродление включено. Следующее списание произойдёт только после окончания текущего периода.');
-}
-function cancelStudentSubscription() {
-  const sub = getSharedSubscription();
-  if (!sub?.active) { alert('Активной подписки нет.'); return; }
-  sub.autoRenew = false;
-  localStorage.setItem('fibi_subscription', JSON.stringify(sub));
-  renderStudentSubscription();
-  alert('Автопродление отключено. Доступ сохранится до конца оплаченного периода.');
-}
-function openStudentTariffModal() {
-  const sub = getSharedSubscription();
-  if (sub?.nextPlanId || sub?.planId) S.selectedPlanId = sub.nextPlanId || sub.planId;
-  renderStudentTariffOptions();
-  document.getElementById('student-tariff-modal').classList.add('open');
-}
-function closeStudentTariffModal() {
-  document.getElementById('student-tariff-modal').classList.remove('open');
-}
-function renderStudentTariffOptions() {
-  document.getElementById('student-tariff-options').innerHTML = STUDENT_PAYMENT_PLANS.map(p => `
-    <label class="flex items-center gap-3 p-4 rounded-2xl cursor-pointer" style="border:2px solid ${S.selectedPlanId===p.id?'#0D3B66':'#e5e7eb'};background:${S.selectedPlanId===p.id?'#f0f6ff':'white'}">
-      <input type="radio" name="student-payment-plan" value="${p.id}" ${S.selectedPlanId===p.id?'checked':''} onchange="S.selectedPlanId=this.value;renderStudentTariffOptions()" class="accent-yale w-4 h-4">
-      <span class="flex-1"><span class="font-bold text-gray-800 block">${p.period}</span><span class="text-xs text-gray-500">${p.id==='monthly'?'679 ₽ / месяц':p.id==='quarter'?'630 ₽ / месяц':'Два месяца в подарок'}</span></span>
-      <span class="font-black text-yale">${p.price.toLocaleString('ru-RU')} ₽</span>
-    </label>`).join('');
-}
-function applyStudentTariff() {
-  const sub = getSharedSubscription();
-  const active = sub?.active;
-  const plan = selectedStudentPlan();
-  if (active) {
-    sub.nextPlanId = plan.id;
-    sub.nextPlan = plan.name;
-    sub.nextPeriod = plan.period;
-    sub.nextPrice = plan.price;
-    localStorage.setItem('fibi_subscription', JSON.stringify(sub));
-  }
-  closeStudentTariffModal();
-  renderStudentSubscription();
-  if (active) alert(`Тариф «${plan.period}» выбран для следующего продления. Повторного списания сейчас не будет.`);
+  document.getElementById('prof-invite-code').textContent = u.linkCode || '——————';
 }
 
 let _epPhotoBase64 = null;
@@ -2515,15 +2917,47 @@ function epCitySuggest(val) {
   }).join('');
 }
 
-function saveProfile() {
+const EXAM_TO_SERVER = {
+  'ogu': 'OGE', 'ege_base': 'EGE_BASE', 'ege_prof': 'EGE_PROFILE',
+  'ОГЭ': 'OGE', 'ЕГЭ база': 'EGE_BASE', 'ЕГЭ профиль': 'EGE_PROFILE',
+};
+
+async function saveProfile() {
   const u = S.user;
-  u.name      = document.getElementById('ep-name').value.trim()     || u.name;
-  u.lastName  = document.getElementById('ep-lastName').value.trim() || '';
-  u.city      = document.getElementById('ep-city').value.trim();
-  u.school    = document.getElementById('ep-school').value.trim();
-  u.exam      = document.getElementById('ep-exam').value;
-  u.dailyGoal = Math.max(1, Number(document.getElementById('ep-goal').value)||3);
-  if (_epPhotoBase64) u.avatar = _epPhotoBase64;
+  const fullName  = [document.getElementById('ep-name').value.trim() || u.name, document.getElementById('ep-lastName').value.trim()].filter(Boolean).join(' ');
+  const city      = document.getElementById('ep-city').value.trim();
+  const school    = document.getElementById('ep-school').value.trim();
+  const examRaw   = document.getElementById('ep-exam').value;
+  const dailyGoal = Math.max(1, Number(document.getElementById('ep-goal').value) || 3);
+  const avatar    = _epPhotoBase64 || u.avatar;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/student/profile`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fullName, city, school, dailyGoal,
+        avatar: _epPhotoBase64 || undefined,
+        exam: EXAM_TO_SERVER[examRaw] || undefined,
+      }),
+    });
+    if (!res.ok) throw new Error('save failed');
+  } catch {
+    alert('Не удалось сохранить профиль. Проверьте подключение и попробуйте снова.');
+    return;
+  }
+
+  const [firstName, ...rest] = fullName.split(' ');
+  u.name = firstName || u.name;
+  u.lastName = rest.join(' ');
+  u.city = city;
+  u.school = school;
+  if (examRaw) u.exam = examRaw.startsWith('ЕГЭ') || examRaw.startsWith('ОГЭ')
+    ? (examRaw === 'ОГЭ' ? 'ogu' : examRaw === 'ЕГЭ база' ? 'ege_base' : 'ege_prof')
+    : examRaw;
+  u.dailyGoal = dailyGoal;
+  u.avatar = avatar;
   saveUser();
   closeModal('edit-profile-modal');
   renderSidebar();
@@ -2574,7 +3008,9 @@ function checkAchievements() {
   if (u.streak >= 7) earn('streak7');
   if (u.solved >= 10) earn('solve10');
   if (u.solved >= 50) earn('solve50');
+  if ((u.bestCorrectStreak||u.correctStreak||0) >= 5) earn('perfect');
   if (u.solvedTasks && [...new Set(_bankCache.filter(t=>u.solvedTasks.includes(t.id)).flatMap(t=>t.topics?.map(tt=>tt.topic?.name)||[]))].length >= 10) earn('allTopics');
+  if (u.solvedTasks && _bankCache.some(t => u.solvedTasks.includes(t.id) && t.part === 2)) earn('part2');
 }
 
 function showAchievementNotif(id) {
@@ -2591,7 +3027,10 @@ function showAchievementNotif(id) {
 function openModal(id) { document.getElementById(id).classList.add('open'); }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function closeTaskModal() { closeModal('task-modal'); }
-function logout() { localStorage.removeItem('fibi_current_user'); location.href='index.html'; }
+async function logout() {
+  try { await fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }); } catch {}
+  location.href = 'index.html';
+}
 function pluralTasks(n) { if(n%10===1&&n%100!==11)return'задачу';if(n%10>=2&&n%10<=4&&!(n%100>=12&&n%100<=14))return'задачи';return'задач'; }
 
 // Close modals on overlay click
@@ -2793,7 +3232,7 @@ x / (x − 2) − 12 / (x² − 4) = 1`,
 ];
 
 const DIFF_LABELS = {1:'Лёгкий',2:'Средний',3:'Сложный'};
-const DIFF_COLORS = {1:'bg-green-100 text-green-700',2:'bg-yellow-100 text-yellow-700',3:'bg-red-100 text-red-700'};
+const DIFF_COLORS = {1:'bg-yale text-white',2:'bg-lemon text-yale',3:'bg-red-100 text-red-700'};
 
 function renderOge2List() {
   const container = document.getElementById('oge2-task-list');
@@ -3130,7 +3569,7 @@ function renderBankPart1() {
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 mb-2 flex-wrap">
             <span class="tag ${dBg} ${dTc} text-xs">${dLabel}</span>
-            ${isSolved?'<span class="tag bg-green-100 text-green-700 text-xs">✓ Решено</span>':''}
+            ${isSolved?'<span class="tag bg-yale text-white text-xs">✓ Решено</span>':''}
           </div>
           <p class="text-sm text-gray-800">${t.description}</p>
         </div>
@@ -3417,7 +3856,7 @@ function renderDemoList() {
       <p class="text-xs text-gray-500 mb-4 leading-relaxed">${v.description}</p>
       <div class="flex gap-2 flex-wrap mb-4">
         <span class="tag bg-blue-50 text-blue-700 text-xs">14 заданий ч.1</span>
-        <span class="tag bg-purple-50 text-purple-700 text-xs">6 заданий ч.2</span>
+        <span class="tag bg-yellow-50 text-yale text-xs">6 заданий ч.2</span>
       </div>
       <button class="btn-p w-full text-sm">Начать →</button>
     </div>
@@ -3447,7 +3886,7 @@ function startDemoVariant(varId) {
       </div>
       <div class="flex gap-2 flex-wrap">
         <span class="tag bg-blue-50 text-blue-700">Ч.1: задания 1–14</span>
-        <span class="tag bg-purple-50 text-purple-700">Ч.2: задания 15–20</span>
+        <span class="tag bg-yellow-50 text-yale">Ч.2: задания 15–20</span>
       </div>
     </div>
   `;
@@ -3522,7 +3961,7 @@ function showDemoResults() {
   const score = correct;
   const total = S_demoTasks.length;
   const grade = score >= 18 ? 5 : score >= 14 ? 4 : score >= 8 ? 3 : 2;
-  const gradeColors = {5:'bg-green-100 text-green-700', 4:'bg-blue-100 text-blue-700', 3:'bg-yellow-100 text-yellow-700', 2:'bg-red-100 text-red-700'};
+  const gradeColors = {5:'bg-yale text-white', 4:'bg-blue-100 text-blue-700', 3:'bg-lemon text-yale', 2:'bg-red-100 text-red-700'};
 
   const def = DEMO_VARIANT_DEFS.find(v => v.id === S_demoVariantId);
   document.getElementById('demo-score-card').innerHTML = `
@@ -3531,7 +3970,7 @@ function showDemoResults() {
       <h2 class="font-black text-gray-900 text-2xl mb-1">${score} из ${total}</h2>
       <p class="text-gray-500 text-sm mb-4">${def?.title || 'Демовариант'}</p>
       <div class="flex gap-3 justify-center flex-wrap">
-        <span class="tag bg-green-100 text-green-700">${correct} верно</span>
+        <span class="tag bg-yale text-white">${correct} верно</span>
         <span class="tag bg-red-100 text-red-700">${total - correct} ошибок</span>
         <span class="tag ${gradeColors[grade]}">Оценка ${grade}</span>
       </div>
@@ -3552,7 +3991,7 @@ function showDemoResults() {
         <div class="flex items-center gap-2">
           <div class="w-6 h-6 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0"><svg width="12" height="12" fill="none" stroke="#16a34a" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
           <span class="font-bold text-sm text-gray-900">${t.taskNumLabel || 'Задание ' + t.demoNum}</span>
-          <span class="tag bg-green-100 text-green-700 text-xs ml-auto">Верно</span>
+          <span class="tag bg-yale text-white text-xs ml-auto">Верно</span>
         </div>
         <p class="text-xs text-gray-500 mt-1.5">${t.demoText.substring(0,80)}${t.demoText.length>80?'…':''}</p>
       </div>`;
@@ -3566,7 +4005,7 @@ function showDemoResults() {
         <p class="text-xs text-gray-600 mb-2 leading-relaxed">${t.demoText.substring(0,120)}${t.demoText.length>120?'…':''}</p>
         <div class="flex gap-4 text-xs mb-3 flex-wrap">
           <span><b class="text-red-600">Твой ответ:</b> ${userAns||'—'}</span>
-          <span><b class="text-green-600">Правильно:</b> ${t.answer}</span>
+          <span><b class="text-yale">Правильно:</b> ${t.answer}</span>
         </div>
         <details class="group">
           <summary class="cursor-pointer text-xs font-bold text-yale hover:opacity-75 list-none flex items-center gap-1">
@@ -3591,6 +4030,337 @@ function retryDemo() {
 function backToDemoList() {
   renderDemoList();
 }
+
+// ===== CUSTOM VARIANTS =====
+let customVariantDraft = {};
+let activeCustomVariant = null;
+
+function variantStorageKey() {
+  return `fibi_custom_variants_${S.user?.id || 'guest'}`;
+}
+
+function loadCustomVariants() {
+  try { return JSON.parse(localStorage.getItem(variantStorageKey()) || '[]'); }
+  catch { return []; }
+}
+
+function saveCustomVariants(items) {
+  localStorage.setItem(variantStorageKey(), JSON.stringify(items));
+  updateVariantHistoryCount();
+}
+
+function updateVariantHistoryCount() {
+  const el = document.getElementById('variant-history-count');
+  if (el) {
+    const count = loadCustomVariants().length;
+    el.textContent = count ? `· ${count}` : '';
+  }
+}
+
+function escapeVariantText(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[ch]);
+}
+
+function customVariantPool() {
+  const part1 = STATIC_TASKS.map(t => ({
+    id:t.id, part:1, number:t.taskNumber,
+    topic:t.topics?.[0]?.topic?.name || '',
+    text:t.description, answer:t.answer, answerAlt:t.answerAlt,
+    hint:t.hint1 || '', solution:Array.isArray(t.fullSolution) ? t.fullSolution : []
+  }));
+  const part2 = OGE_PART2_TASKS.map((t, index) => ({
+    id:`oge2_custom_${t.num}_${index}`, part:2, number:t.num,
+    topic:t.topic || '', text:t.fullText || t.shortText || '',
+    answer:t.answer, answerAlt:[], hint:(t.hints || [])[0] || '',
+    solution:t.solution || []
+  }));
+  return [...part1, ...part2];
+}
+
+function showVariantView(name) {
+  ['bank-main-view','variant-builder-view','variant-runner-view','variant-history-view'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = id === name ? '' : 'none';
+  });
+  const filters = document.querySelector('#s-bank > .card');
+  const numberBar = document.getElementById('bank-tasknum-bar');
+  const warning = document.getElementById('anticheat-warn');
+  const customView = name !== 'bank-main-view';
+  if (filters) filters.style.display = customView ? 'none' : '';
+  if (numberBar) numberBar.style.display = customView ? 'none' : '';
+  if (warning && customView) warning.style.display = 'none';
+  document.querySelector('.main-content').scrollTop = 0;
+}
+
+function returnToBankFromVariant() {
+  activeCustomVariant = null;
+  showVariantView('bank-main-view');
+  renderBank();
+  updateVariantHistoryCount();
+}
+
+function openVariantBuilder() {
+  customVariantDraft = {};
+  renderVariantBuilder();
+  showVariantView('variant-builder-view');
+}
+
+function renderVariantBuilder() {
+  const el = document.getElementById('variant-builder-view');
+  const pool = customVariantPool();
+  const numbers = [...new Set(pool.map(t => t.number))].sort((a,b)=>a-b);
+  const selected = Object.values(customVariantDraft).reduce((sum,n)=>sum+Number(n||0),0);
+  el.innerHTML = `
+    <button onclick="returnToBankFromVariant()" class="flex items-center gap-2 text-yale font-bold text-sm mb-4">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Назад в банк
+    </button>
+    <div class="card mb-4">
+      <h2 class="font-black text-gray-900 text-2xl mb-1">Сформировать вариант</h2>
+      <p class="text-sm text-gray-500">Укажи, сколько задач каждого номера добавить. Задания выбираются случайно без повторов.</p>
+    </div>
+    <div class="card mb-4">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px">
+        ${numbers.map(number => {
+          const tasks = pool.filter(t=>t.number===number);
+          const topic = tasks[0]?.topic || '';
+          const max = Math.min(5, tasks.length);
+          return `<label style="border:1.5px solid #e5e7eb;border-radius:14px;padding:12px;display:block">
+            <span class="font-black text-yale text-lg">№ ${number}</span>
+            <span class="block text-xs text-gray-500 mt-1 mb-2" style="min-height:32px">${escapeVariantText(topic)}</span>
+            <select onchange="setVariantTaskCount(${number},this.value)" style="width:100%">
+              ${Array.from({length:max+1},(_,i)=>`<option value="${i}" ${Number(customVariantDraft[number]||0)===i?'selected':''}>${i} ${i===1?'задание':'заданий'}</option>`).join('')}
+            </select>
+          </label>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="card flex items-center justify-between gap-4 flex-wrap" style="position:sticky;bottom:12px;z-index:10">
+      <div><span class="text-sm text-gray-500">В варианте:</span> <b class="text-yale">${selected} заданий</b></div>
+      <button class="btn-p" onclick="createCustomVariant()" ${selected ? '' : 'disabled style="opacity:.45;cursor:not-allowed"'}>Сформировать и начать →</button>
+    </div>`;
+}
+
+function setVariantTaskCount(number, value) {
+  customVariantDraft[number] = Number(value);
+  renderVariantBuilder();
+}
+
+function shuffled(items) {
+  const copy = [...items];
+  for (let i=copy.length-1;i>0;i--) {
+    const j = Math.floor(Math.random()*(i+1));
+    [copy[i],copy[j]] = [copy[j],copy[i]];
+  }
+  return copy;
+}
+
+function createCustomVariant() {
+  const pool = customVariantPool();
+  const chosen = [];
+  Object.entries(customVariantDraft).forEach(([number,count]) => {
+    chosen.push(...shuffled(pool.filter(t=>String(t.number)===String(number))).slice(0,Number(count)));
+  });
+  chosen.sort((a,b)=>a.number-b.number);
+  if (!chosen.length) return;
+  const now = new Date();
+  activeCustomVariant = {
+    id:`variant_${Date.now()}`, title:`Вариант от ${now.toLocaleDateString('ru-RU')}`,
+    createdAt:now.toISOString(), completedAt:null, currentIndex:0,
+    tasks:chosen.map(t=>({...t,userAnswer:'',note:'',isCorrect:null,solutionViewed:false}))
+  };
+  persistActiveVariant();
+  renderCustomVariantRunner();
+  showVariantView('variant-runner-view');
+}
+
+function persistActiveVariant() {
+  if (!activeCustomVariant) return;
+  const items = loadCustomVariants();
+  const index = items.findIndex(v=>v.id===activeCustomVariant.id);
+  if (index >= 0) items[index] = activeCustomVariant;
+  else items.unshift(activeCustomVariant);
+  saveCustomVariants(items.slice(0,100));
+}
+
+function answerMatchesVariant(task, value) {
+  let alternatives = task.answerAlt;
+  if (!Array.isArray(alternatives)) {
+    try { alternatives = JSON.parse(alternatives || '[]'); } catch { alternatives = []; }
+  }
+  return [task.answer,...alternatives].some(a=>normalize(a)===normalize(value));
+}
+
+function renderCustomVariantRunner() {
+  const el = document.getElementById('variant-runner-view');
+  if (!activeCustomVariant) return;
+  const v = activeCustomVariant;
+  const done = v.tasks.filter(t=>t.isCorrect !== null).length;
+  const index = Math.max(0,Math.min(v.currentIndex,v.tasks.length-1));
+  v.currentIndex = index;
+  const t = v.tasks[index];
+  const solution = (t.solution || []).map(s=>`<div class="solution-box mt-2"><p class="font-bold text-green-800 text-sm">${escapeVariantText(s.step)}</p><p class="text-sm text-gray-700 whitespace-pre-line">${escapeVariantText(s.detail)}</p></div>`).join('');
+  el.innerHTML = `
+    <div class="flex items-center justify-between gap-3 mb-4 flex-wrap">
+      <button onclick="saveAndExitCustomVariant()" class="flex items-center gap-2 text-yale font-bold text-sm">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Сохранить и выйти
+      </button>
+      <span class="text-sm font-bold text-gray-500">${done} из ${v.tasks.length} решено</span>
+    </div>
+    <div class="card mb-4">
+      <div class="flex items-center justify-between mb-3 gap-3">
+        <div><span class="tag bg-blue-100 text-blue-700">Задание №${t.number}</span> <span class="tag bg-gray-100 text-gray-600">Часть ${t.part}</span></div>
+        <b class="text-yale">${index+1} / ${v.tasks.length}</b>
+      </div>
+      <div class="h-2 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-yale" style="width:${((index+1)/v.tasks.length)*100}%"></div></div>
+    </div>
+    <div class="card mb-4">
+      <p class="text-xs font-bold text-gray-400 uppercase mb-2">${escapeVariantText(t.topic)}</p>
+      <p class="text-base text-gray-900 whitespace-pre-line leading-relaxed">${escapeVariantText(t.text)}</p>
+    </div>
+    <div class="card mb-4">
+      <label class="font-bold text-sm text-gray-900 block mb-2">Твой ответ</label>
+      <div class="answer-input-wrap">
+        <input id="custom-variant-answer" class="answer-field" value="${escapeVariantText(t.userAnswer)}" ${t.isCorrect!==null?'disabled':''} placeholder="Введи ответ">
+        <button class="btn-p" onclick="checkCustomVariantAnswer()" ${t.isCorrect!==null?'disabled style="opacity:.45"':''}>Проверить</button>
+      </div>
+      <div class="mt-2">${t.isCorrect===true?'<div class="answer-feedback-ok">✓ Верно</div>':t.isCorrect===false?`<div class="answer-feedback-err">✗ Неверно. Правильный ответ: ${escapeVariantText(t.answer)}</div>`:''}</div>
+    </div>
+    <div class="card mb-4">
+      <label class="font-bold text-sm text-gray-900 block mb-2">Мои заметки</label>
+      <textarea rows="4" style="width:100%;resize:vertical" placeholder="Запиши ход решения, формулы или вопрос репетитору…" oninput="saveCustomVariantNote(this.value)">${escapeVariantText(t.note)}</textarea>
+      <p class="text-xs text-gray-400 mt-2">Заметка сохраняется автоматически.</p>
+    </div>
+    ${t.isCorrect!==null ? `<div class="card mb-4">
+      <button class="btn-o w-full" onclick="toggleCustomVariantSolution()">${t.solutionViewed?'Скрыть решение':'Показать решение'}</button>
+      ${t.solutionViewed?`<div class="mt-3">${t.hint?`<div class="hint-box mb-2"><b class="text-amber-800 text-sm">Подсказка:</b><p class="text-sm text-amber-900">${escapeVariantText(t.hint)}</p></div>`:''}${solution || '<p class="text-sm text-gray-400">Подробное решение пока не добавлено.</p>'}</div>`:''}
+    </div>` : ''}
+    <div class="flex gap-2 justify-between mb-8">
+      <button class="btn-o" onclick="moveCustomVariant(-1)" ${index===0?'disabled style="opacity:.4"':''}>← Назад</button>
+      ${index===v.tasks.length-1
+        ? `<button class="btn-p" onclick="finishCustomVariant()">Завершить вариант</button>`
+        : `<button class="btn-p" onclick="moveCustomVariant(1)">Следующее →</button>`}
+    </div>`;
+}
+
+function checkCustomVariantAnswer() {
+  const value = document.getElementById('custom-variant-answer')?.value.trim();
+  if (!value || !activeCustomVariant) return;
+  const task = activeCustomVariant.tasks[activeCustomVariant.currentIndex];
+  task.userAnswer = value;
+  task.isCorrect = answerMatchesVariant(task,value);
+  persistActiveVariant();
+  renderCustomVariantRunner();
+}
+
+function saveCustomVariantNote(value) {
+  if (!activeCustomVariant) return;
+  activeCustomVariant.tasks[activeCustomVariant.currentIndex].note = value;
+  persistActiveVariant();
+}
+
+function toggleCustomVariantSolution() {
+  const task = activeCustomVariant.tasks[activeCustomVariant.currentIndex];
+  task.solutionViewed = !task.solutionViewed;
+  persistActiveVariant();
+  renderCustomVariantRunner();
+}
+
+function moveCustomVariant(delta) {
+  activeCustomVariant.currentIndex = Math.max(0,Math.min(activeCustomVariant.tasks.length-1,activeCustomVariant.currentIndex+delta));
+  persistActiveVariant();
+  renderCustomVariantRunner();
+}
+
+function saveAndExitCustomVariant() {
+  persistActiveVariant();
+  openVariantHistory();
+}
+
+function finishCustomVariant() {
+  if (!activeCustomVariant.completedAt) activeCustomVariant.completedAt = new Date().toISOString();
+  persistActiveVariant();
+  openVariantHistory(activeCustomVariant.id);
+}
+
+function openVariantHistory(openId) {
+  renderVariantHistory(openId);
+  showVariantView('variant-history-view');
+}
+
+function formatVariantDate(value) {
+  return new Date(value).toLocaleString('ru-RU',{day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+function renderVariantHistory(openId) {
+  const el = document.getElementById('variant-history-view');
+  const items = loadCustomVariants();
+  if (openId) {
+    const v = items.find(x=>x.id===openId);
+    if (v) { renderVariantReview(v); return; }
+  }
+  el.innerHTML = `
+    <button onclick="returnToBankFromVariant()" class="flex items-center gap-2 text-yale font-bold text-sm mb-4">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>Назад в банк
+    </button>
+    <div class="card mb-4"><h2 class="font-black text-gray-900 text-2xl">История вариантов</h2><p class="text-sm text-gray-500 mt-1">Здесь сохраняются ответы, заметки и подробные решения.</p></div>
+    ${items.length ? items.map(v=>{
+      const checked=v.tasks.filter(t=>t.isCorrect!==null).length;
+      const correct=v.tasks.filter(t=>t.isCorrect===true).length;
+      return `<div class="card mb-3 cursor-pointer" onclick="renderVariantHistory('${v.id}')">
+        <div class="flex items-center justify-between gap-3 flex-wrap">
+          <div><h3 class="font-black text-gray-900">${escapeVariantText(v.title)}</h3><p class="text-xs text-gray-400 mt-1">${formatVariantDate(v.createdAt)} · ${v.tasks.length} заданий</p></div>
+          <div class="flex gap-2"><span class="tag ${v.completedAt?'bg-green-100 text-green-700':'bg-amber-100 text-amber-700'}">${v.completedAt?'Завершён':'В процессе'}</span><span class="tag bg-blue-100 text-blue-700">${correct} верно · ${checked}/${v.tasks.length}</span></div>
+        </div>
+      </div>`;
+    }).join('') : '<div class="card text-center text-gray-400 py-10">Пока нет сформированных вариантов.</div>'}`;
+}
+
+function renderVariantReview(v) {
+  const el = document.getElementById('variant-history-view');
+  const correct = v.tasks.filter(t=>t.isCorrect===true).length;
+  el.innerHTML = `
+    <button onclick="renderVariantHistory()" class="flex items-center gap-2 text-yale font-bold text-sm mb-4">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>К истории
+    </button>
+    <div class="card mb-4">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
+        <div><h2 class="font-black text-gray-900 text-2xl">${escapeVariantText(v.title)}</h2><p class="text-sm text-gray-500">${formatVariantDate(v.createdAt)}</p></div>
+        <div class="text-right"><p class="font-black text-yale text-2xl">${correct} / ${v.tasks.length}</p><p class="text-xs text-gray-400">правильных ответов</p></div>
+      </div>
+      ${!v.completedAt?`<button class="btn-p mt-4" onclick="resumeCustomVariant('${v.id}')">Продолжить решение →</button>`:''}
+    </div>
+    ${v.tasks.map((t,i)=>`<details class="card mb-3" ${t.note?'open':''}>
+      <summary class="cursor-pointer list-none flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg ${t.isCorrect===true?'bg-green-100 text-green-700':t.isCorrect===false?'bg-red-100 text-red-700':'bg-gray-100 text-gray-500'} flex items-center justify-center font-black">${t.number}</div>
+        <div class="flex-1"><b class="text-sm text-gray-900">Задание ${i+1} · №${t.number}</b><p class="text-xs text-gray-400">${escapeVariantText(t.topic)}</p></div>
+        <span class="tag ${t.isCorrect===true?'bg-green-100 text-green-700':t.isCorrect===false?'bg-red-100 text-red-700':'bg-gray-100 text-gray-500'}">${t.isCorrect===true?'Верно':t.isCorrect===false?'Ошибка':'Не решено'}</span>
+      </summary>
+      <div class="mt-4 pt-4" style="border-top:1px solid #e5e7eb">
+        <p class="text-sm text-gray-800 whitespace-pre-line mb-3">${escapeVariantText(t.text)}</p>
+        <div class="text-sm mb-3"><b>Ответ ученика:</b> ${escapeVariantText(t.userAnswer||'—')} · <b>Правильный:</b> ${escapeVariantText(t.answer)}</div>
+        <div class="rounded-xl bg-blue-50 p-3 mb-3"><b class="text-yale text-sm">Заметка ученика</b><p class="text-sm text-gray-700 whitespace-pre-line mt-1">${escapeVariantText(t.note||'Заметок нет')}</p></div>
+        ${(t.solution||[]).map(s=>`<div class="solution-box mt-2"><p class="font-bold text-green-800 text-sm">${escapeVariantText(s.step)}</p><p class="text-sm text-gray-700 whitespace-pre-line">${escapeVariantText(s.detail)}</p></div>`).join('') || '<p class="text-sm text-gray-400">Подробное решение пока не добавлено.</p>'}
+      </div>
+    </details>`).join('')}`;
+}
+
+function resumeCustomVariant(id) {
+  const v = loadCustomVariants().find(x=>x.id===id);
+  if (!v) return;
+  activeCustomVariant = v;
+  renderCustomVariantRunner();
+  showVariantView('variant-runner-view');
+}
+
+const _originalRenderBankForVariants = renderBank;
+renderBank = async function() {
+  await _originalRenderBankForVariants();
+  updateVariantHistoryCount();
+};
 
 </script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>

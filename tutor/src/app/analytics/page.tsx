@@ -1,8 +1,11 @@
 'use client'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, TrendingUp, BookOpen, CheckCircle2, BarChart2 } from 'lucide-react'
 import { Card, SectionTitle, KPICard } from '@/components/ui'
-import { MOCK_STUDENTS, MOCK_HW, ACTIVITY_DATA } from '@/lib/mock'
+import { ACTIVITY_DATA } from '@/lib/mock'
+import { getTutorStudents, getHomework } from '@/lib/api'
+import type { Student, Homework } from '@/lib/types'
 
 function MiniBar({ value, max, label, color = 'bg-yale' }: { value: number; max: number; label: string; color?: string }) {
   return (
@@ -20,10 +23,18 @@ function MiniBar({ value, max, label, color = 'bg-yale' }: { value: number; max:
 }
 
 export default function AnalyticsPage() {
-  const avgScore = Math.round(MOCK_STUDENTS.reduce((s,st) => s+st.score, 0) / MOCK_STUDENTS.length)
-  const hwDone   = MOCK_HW.filter(h => h.status==='checked').length
-  const hwTotal  = MOCK_HW.length
-  const allWeak  = MOCK_STUDENTS.flatMap(s => s.weakTopics)
+  const [students, setStudents] = useState<Student[]>([])
+  const [hw, setHw] = useState<Homework[]>([])
+
+  useEffect(() => {
+    getTutorStudents().then(setStudents).catch(() => setStudents([]))
+    getHomework().then(setHw).catch(() => setHw([]))
+  }, [])
+
+  const avgScore = students.length ? Math.round(students.reduce((s,st) => s+st.score, 0) / students.length) : 0
+  const hwDone   = hw.filter(h => h.status==='checked').length
+  const hwTotal  = hw.length
+  const allWeak  = students.flatMap(s => s.weakTopics)
   const topicFreq: Record<string,number> = {}
   allWeak.forEach(t => topicFreq[t] = (topicFreq[t]||0)+1)
   const topics = Object.entries(topicFreq).sort((a,b)=>b[1]-a[1])
@@ -37,10 +48,10 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-4">
-        <KPICard label="Учеников" value={MOCK_STUDENTS.length} trend={+25} icon={<Users size={20} strokeWidth={1.8}/>}/>
-        <KPICard label="Ср. балл" value={avgScore+'%'} trend={+8} icon={<TrendingUp size={20} strokeWidth={1.8}/>}/>
+        <KPICard label="Учеников" value={students.length} icon={<Users size={20} strokeWidth={1.8}/>}/>
+        <KPICard label="Ср. балл" value={avgScore+'%'} icon={<TrendingUp size={20} strokeWidth={1.8}/>}/>
         <KPICard label="ДЗ выполнено" value={`${hwDone}/${hwTotal}`} icon={<CheckCircle2 size={20} strokeWidth={1.8}/>}/>
-        <KPICard label="Активных дней" value={18} trend={+3} icon={<BarChart2 size={20} strokeWidth={1.8}/>}/>
+        <KPICard label="Активных дней" value={18} icon={<BarChart2 size={20} strokeWidth={1.8}/>}/>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -75,7 +86,7 @@ export default function AnalyticsPage() {
       <Card>
         <SectionTitle>Прогресс учеников</SectionTitle>
         <div className="space-y-4">
-          {MOCK_STUDENTS.map(s => (
+          {students.map(s => (
             <div key={s.id} className="flex items-center gap-4">
               <div className="w-32 text-sm font-medium text-gray-700 truncate">{s.name.split(' ')[0]}</div>
               <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">

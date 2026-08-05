@@ -1,15 +1,46 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Star, Award, TrendingUp, Edit3, Check, X } from 'lucide-react'
 import { Card, SectionTitle, Badge, Btn } from '@/components/ui'
-import { MOCK_TUTOR, MOCK_STUDENTS } from '@/lib/mock'
+import { MOCK_TUTOR } from '@/lib/mock'
+import { getMe, getTutorStudents, patchTutorProfile, MeUser } from '@/lib/api'
+import type { Student } from '@/lib/types'
 
 export default function ProfilePage() {
+  const [me, setMe] = useState<MeUser | null>(null)
+  const [students, setStudents] = useState<Student[]>([])
   const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [name, setName] = useState(MOCK_TUTOR.name)
   const [bio, setBio] = useState(MOCK_TUTOR.bio)
   const [price, setPrice] = useState('2 500')
+
+  useEffect(() => {
+    getMe().then(user => {
+      if (!user) return
+      setMe(user)
+      setName(user.fullName || MOCK_TUTOR.name)
+      setBio(user.tutorProfile?.bio || MOCK_TUTOR.bio)
+      if (user.tutorProfile?.priceRub != null) setPrice(String(user.tutorProfile.priceRub))
+    })
+    getTutorStudents().then(setStudents).catch(() => setStudents([]))
+  }, [])
+
+  async function save() {
+    setSaving(true)
+    try {
+      await patchTutorProfile({ fullName: name, bio, priceRub: Number(price.replace(/\D/g, '')) || undefined })
+    } finally {
+      setSaving(false)
+      setEditing(false)
+    }
+  }
+
+  const subject = me?.tutorProfile?.subject || MOCK_TUTOR.subject
+  const rating = me?.tutorProfile?.rating || MOCK_TUTOR.rating
+  const reviews = me?.tutorProfile?.reviewsCount ?? MOCK_TUTOR.reviews
+  const avatarInitials = (name || MOCK_TUTOR.name).split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() || MOCK_TUTOR.avatar
 
   return (
     <div className="space-y-6">
@@ -26,7 +57,7 @@ export default function ProfilePage() {
           <Card className="text-center">
             <div className="relative inline-block mb-4">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-yale to-yale-light flex items-center justify-center text-white text-3xl font-black mx-auto">
-                {MOCK_TUTOR.avatar}
+                {avatarInitials}
               </div>
               <span className="absolute -bottom-1 -right-1 bg-amber-400 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                 Основатель
@@ -36,13 +67,13 @@ export default function ProfilePage() {
               ? <input value={name} onChange={e=>setName(e.target.value)}
                   className="text-xl font-black text-center w-full border-b border-yale focus:outline-none mb-2"/>
               : <h2 className="text-xl font-black text-gray-900">{name}</h2>}
-            <p className="text-gray-500 text-sm">{MOCK_TUTOR.subject}</p>
+            <p className="text-gray-500 text-sm">{subject}</p>
             <div className="flex items-center justify-center gap-1 mt-2 text-amber-500">
-              {[...Array(5)].map((_,i) => <Star key={i} size={14} fill={i<4?'currentColor':'none'}/>)}
-              <span className="text-sm font-bold text-gray-700 ml-1">{MOCK_TUTOR.rating}</span>
+              {[...Array(5)].map((_,i) => <Star key={i} size={14} fill={i<Math.round(rating)?'currentColor':'none'}/>)}
+              <span className="text-sm font-bold text-gray-700 ml-1">{rating}</span>
             </div>
             <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-100">
-              {[['Стаж', MOCK_TUTOR.exp+'л'], ['Отзывов', MOCK_TUTOR.reviews+''], ['#'+MOCK_TUTOR.chartRank, 'чарт']].map(([v,l]) => (
+              {[['Стаж', MOCK_TUTOR.exp+'л'], ['Отзывов', reviews+''], ['#'+MOCK_TUTOR.chartRank, 'чарт']].map(([v,l]) => (
                 <div key={l}><p className="font-black text-gray-900 text-lg">{v}</p><p className="text-xs text-gray-400">{l}</p></div>
               ))}
             </div>
@@ -91,7 +122,7 @@ export default function ProfilePage() {
           <Card>
             <SectionTitle>Результаты учеников</SectionTitle>
             <div className="space-y-3">
-              {MOCK_STUDENTS.map(s => (
+              {students.map(s => (
                 <div key={s.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-yale text-white flex items-center justify-center text-xs font-bold">{s.avatar}</div>
@@ -108,7 +139,7 @@ export default function ProfilePage() {
 
           {editing && (
             <motion.div initial={{ opacity:0, y:8 }} animate={{ opacity:1, y:0 }} className="flex gap-2">
-              <Btn className="flex-1" onClick={() => setEditing(false)}><Check size={16}/> Сохранить изменения</Btn>
+              <Btn className="flex-1" disabled={saving} onClick={save}><Check size={16}/> {saving ? 'Сохраняем…' : 'Сохранить изменения'}</Btn>
             </motion.div>
           )}
         </div>

@@ -7,39 +7,108 @@ datasource db {
   url      = "file:./dev.db"
 }
 
+// ─── IDENTITY ────────────────────────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String
+  role          String // STUDENT | PARENT | TUTOR | ADMIN
+  fullName      String
+  phone         String?
+  avatar        String?
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  studentProfile StudentProfile?
+  tutorProfile   TutorProfile?
+  parentProfile  ParentProfile?
+
+  attempts          Attempt[]
+  progress          UserProgress[]
+  streak            UserStreak?
+  recommendations   Recommendation[]
+  subscriptions     Subscription[]
+  paymentsAsStudent Payment[]           @relation("PaymentStudent")
+  paymentsAsTutor   Payment[]           @relation("PaymentTutor")
+  tutorBalance      TutorBalance?
+  payouts           Payout[]
+  homeworkAsTutor   Homework[]          @relation("HomeworkTutor")
+  homeworkAsStudent Homework[]          @relation("HomeworkStudent")
+  parentLinks       ParentStudentLink[] @relation("LinkParent")
+  studentLinks      ParentStudentLink[] @relation("LinkStudent")
+  tutorRoster       TutorStudentLink[]  @relation("RosterTutor")
+  studentRoster     TutorStudentLink[]  @relation("RosterStudent")
+
+  @@index([role])
+}
+
+model StudentProfile {
+  userId            String   @id
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  grade             Int?
+  examType          String?
+  city              String?
+  school            String?
+  age               Int?
+  gender            String?
+  hobbies           String   @default("[]") // JSON array
+  extraSubjects     String   @default("[]") // JSON array
+  dailyGoal         Int      @default(3)
+  onboardingDone    Boolean  @default(false)
+  linkCode          String   @unique // постоянный код для привязки родителя
+  linkCodeUpdatedAt DateTime @default(now())
+}
+
+model TutorProfile {
+  userId         String  @id
+  user           User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject        String?
+  priceRub       Int?
+  experienceText String?
+  bio            String?
+  profileStatus  String  @default("testing_required") // draft|testing_required|test_in_progress|review_pending|approved|rejected
+  testingData    String  @default("{}") // JSON
+  rating         Float   @default(0)
+  reviewsCount   Int     @default(0)
+}
+
+// ─── BANK ЗАДАНИЙ ────────────────────────────────────────────────────────────
+
 model Topic {
-  id          String  @id @default(cuid())
-  name        String  @unique
-  slug        String  @unique
+  id          String      @id @default(cuid())
+  name        String      @unique
+  slug        String      @unique
   parentId    String?
-  parent      Topic?  @relation("TopicTree", fields: [parentId], references: [id])
-  children    Topic[] @relation("TopicTree")
+  parent      Topic?      @relation("TopicTree", fields: [parentId], references: [id])
+  children    Topic[]     @relation("TopicTree")
   examType    String?
   description String?
-  order       Int     @default(0)
+  order       Int         @default(0)
   tasks       TaskTopic[]
-  createdAt   DateTime @default(now())
+  createdAt   DateTime    @default(now())
 }
 
 model Task {
   id                 String  @id @default(cuid())
-  examType           String  // OGE | EGE_BASE | EGE_PROFILE
+  examType           String // OGE | EGE_BASE | EGE_PROFILE
   part               Int
   taskNumber         Int
   title              String?
   description        String
   answer             String?
-  answerAlt          String  @default("[]")   // JSON array
+  answerAlt          String  @default("[]") // JSON array
   hint1              String?
   hint2              String?
   partialSolution    String?
-  fullSolution       String  @default("[]")   // JSON array of {step,detail}
+  fullSolution       String  @default("[]") // JSON array of {step,detail}
   explanation        String?
   difficulty         Int     @default(1)
   estimatedTimeSec   Int?
   source             String  @default("PLATFORM")
   year               Int?
-  tags               String  @default("[]")   // JSON array
+  tags               String  @default("[]") // JSON array
   hasLatex           Boolean @default(false)
   createdById        String?
   verificationStatus String  @default("VERIFIED")
@@ -62,55 +131,64 @@ model TaskTopic {
   topicId String
   task    Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
   topic   Topic  @relation(fields: [topicId], references: [id])
+
   @@id([taskId, topicId])
 }
 
 model Attempt {
-  id         String  @id @default(cuid())
+  id         String   @id @default(cuid())
   userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskId     String
-  task       Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
   attemptNum Int
   answer     String
   isCorrect  Boolean
   timeTaken  Int?
   createdAt  DateTime @default(now())
+
   @@index([userId, taskId])
 }
 
 model UserProgress {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskId        String
-  task          Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  status        String   @default("UNSOLVED")
-  attempts      Int      @default(0)
+  task          Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  status        String    @default("UNSOLVED")
+  attempts      Int       @default(0)
   bestAttempt   Int?
   solvedAt      DateTime?
   lastAttemptAt DateTime?
-  xpEarned      Int      @default(0)
+  xpEarned      Int       @default(0)
+
   @@unique([userId, taskId])
   @@index([userId, status])
 }
 
 model UserStreak {
   userId       String   @id
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   current      Int      @default(0)
   best         Int      @default(0)
   lastActiveAt DateTime @default(now())
 }
 
 model Homework {
-  id          String    @id @default(cuid())
+  id          String         @id @default(cuid())
   tutorId     String
+  tutor       User           @relation("HomeworkTutor", fields: [tutorId], references: [id], onDelete: Cascade)
   studentId   String
+  student     User           @relation("HomeworkStudent", fields: [studentId], references: [id], onDelete: Cascade)
   title       String
   description String?
   dueDate     DateTime?
-  status      String    @default("ACTIVE")
+  status      String         @default("ACTIVE")
   tasks       HomeworkTask[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
   @@index([studentId, status])
   @@index([tutorId])
 }
@@ -128,6 +206,7 @@ model HomeworkTask {
 model Recommendation {
   id        String   @id @default(cuid())
   userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskId    String
   reason    String
   context   String?
@@ -135,5 +214,138 @@ model Recommendation {
   seen      Boolean  @default(false)
   dismissed Boolean  @default(false)
   createdAt DateTime @default(now())
+
   @@index([userId, seen])
+}
+
+// ─── СВЯЗИ УЧАСТНИКОВ ─────────────────────────────────────────────────────────
+
+/// Связь родитель ↔ ученик (по постоянному коду в профиле ученика)
+model ParentStudentLink {
+  id        String   @id @default(cuid())
+  parentId  String
+  parent    User     @relation("LinkParent", fields: [parentId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User     @relation("LinkStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  linkedAt  DateTime @default(now())
+
+  @@unique([parentId, studentId])
+  @@index([studentId])
+}
+
+/// Связь репетитор ↔ ученик (ростер репетитора)
+model TutorStudentLink {
+  id        String   @id @default(cuid())
+  tutorId   String
+  tutor     User     @relation("RosterTutor", fields: [tutorId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User     @relation("RosterStudent", fields: [studentId], references: [id], onDelete: Cascade)
+  status    String   @default("ACTIVE") // ACTIVE | ENDED
+  notes     String?
+  startedAt DateTime @default(now())
+
+  @@unique([tutorId, studentId])
+  @@index([studentId])
+}
+
+// ─── PAYMENT SYSTEM ──────────────────────────────────────────────────────────
+
+model Subscription {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      String // FREE | SELF_STUDY | WITH_TUTOR
+  status    String    @default("ACTIVE") // ACTIVE | EXPIRED | CANCELLED
+  expiresAt DateTime?
+  autoRenew Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, status])
+}
+
+model Payment {
+  id           String        @id @default(cuid())
+  userId       String // student who pays
+  user         User          @relation("PaymentStudent", fields: [userId], references: [id], onDelete: Cascade)
+  tutorId      String? // set for lesson payments
+  tutor        User?         @relation("PaymentTutor", fields: [tutorId], references: [id])
+  amount       Int // kopecks (e.g. 67900 = 679₽)
+  currency     String        @default("RUB")
+  status       String        @default("PENDING") // PENDING | SUCCEEDED | CANCELLED | REFUNDED
+  type         String // SUBSCRIPTION | LESSON
+  yookassaId   String?       @unique // YooKassa payment id
+  confirmUrl   String? // redirect URL from YooKassa
+  description  String?
+  metadata     String        @default("{}") // JSON: { planId, lessonId, ... }
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  transactions Transaction[]
+
+  @@index([userId, status])
+  @@index([tutorId])
+  @@index([status, type])
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  type      String // CHARGE | PLATFORM_FEE | TUTOR_CREDIT | PAYOUT | REFUND
+  amount    Int // kopecks
+  status    String   @default("COMPLETED")
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([paymentId])
+}
+
+model TutorBalance {
+  id          String   @id @default(cuid())
+  tutorId     String   @unique
+  tutor       User     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  available   Int      @default(0) // ready to withdraw, kopecks
+  pending     Int      @default(0) // held (lesson not yet confirmed), kopecks
+  totalEarned Int      @default(0) // all-time earned, kopecks
+  updatedAt   DateTime @updatedAt
+}
+
+model Payout {
+  id          String   @id @default(cuid())
+  tutorId     String
+  tutor       User     @relation(fields: [tutorId], references: [id], onDelete: Cascade)
+  amount      Int // kopecks
+  status      String   @default("PENDING") // PENDING | PROCESSING | COMPLETED | FAILED
+  bankCard    String? // masked "•••• 4242"
+  bankAccount String? // encrypted IBAN / account details
+  yookassaId  String? // YooKassa payout id
+  failReason  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tutorId, status])
+}
+
+// ─── PARENT CABINET ───────────────────────────────────────────────────────────
+
+model ParentProfile {
+  userId         String   @id
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balanceKopecks Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  notifications ParentNotifications?
+}
+
+/// Настройки уведомлений родителя
+model ParentNotifications {
+  id                   String        @id @default(cuid())
+  parentId             String        @unique
+  parent               ParentProfile @relation(fields: [parentId], references: [userId], onDelete: Cascade)
+  newMessage           Boolean       @default(true)
+  progressUpdate       Boolean       @default(true)
+  paymentReminder      Boolean       @default(true)
+  homeworkReminder     Boolean       @default(true)
+  subscriptionExpiring Boolean       @default(true)
 }

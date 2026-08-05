@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { cached } from '@/lib/redis'
+import { requireUser, authErrorResponse } from '@/lib/authGuard'
 import { z } from 'zod'
 
 const FilterSchema = z.object({
@@ -67,21 +68,26 @@ const CreateSchema = z.object({
 })
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
-  const parsed = CreateSchema.safeParse(body)
-  if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
+  try {
+    await requireUser(req, ['TUTOR', 'ADMIN'])
+    const body = await req.json()
+    const parsed = CreateSchema.safeParse(body)
+    if (!parsed.success) return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
 
-  const { topicIds, fullSolution, tags, ...data } = parsed.data
-  const task = await db.task.create({
-    data: {
-      ...data,
-      fullSolution: JSON.stringify(fullSolution),
-      tags:         JSON.stringify(tags),
-      verificationStatus: 'PENDING',
-      topics: { create: topicIds.map(topicId => ({ topicId })) },
-    },
-    include: { topics: { include: { topic: true } } },
-  })
+    const { topicIds, fullSolution, tags, ...data } = parsed.data
+    const task = await db.task.create({
+      data: {
+        ...data,
+        fullSolution: JSON.stringify(fullSolution),
+        tags:         JSON.stringify(tags),
+        verificationStatus: 'PENDING',
+        topics: { create: topicIds.map(topicId => ({ topicId })) },
+      },
+      include: { topics: { include: { topic: true } } },
+    })
 
-  return NextResponse.json(task, { status: 201 })
+    return NextResponse.json(task, { status: 201 })
+  } catch (err) {
+    return authErrorResponse(err) ?? NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 })
+  }
 }

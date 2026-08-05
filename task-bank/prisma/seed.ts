@@ -1,6 +1,48 @@
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
+
+const DEMO_PASSWORD = 'password123'
+
+async function seedDemoUsers() {
+  console.log('👤 Seeding demo users…')
+  const passwordHash = await bcrypt.hash(DEMO_PASSWORD, 12)
+
+  await prisma.user.deleteMany({ where: { email: { endsWith: '@fibi.demo' } } })
+
+  const admin = await prisma.user.create({
+    data: { email: 'admin@fibi.demo', passwordHash, role: 'ADMIN', fullName: 'Администратор ФИБИ' },
+  })
+
+  const tutor = await prisma.user.create({
+    data: {
+      email: 'tutor@fibi.demo', passwordHash, role: 'TUTOR', fullName: 'Анна Петрова',
+      tutorProfile: { create: { subject: 'Математика', priceRub: 2500, profileStatus: 'approved', rating: 4.9, reviewsCount: 48 } },
+    },
+  })
+
+  const student = await prisma.user.create({
+    data: {
+      email: 'student@fibi.demo', passwordHash, role: 'STUDENT', fullName: 'Иван Смирнов',
+      studentProfile: { create: { grade: 9, examType: 'OGE', onboardingDone: true, linkCode: 'DEMO01' } },
+    },
+  })
+
+  const parent = await prisma.user.create({
+    data: {
+      email: 'parent@fibi.demo', passwordHash, role: 'PARENT', fullName: 'Ольга Смирнова',
+      parentProfile: { create: { notifications: { create: {} } } },
+    },
+  })
+
+  await prisma.parentStudentLink.create({ data: { parentId: parent.id, studentId: student.id } })
+  await prisma.tutorStudentLink.create({ data: { tutorId: tutor.id, studentId: student.id } })
+  await prisma.userStreak.create({ data: { userId: student.id, current: 3, best: 5 } })
+
+  console.log(`✅ Demo users: admin@fibi.demo / tutor@fibi.demo / student@fibi.demo / parent@fibi.demo (пароль: ${DEMO_PASSWORD})`)
+  console.log(`   Код привязки ученика для родителя: DEMO01`)
+}
 
 // ── Topic hierarchy ───────────────────────────────────────
 const TOPIC_TREE = [
@@ -140,6 +182,9 @@ async function main() {
   }
 
   console.log(`✅ ${RAW_TASKS.length} tasks seeded`)
+
+  await seedDemoUsers()
+
   console.log('🎉 Done!')
 }
 
